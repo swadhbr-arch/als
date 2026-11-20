@@ -3,395 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عبدالرحيم الجياشي الشمري | الهوية الرقمية</title>
+    <title>لوحة التركيز والإنتاجية | Focus Board</title>
     
     <!-- أيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- خطوط عربية -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- خط عربي -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
         }
 
         body {
-            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             min-height: 100vh;
-            background-color: #030408;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 1.5rem;
-            overflow: hidden; /* لمنع التمرير بسبب الخلفية */
-            position: relative;
-            color: #fff;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.08), transparent 25%);
         }
 
-        /* ===== الخلفية السينمائية (نجوم متحركة) ===== */
-        #stars-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-            overflow: hidden;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: twinkle infinite alternate;
-        }
-
-        @keyframes twinkle {
-            0% { opacity: 0.1; transform: scale(0.8); }
-            100% { opacity: 0.8; transform: scale(1.2); }
-        }
-
-        /* ===== الحاوية الرئيسية ===== */
-        .id-card-wrapper {
-            position: relative;
-            z-index: 2;
+        .dashboard {
             width: 100%;
-            max-width: 420px;
-            animation: floatIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        @keyframes floatIn {
-            from { opacity: 0; transform: translateY(40px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== الهوية الرقمية (البطاقة) ===== */
-        .digital-card {
-            background: rgba(15, 18, 30, 0.65);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 2rem;
-            padding: 2.5rem 1.5rem 2rem;
-            position: relative;
+        /* رأس الصفحة */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .clock-box h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .clock-box p { font-size: 0.9rem; color: var(--text-muted); }
+
+        .quote-box {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 60%;
+            text-align: left;
+            direction: ltr;
+            font-style: italic;
+        }
+
+        /* البطاقات الأساسية */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
             align-items: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            gap: 10px;
         }
 
-        /* إطار الهولوغرام المتوهج */
-        .digital-card::before {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: 2.1rem;
-            background: linear-gradient(45deg, #00f2fe, #4facfe, #f093fb, #f5576c, #4facfe, #00f2fe);
-            background-size: 300% 300%;
-            z-index: -1;
-            animation: hologramGlow 5s linear infinite;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-        
-        .digital-card:hover::before {
-            opacity: 1;
+        .card-title i { color: var(--primary); }
+
+        /* ===== قسم المؤقت (Pomodoro) ===== */
+        .timer-section {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
-        @keyframes hologramGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* خطوط التصميم الداخلي (HUD) */
-        .hud-line {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .hud-top { top: 15px; right: 15px; width: 30px; height: 2px; }
-        .hud-bottom { bottom: 15px; left: 15px; width: 30px; height: 2px; }
-
-        /* ===== الصورة والبروفايل ===== */
-        .avatar-box {
+        .timer-circle {
             position: relative;
-            width: 115px;
-            height: 115px;
-            margin-bottom: 1.2rem;
-            border-radius: 50%;
-            padding: 3px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.05));
+            width: 220px;
+            height: 220px;
+            margin-bottom: 2rem;
         }
 
-        .avatar-box img {
+        .timer-circle svg {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #0f121e;
+            transform: rotate(-90deg);
         }
 
-        /* شريط الحالة (متصل الآن) */
-        .status-dot {
+        .timer-circle circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .timer-bg { stroke: rgba(255,255,255,0.05); }
+        
+        .timer-progress {
+            stroke: var(--primary);
+            stroke-dasharray: 691; /* 2 * pi * r (110) */
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-text {
             position: absolute;
-            bottom: 5px;
-            right: 10px;
-            width: 18px;
-            height: 18px;
-            background: #10b981;
-            border: 3px solid #0f121e;
-            border-radius: 50%;
-            z-index: 3;
-            animation: pulseStatus 2s infinite;
-        }
-
-        @keyframes pulseStatus {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* الاسم والتوثيق */
-        .name-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 0.3rem;
-        }
-
-        .name-text {
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.35rem;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
             font-weight: 800;
-            white-space: nowrap;
-            background: linear-gradient(to right, #fff, #b8ccff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* علامة التوثيق الاحترافية */
-        .verified-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 20px;
-            background: #1d9bf0;
-            border-radius: 50%;
-            color: white;
-            font-size: 0.55rem;
-            box-shadow: 0 0 10px rgba(29, 155, 240, 0.8);
-        }
-
-        .user-title {
-            font-size: 0.85rem;
-            color: #8892b0;
-            letter-spacing: 1px;
-            margin-bottom: 2rem;
-            font-weight: 500;
-        }
-
-        /* ===== أزرار الحسابات (شكل شرائح تفاعلية) ===== */
-        .social-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            width: 100%;
-        }
-
-        .social-btn {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 1rem;
-            text-decoration: none;
-            color: #fff;
-            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* تأثير التداخل الضوئي عند التمرير */
-        .social-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .social-btn:hover::before {
-            left: 100%;
-        }
-
-        .social-btn:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateX(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        /* أيقونة المنصة */
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            margin-left: 1rem;
-            transition: transform 0.4s ease;
-        }
-
-        .social-btn:hover .btn-icon {
-            transform: scale(1.15) rotate(10deg);
-        }
-
-        .icon-tk { background: #000; color: #fff; border: 1px solid #25f4ee; }
-        .icon-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
-        .icon-fb { background: #1877f2; color: #fff; }
-
-        /* محتوى الزر */
-        .btn-content {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .btn-name {
-            font-size: 0.95rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-name i {
-            color: #1d9bf0;
-            font-size: 0.75rem;
-        }
-
-        .btn-handle {
-            font-size: 0.75rem;
-            color: #8892b0;
             direction: ltr;
-            text-align: right;
-            margin-top: 2px;
         }
 
-        /* أيقونة الانتقال */
-        .btn-arrow {
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 0.8rem;
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #0f172a;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* ===== قسم المهام (To-Do) ===== */
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.8rem 1rem;
+            border-radius: 0.8rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
             transition: 0.3s;
         }
 
-        .social-btn:hover .btn-arrow {
-            color: #fff;
-            transform: translateX(-3px);
+        .input-group input:focus { border-color: var(--primary); }
+
+        .task-list {
+            list-style: none;
+            overflow-y: auto;
+            max-height: 250px;
+            padding-left: 5px;
         }
 
-        @media (max-width: 360px) {
-            .name-text { font-size: 1.15rem; }
-            .digital-card { padding: 2rem 1rem; }
+        .task-list::-webkit-scrollbar { width: 6px; }
+        .task-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.02);
+            transition: 0.3s;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .task-item:hover { background: rgba(255,255,255,0.06); }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .task-item.completed .task-checkbox {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-item.completed .task-checkbox::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.7rem;
+            color: white;
+        }
+
+        .task-text {
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+            padding: 5px;
+        }
+
+        .delete-btn:hover { color: var(--danger); transform: scale(1.1); }
+
+        /* استجابة الجوال */
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .header { flex-direction: column; text-align: center; gap: 1rem; padding: 1.5rem; }
+            .quote-box { max-width: 100%; text-align: center; }
+            .timer-circle { width: 180px; height: 180px; }
+            .timer-text { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- خلفية النجوم المتلألئة -->
-    <div id="stars-container"></div>
-
-    <div class="id-card-wrapper">
-        <div class="digital-card">
-            <!-- خطوط التصميم الداخلي -->
-            <div class="hud-line hud-top"></div>
-            <div class="hud-line hud-bottom"></div>
-
-            <!-- الصورة -->
-            <div class="avatar-box">
-                <img src="logo.png" alt="عبدالرحيم الجياشي الشمري" onerror="this.src='https://ui-avatars.com/api/?name=عبدالرحيم&background=0f121e&color=fff&size=115'">
-                <div class="status-dot" title="متصل"></div>
+    <div class="dashboard">
+        
+        <!-- الرأس: الساعة والاقتباس -->
+        <header class="header">
+            <div class="clock-box">
+                <h2 id="time">00:00</h2>
+                <p id="date">جاري التحميل...</p>
             </div>
-
-            <!-- الاسم + التوثيق -->
-            <div class="name-container">
-                <div class="name-text">عبدالرحيم الجياشي الشمري</div>
-                <div class="verified-icon" title="موثق">
-                    <i class="fas fa-check"></i>
-                </div>
+            <div class="quote-box" id="quote">
+                "النجاح هو مجموع جهود صغيرة تتكرر يوماً بعد يوم."
             </div>
+        </header>
+
+        <!-- القسم الأول: مؤقت بومودورو -->
+        <div class="card timer-section">
+            <div class="card-title"><i class="fas fa-clock"></i> مؤقت التركيز (Pomodoro)</div>
             
-            <div class="user-title">DIGITAL IDENTITY</div>
-
-            <!-- الروابط -->
-            <div class="social-links">
-                <!-- تيك توك -->
-                <a href="https://www.tiktok.com/@r_epd" target="_blank" class="social-btn">
-                    <div class="btn-icon icon-tk"><i class="fab fa-tiktok"></i></div>
-                    <div class="btn-content">
-                        <div class="btn-name">تيك توك <i class="fas fa-check-circle"></i></div>
-                        <div class="btn-handle">@r_epd</div>
-                    </div>
-                    <i class="fas fa-chevron-left btn-arrow"></i>
-                </a>
-
-                <!-- انستغرام -->
-                <a href="https://www.instagram.com/alsamkark" target="_blank" class="social-btn">
-                    <div class="btn-icon icon-ig"><i class="fab fa-instagram"></i></div>
-                    <div class="btn-content">
-                        <div class="btn-name">إنستغرام <i class="fas fa-check-circle"></i></div>
-                        <div class="btn-handle">@alsamkark</div>
-                    </div>
-                    <i class="fas fa-chevron-left btn-arrow"></i>
-                </a>
-
-                <!-- فيسبوك -->
-                <a href="https://www.facebook.com/share/1CCY33nfm3/" target="_blank" class="social-btn">
-                    <div class="btn-icon icon-fb"><i class="fab fa-facebook-f"></i></div>
-                    <div class="btn-content">
-                        <div class="btn-name">فيسبوك <i class="fas fa-check-circle"></i></div>
-                        <div class="btn-handle">facebook.com/share/1CCY...</div>
-                    </div>
-                    <i class="fas fa-chevron-left btn-arrow"></i>
-                </a>
+            <div class="timer-circle">
+                <svg>
+                    <circle class="timer-bg" cx="110" cy="110" r="110"></circle>
+                    <circle class="timer-progress" id="progress" cx="110" cy="110" r="110"></circle>
+                </svg>
+                <div class="timer-text" id="timer">25:00</div>
             </div>
 
+            <div class="timer-controls">
+                <button class="btn btn-primary" id="startBtn"><i class="fas fa-play"></i> ابدأ</button>
+                <button class="btn btn-secondary" id="resetBtn"><i class="fas fa-rotate-left"></i> إعادة</button>
+            </div>
         </div>
+
+        <!-- القسم الثاني: قائمة المهام -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-list-check"></i> قائمة المهام</div>
+            
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="أضف مهمة جديدة..." autocomplete="off">
+                <button class="btn btn-primary" id="addBtn"><i class="fas fa-plus"></i></button>
+            </div>
+
+            <ul class="task-list" id="taskList">
+                <!-- المهام ستظهر هنا تلقائياً -->
+            </ul>
+        </div>
+
     </div>
 
-    <!-- سكربت بسيط لتوليد النجوم في الخلفية -->
     <script>
-        const starsContainer = document.getElementById('stars-container');
-        const starCount = 50; // عدد النجوم
-
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
+        // ================= 1. الساعة والتاريخ =================
+        function updateClock() {
+            const now = new Date();
+            // الوقت
+            const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('time').textContent = timeString;
             
-            // حجم عشوائي
-            const size = Math.random() * 3 + 1;
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
-            
-            // مكان عشوائي
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            
-            // سرعة وتأخير عشوائي للنبض
-            star.style.animationDuration = `${Math.random() * 2 + 1}s`;
-            star.style.animationDelay = `${Math.random() * 2}s`;
-            
-            starsContainer.appendChild(star);
+            // التاريخ
+            const dateString = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('date').textContent = dateString;
         }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ================= 2. الاقتباسات =================
+        const quotes = [
+            "النجاح هو مجموع جهود صغيرة تتكرر يوماً بعد يوم.",
+            "لا تؤجل عمل اليوم إلى الغد.",
+            "التركيز هو سر الإنجاز في وقت قياسي.",
+            "افعل شيئاً اليوم يجعلك فخوراً غداً.",
+            "الطريق إلى القمة يبدأ بخطوة واحدة."
+        ];
+        document.getElementById('quote').textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+
+        // ================= 3. مؤقت بومودورو =================
+        let timer;
+        let timeLeft = 25 * 60; // 25 دقيقة
+        let isRunning = false;
+        const totalTime = 25 * 60;
+        const timerDisplay = document.getElementById('timer');
+        const progressCircle = document.getElementById('progress');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        const circleRadius = 110;
+        const circumference = 2 * Math.PI * circleRadius;
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // تحديث الدائرة
+            const offset = circumference - (timeLeft / totalTime) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+
+        function startTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startBtn.innerHTML = '<i class="fas fa-play"></i> استمرار';
+                isRunning = false;
+            } else {
+                isRunning = true;
+                startBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف مؤقت';
+                timer = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timer);
+                        isRunning = false;
+                        startBtn.innerHTML = '<i class="fas fa-play"></i> ابدأ';
+                        // تنبيه بسيط عند انتهاء الوقت
+                        alert("انتهى وقت التركيز! خذ استراحة قصيرة.");
+                        timeLeft = totalTime;
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            timeLeft = totalTime;
+            updateTimerDisplay();
+            startBtn.innerHTML = '<i class="fas fa-play"></i> ابدأ';
+        }
+
+        startBtn.addEventListener('click', startTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        updateTimerDisplay();
+
+        // ================= 4. قائمة المهام (To-Do) =================
+        const taskInput = document.getElementById('taskInput');
+        const addBtn = document.getElementById('addBtn');
+        const taskList = document.getElementById('taskList');
+
+        // جلب المهام من الذاكرة المحلية أو إنشاء مصفوفة فارغة
+        let tasks = JSON.parse(localStorage.getItem('focusTasks')) || [];
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                
+                li.innerHTML = `
+                    <div class="task-content" onclick="toggleTask(${index})">
+                        <div class="task-checkbox"></div>
+                        <span class="task-text">${task.text}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTask(${index})"><i class="fas fa-trash"></i></button>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        function addTask() {
+            const text = taskInput.value.trim();
+            if (text !== '') {
+                tasks.push({ text: text, completed: false });
+                taskInput.value = '';
+                saveAndRender();
+            }
+        }
+
+        window.toggleTask = function(index) {
+            tasks[index].completed = !tasks[index].completed;
+            saveAndRender();
+        }
+
+        window.deleteTask = function(index) {
+            tasks.splice(index, 1);
+            saveAndRender();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('focusTasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        addBtn.addEventListener('click', addTask);
+        taskInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addTask();
+        });
+
+        // عرض المهام عند فتح الصفحة
+        renderTasks();
     </script>
 </body>
 </html>
