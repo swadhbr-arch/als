@@ -2,25 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التركيز والإنتاجية | Focus Board</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Reflex | تحدي سرعة البديهة</title>
     
-    <!-- أيقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- خط عربي -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --primary: #38bdf8;
-            --primary-hover: #0ea5e9;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --danger: #ef4444;
-            --success: #10b981;
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ea;
+            --bg-color: #050510;
         }
 
         * {
@@ -28,466 +19,464 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Tajawal', sans-serif;
+            user-select: none; /* منع تحديد النص أثناء اللعب */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            overflow: hidden;
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.08), transparent 25%);
+                radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at bottom, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
         }
 
-        .dashboard {
+        /* حاوية اللعبة */
+        .game-wrapper {
+            position: relative;
             width: 100%;
-            max-width: 1000px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            animation: fadeIn 0.8s ease-out;
+            max-width: 500px;
+            height: 90vh;
+            max-height: 700px;
+            background: rgba(10, 15, 30, 0.8);
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            border-radius: 1.5rem;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.1);
+            overflow: hidden;
+            cursor: crosshair;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* رأس الصفحة */
-        .header {
-            grid-column: 1 / -1;
+        /* شريط المعلومات العلوي (HUD) */
+        .hud {
+            position: absolute;
+            top: 0; left: 0; right: 0;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            z-index: 10;
+            pointer-events: none;
+            background: linear-gradient(to bottom, rgba(5,5,16,0.9), transparent);
         }
 
-        .clock-box h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        .clock-box p { font-size: 0.9rem; color: var(--text-muted); }
-
-        .quote-box {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            max-width: 60%;
-            text-align: left;
-            direction: ltr;
-            font-style: italic;
-        }
-
-        /* البطاقات الأساسية */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        .stat-box {
             display: flex;
             flex-direction: column;
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
             align-items: center;
-            gap: 10px;
         }
 
-        .card-title i { color: var(--primary); }
-
-        /* ===== قسم المؤقت (Pomodoro) ===== */
-        .timer-section {
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+        .stat-label {
+            font-size: 0.8rem;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .timer-circle {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin-bottom: 2rem;
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
         }
 
-        .timer-circle svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
+        .time-value { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
-        .timer-circle circle {
-            fill: none;
-            stroke-width: 8;
-            stroke-linecap: round;
-        }
-
-        .timer-bg { stroke: rgba(255,255,255,0.05); }
-        
-        .timer-progress {
-            stroke: var(--primary);
-            stroke-dasharray: 691; /* 2 * pi * r (110) */
-            stroke-dashoffset: 0;
-            transition: stroke-dashoffset 1s linear;
-        }
-
-        .timer-text {
+        /* الهدف (الدائرة) */
+        .target {
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3rem;
-            font-weight: 800;
-            direction: ltr;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px #fff;
+            transform: translate(-50%, -50%) scale(0);
+            cursor: pointer;
+            z-index: 5;
+            display: none;
         }
 
-        .timer-controls {
+        /* تأثير ظهور الهدف */
+        .target.active {
+            display: block;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* تأثير الانفجار عند النقر */
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            pointer-events: none;
+            z-index: 4;
+            transform: translate(-50%, -50%);
+            animation: explode 0.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            to {
+                transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* شاشة البداية والنهاية */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 5, 16, 0.9);
+            backdrop-filter: blur(10px);
             display: flex;
-            gap: 1rem;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            text-align: center;
+            padding: 2rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .game-title span { color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink); }
+
+        .game-desc {
+            font-size: 1rem;
+            color: #a0aabf;
+            margin-bottom: 2rem;
+            max-width: 80%;
+            line-height: 1.6;
         }
 
         .btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 0.8rem;
-            font-size: 1rem;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
             font-weight: 700;
+            color: #000;
+            background: var(--neon-blue);
+            border: none;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            box-shadow: 0 0 20px var(--neon-blue);
+            transition: all 0.2s;
             font-family: 'Tajawal', sans-serif;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: #0f172a;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
-        }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            color: var(--text-main);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-
-        /* ===== قسم المهام (To-Do) ===== */
-        .input-group {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+        .btn:hover {
+            background: #fff;
+            box-shadow: 0 0 30px #fff, 0 0 10px var(--neon-blue);
+            transform: scale(1.05);
         }
 
-        .input-group input {
-            flex: 1;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 0.8rem 1rem;
-            border-radius: 0.8rem;
-            color: var(--text-main);
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .input-group input:focus { border-color: var(--primary); }
-
-        .task-list {
-            list-style: none;
-            overflow-y: auto;
-            max-height: 250px;
-            padding-left: 5px;
-        }
-
-        .task-list::-webkit-scrollbar { width: 6px; }
-        .task-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.02);
-            transition: 0.3s;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .task-item:hover { background: rgba(255,255,255,0.06); }
-
-        .task-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            cursor: pointer;
-        }
-
-        .task-checkbox {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-
-        .task-item.completed .task-checkbox {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
-        .task-item.completed .task-checkbox::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
+        /* شاشة النتيجة */
+        .final-score {
+            font-size: 4rem;
             font-weight: 900;
-            font-size: 0.7rem;
-            color: white;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px var(--neon-blue);
+            margin: 1rem 0;
         }
 
-        .task-text {
-            font-size: 0.95rem;
-            transition: 0.3s;
+        .high-score-text {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
         }
 
-        .task-item.completed .task-text {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-
-        .delete-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.3s;
-            padding: 5px;
-        }
-
-        .delete-btn:hover { color: var(--danger); transform: scale(1.1); }
-
-        /* استجابة الجوال */
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .header { flex-direction: column; text-align: center; gap: 1rem; padding: 1.5rem; }
-            .quote-box { max-width: 100%; text-align: center; }
-            .timer-circle { width: 180px; height: 180px; }
-            .timer-text { font-size: 2.5rem; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
+    <div class="game-wrapper" id="gameArea">
         
-        <!-- الرأس: الساعة والاقتباس -->
-        <header class="header">
-            <div class="clock-box">
-                <h2 id="time">00:00</h2>
-                <p id="date">جاري التحميل...</p>
+        <!-- شريط النقاط والوقت -->
+        <div class="hud">
+            <div class="stat-box">
+                <span class="stat-label">Score</span>
+                <span class="stat-value" id="scoreDisplay">0</span>
             </div>
-            <div class="quote-box" id="quote">
-                "النجاح هو مجموع جهود صغيرة تتكرر يوماً بعد يوم."
-            </div>
-        </header>
-
-        <!-- القسم الأول: مؤقت بومودورو -->
-        <div class="card timer-section">
-            <div class="card-title"><i class="fas fa-clock"></i> مؤقت التركيز (Pomodoro)</div>
-            
-            <div class="timer-circle">
-                <svg>
-                    <circle class="timer-bg" cx="110" cy="110" r="110"></circle>
-                    <circle class="timer-progress" id="progress" cx="110" cy="110" r="110"></circle>
-                </svg>
-                <div class="timer-text" id="timer">25:00</div>
-            </div>
-
-            <div class="timer-controls">
-                <button class="btn btn-primary" id="startBtn"><i class="fas fa-play"></i> ابدأ</button>
-                <button class="btn btn-secondary" id="resetBtn"><i class="fas fa-rotate-left"></i> إعادة</button>
+            <div class="stat-box">
+                <span class="stat-label">Time</span>
+                <span class="stat-value time-value" id="timeDisplay">30</span>
             </div>
         </div>
 
-        <!-- القسم الثاني: قائمة المهام -->
-        <div class="card">
-            <div class="card-title"><i class="fas fa-list-check"></i> قائمة المهام</div>
-            
-            <div class="input-group">
-                <input type="text" id="taskInput" placeholder="أضف مهمة جديدة..." autocomplete="off">
-                <button class="btn btn-primary" id="addBtn"><i class="fas fa-plus"></i></button>
-            </div>
+        <!-- الهدف -->
+        <div class="target" id="target"></div>
 
-            <ul class="task-list" id="taskList">
-                <!-- المهام ستظهر هنا تلقائياً -->
-            </ul>
+        <!-- شاشة البداية / النهاية -->
+        <div class="overlay" id="startScreen">
+            <h1 class="game-title">NEON <span>REFLEX</span></h1>
+            <p class="game-desc">انقر على الدوائر المتوهجة بأسرع ما يمكن قبل أن تختفي. لديك 30 ثانية لإثبات سرعة بديهتك!</p>
+            
+            <div class="high-score-text">أعلى نتيجة: <span id="highScoreDisplay">0</span></div>
+            
+            <button class="btn" id="startBtn">ابدأ اللعب</button>
+        </div>
+
+        <div class="overlay hidden" id="endScreen">
+            <h1 class="game-title">انتهى الوقت!</h1>
+            <div class="final-score" id="finalScore">0</div>
+            <p class="game-desc">نقاطك النهائية</p>
+            
+            <div class="high-score-text" id="endHighScoreMsg">أعلى نتيجة: 0</div>
+            
+            <button class="btn" id="restartBtn">إعادة المحاولة</button>
         </div>
 
     </div>
 
     <script>
-        // ================= 1. الساعة والتاريخ =================
-        function updateClock() {
-            const now = new Date();
-            // الوقت
-            const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('time').textContent = timeString;
-            
-            // التاريخ
-            const dateString = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            document.getElementById('date').textContent = dateString;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+        // إعدادات اللعبة
+        const GAME_TIME = 30; // مدة اللعبة بالثواني
+        const TARGET_LIFESPAN = 800; // مدة بقاء الهدف بالمللي ثانية (0.8 ثانية)
 
-        // ================= 2. الاقتباسات =================
-        const quotes = [
-            "النجاح هو مجموع جهود صغيرة تتكرر يوماً بعد يوم.",
-            "لا تؤجل عمل اليوم إلى الغد.",
-            "التركيز هو سر الإنجاز في وقت قياسي.",
-            "افعل شيئاً اليوم يجعلك فخوراً غداً.",
-            "الطريق إلى القمة يبدأ بخطوة واحدة."
-        ];
-        document.getElementById('quote').textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
-
-        // ================= 3. مؤقت بومودورو =================
-        let timer;
-        let timeLeft = 25 * 60; // 25 دقيقة
-        let isRunning = false;
-        const totalTime = 25 * 60;
-        const timerDisplay = document.getElementById('timer');
-        const progressCircle = document.getElementById('progress');
+        // العناصر
+        const gameArea = document.getElementById('gameArea');
+        const target = document.getElementById('target');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const startScreen = document.getElementById('startScreen');
+        const endScreen = document.getElementById('endScreen');
         const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const highScoreDisplay = document.getElementById('highScoreDisplay');
+        const finalScore = document.getElementById('finalScore');
+        const endHighScoreMsg = document.getElementById('endHighScoreMsg');
+
+        // المتغيرات
+        let score = 0;
+        let timeLeft = GAME_TIME;
+        let gameActive = false;
+        let gameInterval;
+        let targetTimeout;
         
-        const circleRadius = 110;
-        const circumference = 2 * Math.PI * circleRadius;
+        // جلب أعلى نتيجة من الذاكرة
+        let highScore = localStorage.getItem('neonReflexHighScore') || 0;
+        highScoreDisplay.textContent = highScore;
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        // الأصوات (Web Audio API)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playHitSound() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
             
-            // تحديث الدائرة
-            const offset = circumference - (timeLeft / totalTime) * circumference;
-            progressCircle.style.strokeDashoffset = offset;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        function startTimer() {
-            if (isRunning) {
-                clearInterval(timer);
-                startBtn.innerHTML = '<i class="fas fa-play"></i> استمرار';
-                isRunning = false;
-            } else {
-                isRunning = true;
-                startBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف مؤقت';
-                timer = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timer);
-                        isRunning = false;
-                        startBtn.innerHTML = '<i class="fas fa-play"></i> ابدأ';
-                        // تنبيه بسيط عند انتهاء الوقت
-                        alert("انتهى وقت التركيز! خذ استراحة قصيرة.");
-                        timeLeft = totalTime;
-                        updateTimerDisplay();
-                    }
-                }, 1000);
-            }
+        function playMissSound() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
         }
 
-        function resetTimer() {
-            clearInterval(timer);
-            isRunning = false;
-            timeLeft = totalTime;
-            updateTimerDisplay();
-            startBtn.innerHTML = '<i class="fas fa-play"></i> ابدأ';
+        // دالة بدء اللعبة
+        function startGame() {
+            score = 0;
+            timeLeft = GAME_TIME;
+            gameActive = true;
+            
+            scoreDisplay.textContent = score;
+            timeDisplay.textContent = timeLeft;
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            
+            // مسح أي مؤقتات سابقة
+            clearInterval(gameInterval);
+            clearTimeout(targetTimeout);
+            target.classList.remove('active');
+            
+            // مؤقت الوقت
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // إظهار أول هدف
+            moveTarget();
         }
 
-        startBtn.addEventListener('click', startTimer);
-        resetBtn.addEventListener('click', resetTimer);
-        updateTimerDisplay();
+        // دالة إظهار الهدف في مكان عشوائي
+        function moveTarget() {
+            if (!gameActive) return;
 
-        // ================= 4. قائمة المهام (To-Do) =================
-        const taskInput = document.getElementById('taskInput');
-        const addBtn = document.getElementById('addBtn');
-        const taskList = document.getElementById('taskList');
+            // إخفاء الهدف مؤقتاً لإعادة وضعه
+            target.classList.remove('active');
+            
+            // حساب مساحة اللعب (مع ترك مسافة للحواف)
+            const padding = 40;
+            const maxX = gameArea.clientWidth - padding;
+            const maxY = gameArea.clientHeight - padding;
+            
+            const randomX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+            const randomY = Math.floor(Math.random() * (maxY - padding + 1)) + padding;
 
-        // جلب المهام من الذاكرة المحلية أو إنشاء مصفوفة فارغة
-        let tasks = JSON.parse(localStorage.getItem('focusTasks')) || [];
+            target.style.left = `${randomX}px`;
+            target.style.top = `${randomY}px`;
 
-        function renderTasks() {
-            taskList.innerHTML = '';
-            tasks.forEach((task, index) => {
-                const li = document.createElement('li');
-                li.className = `task-item ${task.completed ? 'completed' : ''}`;
-                
-                li.innerHTML = `
-                    <div class="task-content" onclick="toggleTask(${index})">
-                        <div class="task-checkbox"></div>
-                        <span class="task-text">${task.text}</span>
-                    </div>
-                    <button class="delete-btn" onclick="deleteTask(${index})"><i class="fas fa-trash"></i></button>
-                `;
-                taskList.appendChild(li);
+            // إظهار الهدف
+            // استخدام requestAnimationFrame لضمان عمل الأنيميشن
+            requestAnimationFrame(() => {
+                target.classList.add('active');
             });
+
+            // مؤقت اختفاء الهدف (إذا لم ينقر عليه اللاعب)
+            clearTimeout(targetTimeout);
+            targetTimeout = setTimeout(() => {
+                if (gameActive) {
+                    playMissSound();
+                    target.classList.remove('active');
+                    // إظهار هدف جديد بعد فترة قصيرة جداً
+                    setTimeout(moveTarget, 200);
+                }
+            }, TARGET_LIFESPAN);
         }
 
-        function addTask() {
-            const text = taskInput.value.trim();
-            if (text !== '') {
-                tasks.push({ text: text, completed: false });
-                taskInput.value = '';
-                saveAndRender();
-            }
-        }
-
-        window.toggleTask = function(index) {
-            tasks[index].completed = !tasks[index].completed;
-            saveAndRender();
-        }
-
-        window.deleteTask = function(index) {
-            tasks.splice(index, 1);
-            saveAndRender();
-        }
-
-        function saveAndRender() {
-            localStorage.setItem('focusTasks', JSON.stringify(tasks));
-            renderTasks();
-        }
-
-        addBtn.addEventListener('click', addTask);
-        taskInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') addTask();
+        // عند النقر على الهدف
+        target.addEventListener('pointerdown', (e) => {
+            if (!gameActive) return;
+            
+            e.preventDefault(); // منع التكرار في الجوال
+            
+            score++;
+            scoreDisplay.textContent = score;
+            
+            playHitSound();
+            createParticles(e.clientX, e.clientY);
+            
+            target.classList.remove('active');
+            clearTimeout(targetTimeout);
+            
+            // تسريع اللعبة قليلاً مع زيادة النقاط (تحدي أكبر)
+            const newLifespan = Math.max(300, TARGET_LIFESPAN - (score * 15));
+            
+            setTimeout(() => {
+                if(gameActive) moveTarget();
+            }, 50); // تأخير بسيط جداً قبل ظهور الهدف التالي
         });
 
-        // عرض المهام عند فتح الصفحة
-        renderTasks();
+        // دالة إنشاء تأثير الانفجار (Particles)
+        function createParticles(x, y) {
+            const rect = gameArea.getBoundingClientRect();
+            const relX = x - rect.left;
+            const relY = y - rect.top;
+
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = `${relX}px`;
+                particle.style.top = `${relY}px`;
+                
+                // اتجاهات عشوائية
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 50 + 20;
+                const xMove = Math.cos(angle) * distance;
+                const yMove = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--x', `${xMove}px`);
+                particle.style.setProperty('--y', `${yMove}px`);
+                
+                // ألوان عشوائية للجزيئات
+                if(i % 2 === 0) {
+                    particle.style.background = 'var(--neon-blue)';
+                    particle.style.boxShadow = '0 0 10px var(--neon-blue)';
+                }
+
+                gameArea.appendChild(particle);
+
+                // إزالة الجزيئات بعد انتهاء الأنيميشن
+                setTimeout(() => {
+                    particle.remove();
+                }, 500);
+            }
+        }
+
+        // دالة إنهاء اللعبة
+        function endGame() {
+            gameActive = false;
+            clearInterval(gameInterval);
+            clearTimeout(targetTimeout);
+            target.classList.remove('active');
+            
+            finalScore.textContent = score;
+            
+            // تحديث أعلى نتيجة
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('neonReflexHighScore', highScore);
+                endHighScoreMsg.innerHTML = `🎉 رقم قياسي جديد! 🎉<br>أعلى نتيجة: ${highScore}`;
+                endHighScoreMsg.style.color = 'var(--neon-blue)';
+                endHighScoreMsg.style.background = 'rgba(0, 243, 255, 0.1)';
+            } else {
+                endHighScoreMsg.innerHTML = `أعلى نتيجة: ${highScore}`;
+                endHighScoreMsg.style.color = '#fff';
+                endHighScoreMsg.style.background = 'rgba(255, 255, 255, 0.1)';
+            }
+            
+            highScoreDisplay.textContent = highScore;
+            endScreen.classList.remove('hidden');
+        }
+
+        // مستمعات الأحداث
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+
+        // منع الزوم في الجوال عند النقر المزدوج السريع
+        document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
 </html>
