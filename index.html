@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Reflex 2.0 | تحدي المستويات</title>
+    <title>Neon Reflex Pro | لعبة التحدي</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
@@ -13,52 +14,43 @@
             --neon-pink: #ff00ea;
             --neon-red: #ff0055;
             --neon-gold: #ffcc00;
+            --neon-green: #00ff66;
             --bg-color: #050510;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Tajawal', sans-serif;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 100vh; display: flex; justify-content: center; align-items: center;
             overflow: hidden;
-            background-image: 
-                radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at bottom, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-image: radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 60%);
         }
 
-        .game-wrapper {
+        /* ===== حاوية اللعبة ===== */
+        .game-container {
             position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 90vh;
-            max-height: 700px;
-            background: rgba(10, 15, 30, 0.8);
-            border: 2px solid rgba(0, 243, 255, 0.3);
-            border-radius: 1.5rem;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.1);
+            width: 100%; max-width: 500px; height: 100vh; max-height: 850px;
+            background: rgba(10, 15, 30, 0.85);
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            border-radius: 1rem;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.1);
             overflow: hidden;
             cursor: crosshair;
-            transition: border-color 0.3s;
+            display: flex; flex-direction: column;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        /* تأثير الارتجاج عند الخطأ */
-        .game-wrapper.shake {
-            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        /* تأثير الارتجاج عند القنبلة */
+        .game-container.shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
             border-color: var(--neon-red);
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.3), inset 0 0 20px rgba(255, 0, 85, 0.2);
+            box-shadow: 0 0 50px rgba(255, 0, 85, 0.4), inset 0 0 30px rgba(255, 0, 85, 0.2);
         }
-
         @keyframes shake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             20%, 80% { transform: translate3d(4px, 0, 0); }
@@ -66,313 +58,275 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        /* شريط المعلومات العلوي */
+        /* ===== شريط الحالة العلوي (HUD) ===== */
         .hud {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            display: flex;
-            justify-content: space-between;
             padding: 1rem 1.2rem;
             z-index: 10;
             pointer-events: none;
-            background: linear-gradient(to bottom, rgba(5,5,16,0.95), transparent);
+            background: linear-gradient(to bottom, rgba(5,5,16,0.95) 0%, transparent 100%);
+            display: flex; flex-direction: column; gap: 10px;
         }
 
-        .stat-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .hud-top {
+            display: flex; justify-content: space-between; align-items: flex-start;
         }
 
-        .stat-label {
-            font-size: 0.7rem;
-            color: #8892b0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
-        }
-
-        .time-value { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-label { font-size: 0.7rem; color: #8892b0; font-weight: 700; letter-spacing: 1px; }
+        .stat-value { font-size: 1.6rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); line-height: 1; }
+        
         .level-value { color: var(--neon-gold); text-shadow: 0 0 10px var(--neon-gold); }
+        .time-value { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
-        /* إشعار المستوى الجديد */
-        .level-up-notification {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--neon-gold);
-            text-shadow: 0 0 20px var(--neon-gold);
-            z-index: 15;
-            pointer-events: none;
-            opacity: 0;
+        /* شريط الوقت */
+        .time-bar-bg {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 10px; overflow: hidden; position: relative;
+        }
+        .time-bar-fill {
+            height: 100%; width: 100%; background: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            transition: width 1s linear, background-color 0.3s;
         }
 
-        .level-up-notification.show {
-            animation: levelUpAnim 1.5s ease-out forwards;
+        /* كومبو */
+        .combo-container {
+            position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
+            font-size: 2rem; font-weight: 900; color: var(--neon-green);
+            text-shadow: 0 0 20px var(--neon-green); opacity: 0;
+            transition: opacity 0.3s, transform 0.1s; pointer-events: none;
+        }
+        .combo-container.show { opacity: 1; }
+        .combo-container.pop { transform: translateX(-50%) scale(1.2); }
+
+        /* النصوص الطائرة (+1, -3s) */
+        .floating-text {
+            position: absolute; font-size: 1.5rem; font-weight: 900;
+            pointer-events: none; z-index: 20;
+            animation: floatUp 1s ease-out forwards;
+            text-shadow: 0 0 10px currentColor;
+        }
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.2); opacity: 0; }
         }
 
-        @keyframes levelUpAnim {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
-        }
-
-        /* الهدف الأساسي */
+        /* ===== الأهداف ===== */
         .target {
-            position: absolute;
-            border-radius: 50%;
+            position: absolute; border-radius: 50%;
             transform: translate(-50%, -50%) scale(0);
-            cursor: pointer;
-            z-index: 5;
-            display: none;
+            cursor: pointer; z-index: 5; display: none;
             transition: background 0.2s, box-shadow 0.2s;
         }
 
-        /* الهدف العادي (أزرق) */
         .target.normal {
-            width: 50px; height: 50px;
+            width: 55px; height: 55px;
             background: var(--neon-blue);
-            box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px #fff;
+            box-shadow: 0 0 20px var(--neon-blue), inset 0 0 15px #fff;
         }
 
-        /* الهدف الذهبي (وقت إضافي) */
         .target.gold {
-            width: 50px; height: 50px;
+            width: 55px; height: 55px;
             background: var(--neon-gold);
             box-shadow: 0 0 25px var(--neon-gold), inset 0 0 15px #fff;
             border: 2px solid #fff;
+            display: flex; align-items: center; justify-content: center;
         }
         .target.gold::after {
-            content: '\f005'; /* أيقونة النجمة */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            font-size: 1.2rem;
-            text-shadow: 0 0 5px #000;
+            content: '\f005'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            font-size: 1.5rem; color: #fff; text-shadow: 0 0 5px #000;
         }
 
-        /* القنبلة (خصم وقت) */
         .target.bomb {
-            width: 50px; height: 50px;
+            width: 55px; height: 55px;
             background: var(--neon-red);
             box-shadow: 0 0 25px var(--neon-red), inset 0 0 15px #fff;
             border: 2px solid #fff;
+            display: flex; align-items: center; justify-content: center;
         }
         .target.bomb::after {
-            content: '\f1e2'; /* أيقونة القنبلة */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            font-size: 1.2rem;
+            content: '\f1e2'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            font-size: 1.5rem; color: #fff;
+        }
+
+        .target.freeze {
+            width: 55px; height: 55px;
+            background: #00f3ff; /* Light blue */
+            box-shadow: 0 0 25px #00f3ff, inset 0 0 15px #fff;
+            border: 2px solid #fff;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .target.freeze::after {
+            content: '\f2dc'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            font-size: 1.5rem; color: #fff;
         }
 
         .target.active {
-            display: block;
+            display: flex;
             animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
-        @keyframes popIn {
-            to { transform: translate(-50%, -50%) scale(1); }
-        }
+        @keyframes popIn { to { transform: translate(-50%, -50%) scale(1); } }
 
         /* حركة الأهداف في المراحل المتقدمة */
         .target.moving {
             animation: popIn 0.2s forwards, floatTarget 2s infinite alternate ease-in-out;
         }
-
         @keyframes floatTarget {
-            0% { margin-left: -20px; margin-top: -20px; }
-            100% { margin-left: 20px; margin-top: 20px; }
+            0% { margin-left: -25px; margin-top: -15px; }
+            100% { margin-left: 25px; margin-top: 15px; }
         }
 
-        /* الجزيئات (الانفجار) */
+        /* ===== الجزيئات ===== */
         .particle {
-            position: absolute;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 4;
-            transform: translate(-50%, -50%);
-            animation: explode 0.6s ease-out forwards;
+            position: absolute; border-radius: 50%; pointer-events: none; z-index: 4;
+            transform: translate(-50%, -50%); animation: explode 0.6s ease-out forwards;
         }
-
         @keyframes explode {
-            to {
-                transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0);
-                opacity: 0;
-            }
+            to { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0); opacity: 0; }
         }
 
-        /* شاشات البداية والنهاية */
+        /* ===== الشاشات (القوائم) ===== */
         .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(5, 5, 16, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 20;
-            text-align: center;
-            padding: 2rem;
-            transition: opacity 0.3s ease;
+            position: absolute; inset: 0; background: rgba(5, 5, 16, 0.9);
+            backdrop-filter: blur(12px); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 30;
+            text-align: center; padding: 2rem; transition: opacity 0.3s ease;
         }
+        .overlay.hidden { opacity: 0; pointer-events: none; }
 
-        .overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .game-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: #fff;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-        }
-
+        .game-title { font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
         .game-title span { color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink); }
-
-        .game-desc {
-            font-size: 0.95rem;
-            color: #a0aabf;
-            margin-bottom: 1.5rem;
-            max-width: 90%;
-            line-height: 1.6;
-        }
+        
+        .game-desc { font-size: 1rem; color: #a0aabf; margin-bottom: 2rem; line-height: 1.6; }
 
         .rules-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            text-align: right;
-            width: 100%;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05); padding: 1rem 1.5rem;
+            border-radius: 1rem; margin-bottom: 2rem; font-size: 0.9rem;
+            text-align: right; width: 100%; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; gap: 10px;
         }
-
-        .rules-box p { margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
-        .rules-box p:last-child { margin-bottom: 0; }
-        .rule-blue { color: var(--neon-blue); font-weight: bold; }
-        .rule-gold { color: var(--neon-gold); font-weight: bold; }
-        .rule-red { color: var(--neon-red); font-weight: bold; }
+        .rules-box div { display: flex; align-items: center; gap: 10px; }
 
         .btn {
-            padding: 0.8rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #000;
-            background: var(--neon-blue);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 20px var(--neon-blue);
-            transition: all 0.2s;
-            font-family: 'Tajawal', sans-serif;
+            padding: 1rem 3rem; font-size: 1.2rem; font-weight: 800;
+            color: #000; background: var(--neon-blue); border: none; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 0 20px var(--neon-blue); transition: all 0.2s;
+            display: flex; align-items: center; gap: 10px; justify-content: center;
         }
+        .btn:hover { background: #fff; box-shadow: 0 0 30px #fff, 0 0 10px var(--neon-blue); transform: scale(1.05); }
+        
+        .btn-icon { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; position: absolute; top: 20px; left: 20px; z-index: 40; }
+        .btn-icon:hover { background: rgba(255,255,255,0.2); }
 
-        .btn:hover {
-            background: #fff;
-            box-shadow: 0 0 30px #fff, 0 0 10px var(--neon-blue);
-            transform: scale(1.05);
+        /* شاشة النتيجة */
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-bottom: 2rem;
         }
+        .stat-item {
+            background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.1); text-align: center;
+        }
+        .stat-item span { display: block; }
+        .stat-item .val { font-size: 1.5rem; font-weight: 900; color: var(--neon-blue); }
+        .stat-item .lbl { font-size: 0.8rem; color: #8892b0; }
 
-        .final-score {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--neon-blue);
-            text-shadow: 0 0 20px var(--neon-blue);
-            margin: 0.5rem 0;
+        .new-record {
+            color: var(--neon-gold); font-weight: 900; font-size: 1.2rem;
+            margin-bottom: 1rem; animation: pulse 1s infinite alternate;
         }
-
-        .high-score-text {
-            font-size: 1rem;
-            color: #fff;
-            margin-bottom: 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.4rem 1.5rem;
-            border-radius: 20px;
-        }
+        @keyframes pulse { from { opacity: 0.5; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
 
     </style>
 </head>
 <body>
 
-    <div class="game-wrapper" id="gameArea">
+    <div class="game-container" id="gameArea">
         
-        <!-- شريط النقاط والوقت والمستوى -->
+        <!-- زر الإيقاف المؤقت -->
+        <button class="btn-icon" id="pauseBtn" style="display: none;"><i class="fas fa-pause"></i></button>
+
+        <!-- شريط الحالة -->
         <div class="hud">
-            <div class="stat-box">
-                <span class="stat-label">Score</span>
-                <span class="stat-value" id="scoreDisplay">0</span>
+            <div class="hud-top">
+                <div class="stat-box">
+                    <span class="stat-label">Score</span>
+                    <span class="stat-value" id="scoreDisplay">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Level</span>
+                    <span class="stat-value level-value" id="levelDisplay">1</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Time</span>
+                    <span class="stat-value time-value" id="timeDisplay">30</span>
+                </div>
             </div>
-            <div class="stat-box">
-                <span class="stat-label">Level</span>
-                <span class="stat-value level-value" id="levelDisplay">1</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">Time</span>
-                <span class="stat-value time-value" id="timeDisplay">30</span>
+            <div class="time-bar-bg">
+                <div class="time-bar-fill" id="timeBar"></div>
             </div>
         </div>
 
-        <!-- نص المستوى الجديد -->
-        <div class="level-up-notification" id="levelUpText">LEVEL UP!</div>
+        <!-- الكومبو -->
+        <div class="combo-container" id="comboDisplay">x2</div>
 
         <!-- الهدف -->
         <div class="target" id="target"></div>
 
         <!-- شاشة البداية -->
         <div class="overlay" id="startScreen">
-            <h1 class="game-title">NEON <span>REFLEX 2.0</span></h1>
+            <h1 class="game-title">NEON <span>REFLEX PRO</span></h1>
+            <p class="game-desc">هل تمتلك ردة الفعل الحقيقية؟<br>حطم الرقم القياسي وتجنب القنابل!</p>
             
             <div class="rules-box">
-                <p><i class="fas fa-circle" style="color: var(--neon-blue);"></i> <span class="rule-blue">أزرق:</span> نقاط عادية (+1)</p>
-                <p><i class="fas fa-star" style="color: var(--neon-gold);"></i> <span class="rule-gold">ذهبي:</span> وقت إضافي (+3 ثواني)</p>
-                <p><i class="fas fa-bomb" style="color: var(--neon-red);"></i> <span class="rule-red">أحمر:</span> قنبلة! (خصم 3 ثواني)</p>
+                <div><i class="fas fa-circle" style="color: var(--neon-blue);"></i> <b>أزرق:</b> نقاط عادية (يزيد الكومبو)</div>
+                <div><i class="fas fa-star" style="color: var(--neon-gold);"></i> <b>ذهبي:</b> وقت إضافي (+3 ثواني)</div>
+                <div><i class="fas fa-snowflake" style="color: var(--neon-cyan);"></i> <b>أزرق فاتح:</b> تجميد الوقت (3 ثواني)</div>
+                <div><i class="fas fa-bomb" style="color: var(--neon-red);"></i> <b>أحمر:</b> قنبلة! (خصم وقت وتصفير الكومبو)</div>
             </div>
             
-            <div class="high-score-text">أعلى نتيجة: <span id="highScoreDisplay">0</span></div>
+            <div style="margin-bottom: 1.5rem; font-weight: 700; color: #fff;">أعلى نتيجة: <span id="highScoreDisplay" style="color: var(--neon-gold); font-size: 1.2rem;">0</span></div>
             
-            <button class="btn" id="startBtn">ابدأ اللعب</button>
+            <button class="btn" id="startBtn"><i class="fas fa-play"></i> ابدأ اللعب</button>
+        </div>
+
+        <!-- شاشة الإيقاف المؤقت -->
+        <div class="overlay hidden" id="pauseScreen">
+            <h1 class="game-title">تم <span>الإيقاف</span></h1>
+            <p class="game-desc" style="margin-top: 10px;">خذ نفساً عميقاً...</p>
+            <button class="btn" id="resumeBtn" style="margin-top: 2rem;"><i class="fas fa-play"></i> استمرار</button>
         </div>
 
         <!-- شاشة النهاية -->
         <div class="overlay hidden" id="endScreen">
-            <h1 class="game-title">انتهى الوقت!</h1>
-            <div class="final-score" id="finalScore">0</div>
-            <p class="game-desc">وصلت للمرحلة: <span id="endLevel" style="color: var(--neon-gold); font-weight: bold;">1</span></p>
+            <h1 class="game-title" style="color: var(--neon-red);">GAME OVER</h1>
+            <div class="new-record" id="newRecordMsg" style="display: none;">🏆 رقم قياسي جديد! 🏆</div>
             
-            <div class="high-score-text" id="endHighScoreMsg">أعلى نتيجة: 0</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="val" id="finalScore">0</span>
+                    <span class="lbl">النقاط</span>
+                </div>
+                <div class="stat-item">
+                    <span class="val" id="finalLevel" style="color: var(--neon-gold);">1</span>
+                    <span class="lbl">المستوى</span>
+                </div>
+                <div class="stat-item">
+                    <span class="val" id="finalCombo" style="color: var(--neon-green);">x0</span>
+                    <span class="lbl">أعلى كومبو</span>
+                </div>
+                <div class="stat-item">
+                    <span class="val" id="finalAccuracy" style="color: var(--neon-pink);">0%</span>
+                    <span class="lbl">الدقة</span>
+                </div>
+            </div>
             
-            <button class="btn" id="restartBtn">إعادة المحاولة</button>
+            <button class="btn" id="restartBtn"><i class="fas fa-rotate-right"></i> العب مجدداً</button>
         </div>
 
     </div>
 
-    <!-- تضمين مكتبة الأيقونات للأهداف -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script>
-        // إعدادات اللعبة الأساسية
+        // ================= إعدادات اللعبة =================
         const GAME_TIME = 30;
         
         // العناصر
@@ -381,32 +335,50 @@
         const scoreDisplay = document.getElementById('scoreDisplay');
         const timeDisplay = document.getElementById('timeDisplay');
         const levelDisplay = document.getElementById('levelDisplay');
+        const timeBar = document.getElementById('timeBar');
+        const comboDisplay = document.getElementById('comboDisplay');
+        const pauseBtn = document.getElementById('pauseBtn');
+        
+        // الشاشات
         const startScreen = document.getElementById('startScreen');
+        const pauseScreen = document.getElementById('pauseScreen');
         const endScreen = document.getElementById('endScreen');
+        
+        // الأزرار
         const startBtn = document.getElementById('startBtn');
+        const resumeBtn = document.getElementById('resumeBtn');
         const restartBtn = document.getElementById('restartBtn');
+
+        // النتائج
         const highScoreDisplay = document.getElementById('highScoreDisplay');
         const finalScore = document.getElementById('finalScore');
-        const endLevel = document.getElementById('endLevel');
-        const endHighScoreMsg = document.getElementById('endHighScoreMsg');
-        const levelUpText = document.getElementById('levelUpText');
+        const finalLevel = document.getElementById('finalLevel');
+        const finalCombo = document.getElementById('finalCombo');
+        const finalAccuracy = document.getElementById('finalAccuracy');
+        const newRecordMsg = document.getElementById('newRecordMsg');
 
-        // المتغيرات
+        // ================= حالة اللعبة =================
         let score = 0;
         let timeLeft = GAME_TIME;
         let level = 1;
-        let gameActive = false;
-        let gameInterval;
+        let combo = 0;
+        let maxCombo = 0;
+        let hits = 0;
+        let misses = 0;
+        
+        let isPlaying = false;
+        let isPaused = false;
+        
+        let gameTimer;
         let targetTimeout;
         let currentTargetType = 'normal';
-        
-        // مدة بقاء الهدف تبدأ بـ 900ms وتقل مع المستويات
-        let currentLifespan = 900; 
+        let currentLifespan = 1000; 
+        let isTimeFrozen = false;
 
         let highScore = localStorage.getItem('neonReflexHighScore') || 0;
         highScoreDisplay.textContent = highScore;
 
-        // الأصوات
+        // ================= نظام الصوت =================
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
@@ -417,71 +389,91 @@
             
             if (type === 'hit') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800 + (combo * 50), audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200 + (combo * 50), audioCtx.currentTime + 0.1);
                 gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
             } else if (type === 'bomb') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.4);
+                gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
             } else if (type === 'gold') {
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(600, audioCtx.currentTime);
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
                 osc.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.2);
-                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            } else if (type === 'freeze') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            } else if (type === 'levelup') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             }
 
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
             osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            osc.stop(audioCtx.currentTime + 0.4);
         }
 
+        // ================= بدء اللعبة =================
         function startGame() {
-            score = 0;
-            timeLeft = GAME_TIME;
-            level = 1;
-            currentLifespan = 900;
-            gameActive = true;
+            score = 0; timeLeft = GAME_TIME; level = 1; combo = 0; maxCombo = 0; hits = 0; misses = 0;
+            currentLifespan = 1000; isTimeFrozen = false;
+            isPlaying = true; isPaused = false;
             
-            updateUI();
+            updateHUD();
+            comboDisplay.classList.remove('show');
             
             startScreen.classList.add('hidden');
             endScreen.classList.add('hidden');
+            pauseScreen.classList.add('hidden');
+            pauseBtn.style.display = 'flex';
+            
             gameArea.classList.remove('shake');
+            target.className = 'target'; 
             
-            clearInterval(gameInterval);
+            clearInterval(gameTimer);
             clearTimeout(targetTimeout);
-            target.classList.remove('active', 'moving', 'bomb', 'gold', 'normal');
             
-            gameInterval = setInterval(() => {
-                timeLeft--;
-                if(timeLeft < 0) timeLeft = 0;
-                timeDisplay.textContent = timeLeft;
-                
-                if (timeLeft <= 0) {
-                    endGame();
+            // بدء مؤقت اللعبة
+            gameTimer = setInterval(() => {
+                if (!isPaused && !isTimeFrozen) {
+                    timeLeft--;
+                    updateHUD();
+                    if (timeLeft <= 0) endGame();
                 }
             }, 1000);
 
-            moveTarget();
+            spawnTarget();
         }
 
-        function updateUI() {
+        function updateHUD() {
             scoreDisplay.textContent = score;
-            timeDisplay.textContent = timeLeft;
             levelDisplay.textContent = level;
+            timeDisplay.textContent = timeLeft;
+            
+            // تحديث شريط الوقت
+            const percent = (timeLeft / GAME_TIME) * 100;
+            timeBar.style.width = `${percent}%`;
+            if(timeLeft <= 5) timeBar.style.background = 'var(--neon-red)';
+            else timeBar.style.background = 'var(--neon-pink)';
         }
 
-        function moveTarget() {
-            if (!gameActive) return;
+        // ================= ظهور الأهداف =================
+        function spawnTarget() {
+            if (!isPlaying || isPaused) return;
 
-            target.classList.remove('active', 'moving', 'bomb', 'gold', 'normal');
+            target.className = 'target'; // تصفير الكلاسات
             
-            const padding = 50;
+            const padding = 60;
             const maxX = gameArea.clientWidth - padding;
             const maxY = gameArea.clientHeight - padding;
             
@@ -491,108 +483,159 @@
             target.style.left = `${randomX}px`;
             target.style.top = `${randomY}px`;
 
-            // تحديد نوع الهدف (مفاجآت)
+            // تحديد نوع الهدف
             const rand = Math.random();
             currentTargetType = 'normal';
             
-            // الأهداف الخاصة تبدأ بالظهور من النقطة 5
             if (score >= 5) {
-                if (rand < 0.15) currentTargetType = 'bomb'; // 15% فرصة للقنبلة
-                else if (rand < 0.30) currentTargetType = 'gold'; // 15% فرصة للذهبي
+                if (rand < 0.15) currentTargetType = 'bomb';
+                else if (rand < 0.25) currentTargetType = 'gold';
+                else if (rand < 0.30) currentTargetType = 'freeze';
             }
 
             target.classList.add(currentTargetType);
 
-            // إذا كان المستوى 3 أو أكثر، الأهداف تتحرك
-            if (level >= 3) {
-                target.classList.add('moving');
-            }
+            // الأهداف تتحرك من المستوى 3
+            if (level >= 3) target.classList.add('moving');
 
-            requestAnimationFrame(() => {
-                target.classList.add('active');
-            });
+            // إظهار الهدف
+            requestAnimationFrame(() => target.classList.add('active'));
 
+            // مؤقت اختفاء الهدف (يُعتبر خطأ إذا اختفى)
             clearTimeout(targetTimeout);
             targetTimeout = setTimeout(() => {
-                if (gameActive) {
-                    if (currentTargetType === 'normal') playSound('bomb'); // صوت اختفاء
+                if (isPlaying && !isPaused) {
+                    if (currentTargetType === 'normal') {
+                        misses++;
+                        combo = 0;
+                        hideCombo();
+                    }
                     target.classList.remove('active', 'moving');
-                    setTimeout(moveTarget, 200);
+                    setTimeout(spawnTarget, 150);
                 }
             }, currentLifespan);
         }
 
-        // النقر على الهدف
+        // ================= النقر على الهدف =================
         target.addEventListener('pointerdown', (e) => {
-            if (!gameActive) return;
+            if (!isPlaying || isPaused) return;
             e.preventDefault();
             
+            const rect = gameArea.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
             if (currentTargetType === 'bomb') {
-                // مفاجأة: قنبلة
                 timeLeft = Math.max(0, timeLeft - 3);
+                combo = 0;
+                hideCombo();
+                misses++;
                 playSound('bomb');
+                
                 gameArea.classList.add('shake');
-                setTimeout(() => gameArea.classList.remove('shake'), 300);
-                createParticles(e.clientX, e.clientY, '#ff0055');
+                setTimeout(() => gameArea.classList.remove('shake'), 400);
+                
+                createParticles(clickX, clickY, '#ff0055');
+                showFloatingText(clickX, clickY, '-3s', '#ff0055');
             } 
             else if (currentTargetType === 'gold') {
-                // مفاجأة: وقت إضافي
-                score++; // يعطي نقطة أيضاً
+                score += 10;
                 timeLeft += 3;
+                hits++;
                 playSound('gold');
-                createParticles(e.clientX, e.clientY, '#ffcc00');
+                createParticles(clickX, clickY, '#ffcc00');
+                showFloatingText(clickX, clickY, '+3s', '#ffcc00');
+            } 
+            else if (currentTargetType === 'freeze') {
+                score += 5;
+                hits++;
+                isTimeFrozen = true;
+                playSound('freeze');
+                createParticles(clickX, clickY, '#00f3ff');
+                showFloatingText(clickX, clickY, 'FREEZE!', '#00f3ff');
+                
+                // إيقاف التجميد بعد 3 ثواني
+                setTimeout(() => { isTimeFrozen = false; }, 3000);
             } 
             else {
-                // هدف عادي
-                score++;
+                // هدف عادي (كومبو)
+                hits++;
+                combo++;
+                if (combo > maxCombo) maxCombo = combo;
+                
+                // حساب النقاط بناءً على الكومبو
+                const points = 10 * (combo > 1 ? combo : 1);
+                score += points;
+                
                 playSound('hit');
-                createParticles(e.clientX, e.clientY, '#00f3ff');
+                createParticles(clickX, clickY, '#00f3ff');
+                showFloatingText(clickX, clickY, `+${points}`, '#00f3ff');
+                
+                if (combo >= 2) {
+                    showCombo();
+                }
             }
 
-            updateUI();
+            updateHUD();
             checkLevelUp();
 
             target.classList.remove('active', 'moving');
             clearTimeout(targetTimeout);
             
             setTimeout(() => {
-                if(gameActive) moveTarget();
+                if(isPlaying && !isPaused) spawnTarget();
             }, 50);
         });
 
+        // ================= الكومبو والنصوص =================
+        function showCombo() {
+            comboDisplay.textContent = `x${combo} COMBO!`;
+            comboDisplay.classList.add('show', 'pop');
+            setTimeout(() => comboDisplay.classList.remove('pop'), 100);
+        }
+        
+        function hideCombo() {
+            comboDisplay.classList.remove('show');
+        }
+
+        function showFloatingText(x, y, text, color) {
+            const el = document.createElement('div');
+            el.className = 'floating-text';
+            el.textContent = text;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.style.color = color;
+            gameArea.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        // ================= رفع المستوى =================
         function checkLevelUp() {
-            // نرفع المستوى كل 10 نقاط
-            if (score >= level * 10) {
+            if (score >= level * 100) {
                 level++;
+                playSound('levelup');
                 
-                // تسريع اللعبة في كل مستوى (نقصان وقت بقاء الهدف)
-                currentLifespan = Math.max(350, 900 - (level * 100));
+                // تسريع اللعبة
+                currentLifespan = Math.max(300, 1000 - (level * 100));
                 
-                // إظهار إشعار المستوى
-                levelUpText.classList.remove('show');
-                void levelUpText.offsetWidth; // trigger reflow
-                levelUpText.classList.add('show');
-                levelUpText.textContent = `LEVEL ${level}!`;
-                
-                updateUI();
+                // إظهار نص المستوى
+                showFloatingText(gameArea.clientWidth/2, gameArea.clientHeight/2, `LEVEL ${level}`, '#ffcc00');
+                updateHUD();
             }
         }
 
+        // ================= الجزيئات =================
         function createParticles(x, y, color) {
-            const rect = gameArea.getBoundingClientRect();
-            const relX = x - rect.left;
-            const relY = y - rect.top;
-
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 12; i++) {
                 const particle = document.createElement('div');
-                particle.classList.add('particle');
-                particle.style.left = `${relX}px`;
-                particle.style.top = `${relY}px`;
+                particle.className = 'particle';
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
                 particle.style.background = color;
                 particle.style.boxShadow = `0 0 10px ${color}`;
                 
                 const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 60 + 20;
+                const distance = Math.random() * 80 + 20;
                 particle.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
                 particle.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
 
@@ -601,33 +644,55 @@
             }
         }
 
+        // ================= إيقاف اللعبة =================
         function endGame() {
-            gameActive = false;
-            clearInterval(gameInterval);
+            isPlaying = false;
+            clearInterval(gameTimer);
             clearTimeout(targetTimeout);
-            target.classList.remove('active', 'moving');
+            target.className = 'target';
+            pauseBtn.style.display = 'none';
             
             finalScore.textContent = score;
-            endLevel.textContent = level;
+            finalLevel.textContent = level;
+            finalCombo.textContent = `x${maxCombo}`;
             
+            // حساب الدقة
+            const totalTaps = hits + misses;
+            const accuracy = totalTaps === 0 ? 0 : Math.round((hits / totalTaps) * 100);
+            finalAccuracy.textContent = `${accuracy}%`;
+
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('neonReflexHighScore', highScore);
-                endHighScoreMsg.innerHTML = `🎉 رقم قياسي جديد! 🎉<br>أعلى نتيجة: ${highScore}`;
-                endHighScoreMsg.style.color = 'var(--neon-gold)';
-                endHighScoreMsg.style.background = 'rgba(255, 204, 0, 0.15)';
+                newRecordMsg.style.display = 'block';
             } else {
-                endHighScoreMsg.innerHTML = `أعلى نتيجة: ${highScore}`;
-                endHighScoreMsg.style.color = '#fff';
-                endHighScoreMsg.style.background = 'rgba(255, 255, 255, 0.1)';
+                newRecordMsg.style.display = 'none';
             }
             
             highScoreDisplay.textContent = highScore;
             endScreen.classList.remove('hidden');
         }
 
+        // ================= الإيقاف المؤقت =================
+        function togglePause() {
+            if (!isPlaying) return;
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                pauseScreen.classList.remove('hidden');
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                pauseScreen.classList.add('hidden');
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+        }
+
+        // ================= مستمعي الأحداث =================
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
+        resumeBtn.addEventListener('click', togglePause);
+        pauseBtn.addEventListener('click', togglePause);
+        
         document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
