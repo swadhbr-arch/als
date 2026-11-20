@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عبدالرحيم الجياشي الشمري | البطاقة الرقمية</title>
+    
+    <!-- أيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- خطوط عربية فخمة -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            background-color: #06080f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        /* ===== خلفية متحركة شبكية (Mesh Gradient) ===== */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(43, 82, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+            animation: pulseMesh 10s infinite alternate;
+        }
+
+        @keyframes pulseMesh {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* ===== الحاوية الرئيسية (Bento Grid) ===== */
+        .bento-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* البطاقة الزجاجية الأساسية */
+        .bento-card {
+            background: rgba(20, 25, 40, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+            padding: 1.8rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== بطاقة البروفايل ===== */
+        .profile-bento {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-top: 2.5rem;
+            padding-bottom: 2rem;
+        }
+
+        /* تأثير الإضاءة خلف الصورة */
+        .avatar-glow {
+            position: absolute;
+            top: -20px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #2b52ff, #8a2be2);
+            filter: blur(40px);
+            opacity: 0.4;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin-bottom: 1.2rem;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.02));
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
+        }
+
+        /* الصورة الثابتة */
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #141928;
+        }
+
+        .name-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-name {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            white-space: nowrap;
+            color: #ffffff;
+        }
+
+        /* علامة التوثيق */
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: #1d9bf0;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 0.65rem;
+            box-shadow: 0 0 15px rgba(29, 155, 240, 0.6);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .verified-badge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #1d9bf0;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+        }
+
+        /* ===== شبكة الروابط (Bento Grid Links) ===== */
+        .links-bento {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .link-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+            background: rgba(20, 25, 40, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* تأثير التمرير */
+        .link-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* عرض فيسبوك في سطر كامل */
+        .link-card.full-width {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 1.2rem;
+        }
+
+        /* أيقونة المنصة */
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .full-width .link-icon {
+            margin-bottom: 0;
+            margin-left: 1rem;
+        }
+
+        .link-card:hover .link-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .icon-tiktok { background: #000; color: #fff; border: 1px solid #25f4ee; box-shadow: 0 0 15px rgba(37, 244, 238, 0.2); }
+        .icon-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; box-shadow: 0 0 15px rgba(220, 39, 67, 0.2); }
+        .icon-fb { background: #1877f2; color: #fff; box-shadow: 0 0 15px rgba(24, 119, 242, 0.2); }
+
+        /* نص الرابط */
+        .link-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .link-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .link-name .verified-sm {
+            color: #1d9bf0;
+            font-size: 0.8rem;
+        }
+
+        .link-handle {
+            font-size: 0.75rem;
+            color: #8b9bb4;
+            direction: ltr;
+            text-align: right;
+            margin-top: 0.2rem;
+        }
+
+        .full-width .link-text {
+            flex: 1;
+        }
+
+        /* سهم صغير في زاوية البطاقة */
+        .arrow-corner {
+            position: absolute;
+            top: 1.2rem;
+            left: 1.2rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
+        }
+
+        .link-card:hover .arrow-corner {
+            color: #fff;
+            transform: translate(-3px, 3px);
+        }
+
+        .full-width .arrow-corner {
+            position: static;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* للشاشات الصغيرة جداً */
+        @media (max-width: 360px) {
+            .links-bento { grid-template-columns: 1fr; }
+            .user-name { font-size: 1.2rem; }
+            .full-width { flex-direction: row; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الخلفية المتوهجة -->
+    <div class="bg-mesh"></div>
+
+    <div class="bento-container">
+        
+        <!-- بطاقة البروفايل -->
+        <div class="bento-card profile-bento">
+            <div class="avatar-glow"></div>
+            
+            <div class="avatar-wrapper">
+                <!-- تأكد من رفع الصورة باسم logo.png في نفس المجلد -->
+                <img src="logo.png" alt="عبدالرحيم الجياشي الشمري" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=عبدالرحيم&background=141928&color=fff&size=110'">
+            </div>
+
+            <div class="name-row">
+                <h1 class="user-name">عبدالرحيم الجياشي الشمري</h1>
+                <span class="verified-badge" title="حساب موثق">
+                    <i class="fas fa-check"></i>
+                </span>
+            </div>
+
+            <div class="profile-bio">
+                <i class="fas fa-crown" style="color: #f7c844;"></i>
+                الحساب الرسمي الموثق
+            </div>
+        </div>
+
+        <!-- شبكة الروابط (Bento Links) -->
+        <div class="links-bento">
+            
+            <!-- تيك توك -->
+            <a href="https://www.tiktok.com/@r_epd" target="_blank" class="link-card">
+                <i class="fas fa-arrow-up-left arrow-corner"></i>
+                <div class="link-icon icon-tiktok"><i class="fab fa-tiktok"></i></div>
+                <div class="link-text">
+                    <div class="link-name">تيك توك <i class="fas fa-circle-check verified-sm"></i></div>
+                    <div class="link-handle">@r_epd</div>
+                </div>
+            </a>
+
+            <!-- إنستغرام -->
+            <a href="https://www.instagram.com/alsamkark" target="_blank" class="link-card">
+                <i class="fas fa-arrow-up-left arrow-corner"></i>
+                <div class="link-icon icon-insta"><i class="fab fa-instagram"></i></div>
+                <div class="link-text">
+                    <div class="link-name">إنستغرام <i class="fas fa-circle-check verified-sm"></i></div>
+                    <div class="link-handle">@alsamkark</div>
+                </div>
+            </a>
+
+            <!-- فيسبوك (بعرض كامل) -->
+            <a href="https://www.facebook.com/share/1CCY33nfm3/" target="_blank" class="link-card full-width">
+                <div class="link-icon icon-fb"><i class="fab fa-facebook-f"></i></div>
+                <div class="link-text">
+                    <div class="link-name">فيسبوك <i class="fas fa-circle-check verified-sm"></i></div>
+                    <div class="link-handle">facebook.com/share/1CCY33nfm3</div>
+                </div>
+                <i class="fas fa-arrow-up-left arrow-corner"></i>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>
