@@ -41,7 +41,12 @@
             overflow: hidden;
             cursor: crosshair;
             display: flex; flex-direction: column;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.4s;
+        }
+
+        /* وضع الظلام للمرحلة 7 */
+        .game-container.dark-mode {
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.12) 0px, rgba(2,2,8,0.97) 130px);
         }
 
         /* تأثير الارتجاج */
@@ -102,7 +107,7 @@
             position: absolute; border-radius: 50%;
             transform: translate(-50%, -50%) scale(0);
             cursor: pointer; z-index: 5; display: none;
-            transition: transform 0.1s; /* نعومة في التقلص */
+            transition: left 0.08s ease-out, top 0.08s ease-out;
         }
 
         .target.normal {
@@ -143,20 +148,40 @@
 
         /* حركة الأهداف */
         .target.moving {
-            animation: popIn 0.2s forwards, floatTarget 2s infinite alternate ease-in-out;
+            animation: popIn 0.2s forwards, floatTarget 1.6s infinite alternate ease-in-out;
         }
         @keyframes floatTarget {
-            0% { margin-left: -25px; margin-top: -15px; }
-            100% { margin-left: 25px; margin-top: 15px; }
+            0% { margin-left: -30px; margin-top: -20px; }
+            100% { margin-left: 30px; margin-top: 20px; }
         }
 
-        /* تأثير التقلص في المرحلة 4 */
+        /* تأثير التقلص */
         .target.shrinking {
             animation: popIn 0.2s forwards, shrinkAnim 1.5s linear forwards;
         }
         @keyframes shrinkAnim {
             0% { transform: translate(-50%, -50%) scale(1); }
-            100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(0.25); opacity: 0.2; }
+        }
+
+        /* تأثير الخداع البصري (دوران ووميض) */
+        .target.glitchy {
+            border-radius: 28%;
+            animation: popIn 0.2s forwards, glitchSpin 0.9s infinite linear;
+        }
+        @keyframes glitchSpin {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(0.75); filter: hue-rotate(180deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); filter: hue-rotate(360deg); }
+        }
+
+        /* حركة الجاذبية والارتداد */
+        .target.bouncy {
+            animation: popIn 0.2s forwards, bounceWild 0.75s infinite alternate cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        @keyframes bounceWild {
+            0% { transform: translate(-50%, -50%) translateY(-35px) scale(1.1); }
+            100% { transform: translate(-50%, -50%) translateY(35px) scale(0.85); }
         }
 
         /* ===== الجزيئات ===== */
@@ -213,7 +238,6 @@
         .stat-item span { display: block; }
         .stat-item .val { font-size: 1.5rem; font-weight: 900; color: var(--neon-blue); }
         .stat-item .lbl { font-size: 0.8rem; color: #8892b0; }
-
     </style>
 </head>
 <body>
@@ -233,14 +257,14 @@
                 </div>
                 <div class="stat-box">
                     <span class="stat-label">Time</span>
-                    <span class="stat-value time-value" id="timeDisplay">30</span>
+                    <span class="stat-value time-value" id="timeDisplay">20</span>
                 </div>
             </div>
             
             <!-- شريط المهمة (كم هدف متبقي) -->
             <div class="mission-bar">
                 <span>المهمة: اصطد <span class="mission-target" id="missionCurrent">0</span> / <span id="missionRequired">10</span></span>
-                <span id="stageObjective" style="color: var(--neon-gold);">المستوى الأول</span>
+                <span id="stageObjective" style="color: var(--neon-gold);">الإحماء</span>
             </div>
 
             <div class="time-bar-bg">
@@ -254,7 +278,7 @@
         <!-- شاشة البداية -->
         <div class="overlay" id="startScreen">
             <h1 class="game-title">NEON <span>STAGES</span></h1>
-            <p class="game-desc">أكمل مهام كل مرحلة لتنتقل للتالية.<br>تحديات مختلفة في كل مستوى!</p>
+            <p class="game-desc">10 مراحل بتحديات غريبة وممتعة!<br>احذر القنابل واقتنص النجوم الذهبية.</p>
             <button class="btn" id="startBtn"><i class="fas fa-play"></i> ابدأ الرحلة</button>
         </div>
 
@@ -265,9 +289,9 @@
             <button class="btn" id="nextStageBtn" style="background: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); color: #000;">المرحلة التالية <i class="fas fa-arrow-left"></i></button>
         </div>
 
-        <!-- شاشة النهاية (الخسارة) -->
+        <!-- شاشة النهاية (الخسارة أو الفوز الكامل) -->
         <div class="overlay hidden" id="endScreen">
-            <h1 class="game-title" style="color: var(--neon-red);">انتهت اللعبة</h1>
+            <h1 class="game-title" id="endTitle" style="color: var(--neon-red);">انتهت اللعبة</h1>
             <p class="game-desc" id="endMessage" style="color: var(--neon-red); font-weight: bold;"></p>
             
             <div class="stats-grid">
@@ -287,13 +311,18 @@
     </div>
 
     <script>
-        // ================= إعدادات المراحل =================
+        // ================= إعدادات المراحل (10 مراحل متنوعة) =================
         const stagesConfig = [
-            { stage: 1, name: "الإحماء", required: 10, time: 20, hasBombs: false, isMoving: false, isShrinking: false, speed: 1000 },
-            { stage: 2, name: "احذر القنابل", required: 15, time: 20, hasBombs: true, isMoving: false, isShrinking: false, speed: 900 },
-            { stage: 3, name: "الأهداف المتحركة", required: 15, time: 25, hasBombs: true, isMoving: true, isShrinking: false, speed: 850 },
-            { stage: 4, name: "الدقة والسرعة", required: 20, time: 25, hasBombs: true, isMoving: true, isShrinking: true, speed: 800 },
-            { stage: 5, name: "التحدي الأكبر", required: 25, time: 30, hasBombs: true, isMoving: true, isShrinking: true, speed: 600 }
+            { stage: 1, name: "الإحماء", required: 10, time: 20, hasBombs: false, hasGold: false, isMoving: false, isShrinking: false, isEvading: false, isGlitchy: false, isDark: false, isBouncy: false, speed: 1050 },
+            { stage: 2, name: "احذر القنابل", required: 12, time: 20, hasBombs: true, hasGold: true, isMoving: false, isShrinking: false, isEvading: false, isGlitchy: false, isDark: false, isBouncy: false, speed: 950 },
+            { stage: 3, name: "الأهداف المتحركة", required: 14, time: 22, hasBombs: true, hasGold: true, isMoving: true, isShrinking: false, isEvading: false, isGlitchy: false, isDark: false, isBouncy: false, speed: 900 },
+            { stage: 4, name: "الدقة والسرعة", required: 15, time: 22, hasBombs: true, hasGold: true, isMoving: true, isShrinking: true, isEvading: false, isGlitchy: false, isDark: false, isBouncy: false, speed: 850 },
+            { stage: 5, name: "الهدف الهارب", required: 14, time: 25, hasBombs: true, hasGold: true, isMoving: false, isShrinking: false, isEvading: true, isGlitchy: false, isDark: false, isBouncy: false, speed: 1100 },
+            { stage: 6, name: "الخداع البصري", required: 16, time: 24, hasBombs: true, hasGold: true, isMoving: true, isShrinking: false, isEvading: false, isGlitchy: true, isDark: false, isBouncy: false, speed: 900 },
+            { stage: 7, name: "الظلام النيوني", required: 15, time: 25, hasBombs: true, hasGold: true, isMoving: false, isShrinking: false, isEvading: false, isGlitchy: false, isDark: true, isBouncy: false, speed: 950 },
+            { stage: 8, name: "الجاذبية المقلوبة", required: 18, time: 25, hasBombs: true, hasGold: true, isMoving: false, isShrinking: false, isEvading: false, isGlitchy: false, isDark: false, isBouncy: true, speed: 850 },
+            { stage: 9, name: "الفوضى الكهربائية", required: 20, time: 26, hasBombs: true, hasGold: true, isMoving: true, isShrinking: true, isEvading: true, isGlitchy: false, isDark: false, isBouncy: false, speed: 750 },
+            { stage: 10, name: "التحدي الأسطوري", required: 24, time: 30, hasBombs: true, hasGold: true, isMoving: true, isShrinking: true, isEvading: true, isGlitchy: true, isDark: false, isBouncy: true, speed: 680 }
         ];
 
         // العناصر
@@ -311,6 +340,7 @@
         const startScreen = document.getElementById('startScreen');
         const stageClearScreen = document.getElementById('stageClearScreen');
         const endScreen = document.getElementById('endScreen');
+        const endTitle = document.getElementById('endTitle');
         const startBtn = document.getElementById('startBtn');
         const nextStageBtn = document.getElementById('nextStageBtn');
         const restartBtn = document.getElementById('restartBtn');
@@ -325,6 +355,8 @@
         let gameTimer;
         let targetTimeout;
         let currentTargetType = 'normal';
+        let targetX = 0;
+        let targetY = 0;
 
         // الأصوات
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -340,6 +372,11 @@
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
                 gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            } else if (type === 'gold') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1600, audioCtx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
             } else if (type === 'bomb') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
@@ -363,28 +400,27 @@
 
         // ================= إدارة اللعبة =================
         function initGame() {
-            score = 0; currentStageIndex = 0;
+            score = 0;
+            currentStageIndex = 0;
             startStage(currentStageIndex);
         }
 
         function startStage(index) {
             const config = stagesConfig[index];
             
-            // تصفير حالة المرحلة
             targetsHit = 0;
             timeLeft = config.time;
             isPlaying = true;
             
-            // تحديث الواجهة
             stageDisplay.textContent = config.stage;
             missionRequired.textContent = config.required;
             missionCurrent.textContent = "0";
             stageObjective.textContent = config.name;
             scoreDisplay.textContent = score;
             
+            gameArea.classList.toggle('dark-mode', config.isDark);
             updateUI();
             
-            // إخفاء الشاشات
             startScreen.classList.add('hidden');
             stageClearScreen.classList.add('hidden');
             endScreen.classList.add('hidden');
@@ -394,12 +430,11 @@
             clearInterval(gameTimer);
             clearTimeout(targetTimeout);
 
-            // مؤقت المرحلة
             gameTimer = setInterval(() => {
                 timeLeft--;
                 updateUI();
                 if (timeLeft <= 0) {
-                    gameOver("انتهى الوقت!");
+                    gameOver("انتهى الوقت!", false);
                 }
             }, 1000);
 
@@ -409,7 +444,7 @@
         function updateUI() {
             timeDisplay.textContent = timeLeft;
             const percent = (timeLeft / stagesConfig[currentStageIndex].time) * 100;
-            timeBar.style.width = `${percent}%`;
+            timeBar.style.width = `${Math.max(0, percent)}%`;
             if(timeLeft <= 5) timeBar.style.background = 'var(--neon-red)';
             else timeBar.style.background = 'var(--neon-pink)';
         }
@@ -421,44 +456,77 @@
 
             target.className = 'target'; 
             
-            // مكان عشوائي
-            const padding = 60;
+            const padding = 65;
+            const topSafe = 135;
             const maxX = gameArea.clientWidth - padding;
             const maxY = gameArea.clientHeight - padding;
-            const randomX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
-            const randomY = Math.floor(Math.random() * (maxY - padding + 1)) + padding;
+            targetX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+            targetY = Math.floor(Math.random() * (maxY - topSafe + 1)) + topSafe;
 
-            target.style.left = `${randomX}px`;
-            target.style.top = `${randomY}px`;
+            target.style.left = `${targetX}px`;
+            target.style.top = `${targetY}px`;
 
-            // تحديد نوع الهدف بناءً على إعدادات المرحلة
+            // تحديد نوع الهدف
             currentTargetType = 'normal';
-            if (config.hasBombs && Math.random() < 0.25) {
+            const roll = Math.random();
+            if (config.hasBombs && roll < 0.22) {
                 currentTargetType = 'bomb';
+            } else if (config.hasGold && roll > 0.85) {
+                currentTargetType = 'gold';
             }
 
             target.classList.add(currentTargetType);
 
-            // إضافة حركة إذا كانت المرحلة تتطلب ذلك
+            // تأثيرات المراحل الغريبة
             if (config.isMoving) target.classList.add('moving');
             if (config.isShrinking) target.classList.add('shrinking');
+            if (config.isGlitchy) target.classList.add('glitchy');
+            if (config.isBouncy) target.classList.add('bouncy');
 
             requestAnimationFrame(() => target.classList.add('active'));
 
-            // اختفاء الهدف
             clearTimeout(targetTimeout);
             targetTimeout = setTimeout(() => {
                 if (isPlaying) {
-                    target.classList.remove('active', 'moving', 'shrinking');
-                    setTimeout(spawnTarget, 150);
+                    target.classList.remove('active', 'moving', 'shrinking', 'glitchy', 'bouncy');
+                    setTimeout(spawnTarget, 140);
                 }
             }, config.speed);
         }
+
+        // حركة الهروب والكشاف
+        gameArea.addEventListener('pointermove', (e) => {
+            const rect = gameArea.getBoundingClientRect();
+            const px = e.clientX - rect.left;
+            const py = e.clientY - rect.top;
+
+            if (stagesConfig[currentStageIndex]?.isDark) {
+                gameArea.style.setProperty('--mx', `${px}px`);
+                gameArea.style.setProperty('--my', `${py}px`);
+            }
+
+            if (!isPlaying || currentTargetType === 'bomb') return;
+            if (stagesConfig[currentStageIndex]?.isEvading && target.classList.contains('active')) {
+                const dx = targetX - px;
+                const dy = targetY - py;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist < 85 && dist > 0) {
+                    const step = 38;
+                    const pad = 55;
+                    targetX = Math.min(gameArea.clientWidth - pad, Math.max(pad, targetX + (dx / dist) * step));
+                    targetY = Math.min(gameArea.clientHeight - pad, Math.max(135, targetY + (dy / dist) * step));
+                    target.style.left = `${targetX}px`;
+                    target.style.top = `${targetY}px`;
+                }
+            }
+        });
 
         // ================= النقر =================
         target.addEventListener('pointerdown', (e) => {
             if (!isPlaying) return;
             e.preventDefault();
+            e.stopPropagation();
             
             const rect = gameArea.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
@@ -472,26 +540,32 @@
                 createParticles(clickX, clickY, '#ff0055');
                 showFloatingText(clickX, clickY, '-3s', '#ff0055');
                 updateUI();
-            } 
-            else {
-                // هدف عادي
+            } else if (currentTargetType === 'gold') {
+                score += 25;
+                timeLeft += 1;
+                targetsHit++;
+                scoreDisplay.textContent = score;
+                missionCurrent.textContent = targetsHit;
+                playSound('gold');
+                createParticles(clickX, clickY, '#ffcc00');
+                showFloatingText(clickX, clickY, '+25 +1s', '#ffcc00');
+                updateUI();
+            } else {
                 score += 10;
                 targetsHit++;
                 scoreDisplay.textContent = score;
                 missionCurrent.textContent = targetsHit;
-                
                 playSound('hit');
                 createParticles(clickX, clickY, '#00f3ff');
-                showFloatingText(clickX, clickY, `+10`, '#00f3ff');
-                
-                // التحقق من اكتمال المهمة
-                if (targetsHit >= stagesConfig[currentStageIndex].required) {
-                    stageClear();
-                    return;
-                }
+                showFloatingText(clickX, clickY, '+10', '#00f3ff');
             }
 
-            target.classList.remove('active', 'moving', 'shrinking');
+            if (targetsHit >= stagesConfig[currentStageIndex].required) {
+                stageClear();
+                return;
+            }
+
+            target.classList.remove('active', 'moving', 'shrinking', 'glitchy', 'bouncy');
             clearTimeout(targetTimeout);
             
             setTimeout(() => {
@@ -505,6 +579,7 @@
             clearInterval(gameTimer);
             clearTimeout(targetTimeout);
             target.className = 'target';
+            gameArea.classList.remove('dark-mode');
             playSound('stageClear');
             
             stageClearScreen.classList.remove('hidden');
@@ -515,19 +590,23 @@
             if (currentStageIndex < stagesConfig.length) {
                 startStage(currentStageIndex);
             } else {
-                gameOver("أنت بطل! أكملت جميع المراحل!");
+                gameOver("أنت بطل! أكملت جميع المراحل العشر!", true);
             }
         }
 
-        function gameOver(msg) {
+        function gameOver(msg, isWin) {
             isPlaying = false;
             clearInterval(gameTimer);
             clearTimeout(targetTimeout);
             target.className = 'target';
+            gameArea.classList.remove('dark-mode');
             
+            endTitle.textContent = isWin ? "مبروك الفوز!" : "انتهت اللعبة";
+            endTitle.style.color = isWin ? "var(--neon-green)" : "var(--neon-red)";
             document.getElementById('finalScore').textContent = score;
             document.getElementById('finalStage').textContent = stagesConfig[currentStageIndex].stage;
             document.getElementById('endMessage').textContent = msg;
+            document.getElementById('endMessage').style.color = isWin ? "var(--neon-green)" : "var(--neon-red)";
             
             endScreen.classList.remove('hidden');
         }
