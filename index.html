@@ -15,7 +15,7 @@
     <style>
         :root {
             --bg-dark: #05050a;
-            --bg-panel: rgba(20, 25, 40, 0.72);
+            --bg-panel: rgba(20, 25, 40, 0.78);
             --accent: #00f3ff;
             --accent-secondary: #ff0055;
             --accent-glow: rgba(0, 243, 255, 0.35);
@@ -84,21 +84,21 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            background: rgba(5, 5, 10, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(5, 5, 10, 0.88);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
             box-shadow: 0 0 50px var(--accent-glow);
-            border-left: 1px solid rgba(255,255,255,0.05);
-            border-right: 1px solid rgba(255,255,255,0.05);
+            border-left: 1px solid rgba(255,255,255,0.06);
+            border-right: 1px solid rgba(255,255,255,0.06);
         }
 
         /* ===== شريط حقوق المطور ===== */
         .dev-banner {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.08));
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.09));
             border-bottom: 1px solid rgba(255,255,255,0.1);
             text-align: center;
-            padding: 9px 10px;
-            font-size: 0.84rem;
+            padding: 8px 10px;
+            font-size: 0.82rem;
             font-weight: 700;
             color: #fff;
             flex-shrink: 0;
@@ -106,7 +106,7 @@
         }
         .dev-banner span { 
             color: var(--accent);
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             font-weight: 900;
             text-shadow: 0 0 10px var(--accent-glow);
         }
@@ -141,7 +141,7 @@
             font-size: 8.5px;
             font-weight: 900;
             margin-right: 4px;
-            border: 1px solid rgba(255, 245, 190, 0.75);
+            border: 1px solid rgba(255, 245, 190, 0.8);
             box-shadow: 0 0 12px rgba(255, 196, 0, 0.75);
             vertical-align: middle;
             flex-shrink: 0;
@@ -266,7 +266,7 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.25s;
             width: 100%;
             display: flex;
             align-items: center;
@@ -293,15 +293,15 @@
             box-shadow: 0 5px 15px rgba(29, 155, 240, 0.35);
         }
 
-        /* ===== 2. شاشة الأصدقاء والغرف والثيمات والإدارة ===== */
+        /* ===== 2. شاشة التطبيق الرئيسية والتبويبات المدهشة ===== */
         .top-bar {
-            background: rgba(15, 20, 30, 0.92);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 20, 32, 0.94);
+            backdrop-filter: blur(12px);
             padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
             flex-shrink: 0;
         }
         .user-profile {
@@ -311,17 +311,18 @@
             min-width: 0;
         }
         .avatar-circle {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
             background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
             color: #05050a;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             flex-shrink: 0;
+            box-shadow: 0 4px 14px var(--accent-glow);
         }
         .user-meta .uname {
             font-weight: 900;
@@ -338,6 +339,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            margin-top: 2px;
         }
         .user-meta .u-bio:hover { color: var(--accent); }
 
@@ -346,7 +348,7 @@
             color: #ff4d79;
             border: 1px solid rgba(255, 0, 85, 0.35);
             padding: 7px 12px;
-            border-radius: 10px;
+            border-radius: 11px;
             cursor: pointer;
             font-weight: 800;
             font-size: 0.8rem;
@@ -357,25 +359,37 @@
 
         .home-tabs {
             display: flex;
-            background: rgba(12, 16, 26, 0.9);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            gap: 4px;
+            padding: 8px 10px;
+            background: rgba(11, 15, 25, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
             flex-shrink: 0;
+            overflow-x: auto;
         }
+        .home-tabs::-webkit-scrollbar { display: none; }
         .home-tab {
             flex: 1;
-            padding: 11px 6px;
+            min-width: 72px;
+            padding: 9px 6px;
             text-align: center;
             font-weight: 800;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: 0.2s;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: 0.22s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
         }
+        .home-tab i { font-size: 0.92rem; }
         .home-tab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-            background: rgba(255, 255, 255, 0.03);
+            color: #05050a;
+            background: linear-gradient(135deg, var(--accent), #0099ff);
+            border-color: rgba(255,255,255,0.25);
+            box-shadow: 0 4px 14px var(--accent-glow);
         }
 
         .home-content {
@@ -385,6 +399,38 @@
         }
         .home-content::-webkit-scrollbar { width: 4px; }
         .home-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .section-banner-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 18px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .section-banner-card h4 {
+            font-size: 0.92rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .section-banner-card p {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+        .pill-tag {
+            background: rgba(255, 215, 0, 0.14);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 900;
+            white-space: nowrap;
+        }
 
         .add-friend-box {
             display: flex;
@@ -441,7 +487,7 @@
             position: relative;
             width: 44px;
             height: 44px;
-            border-radius: 50%;
+            border-radius: 14px;
             background: rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
@@ -453,8 +499,8 @@
         }
         .status-dot {
             position: absolute;
-            bottom: 1px;
-            left: 1px;
+            bottom: -2px;
+            left: -2px;
             width: 11px;
             height: 11px;
             border-radius: 50%;
@@ -467,7 +513,7 @@
         }
         .friend-info .fname {
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.94rem;
             color: #fff;
             display: flex;
             align-items: center;
@@ -509,8 +555,8 @@
         .theme-card {
             background: rgba(255,255,255,0.04);
             border: 2px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 15px;
+            border-radius: 18px;
+            padding: 16px;
             cursor: pointer;
             text-align: center;
             transition: 0.2s;
@@ -521,9 +567,9 @@
             box-shadow: 0 0 18px var(--accent-glow);
         }
         .theme-swatch {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
             margin: 0 auto 8px;
         }
         .theme-name {
@@ -563,13 +609,13 @@
         #chatScreen { background: transparent; }
 
         .chat-header {
-            background: rgba(15, 20, 30, 0.92);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 20, 32, 0.94);
+            backdrop-filter: blur(12px);
             padding: 11px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
             flex-shrink: 0;
             z-index: 5;
             gap: 8px;
@@ -698,10 +744,10 @@
             display: flex;
             flex-direction: column;
             max-width: 85%;
-            animation: slideUp 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: slideUp 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -907,8 +953,8 @@
 
         .chat-input-area {
             padding: 10px 15px 12px;
-            background: rgba(15, 20, 30, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 20, 30, 0.96);
+            backdrop-filter: blur(12px);
             display: flex;
             gap: 7px;
             align-items: center;
@@ -981,10 +1027,10 @@
             align-items: center;
             font-size: 1.15rem;
             flex-shrink: 0;
-            transition: 0.3s;
+            transition: 0.25s;
             box-shadow: 0 0 15px var(--accent-glow);
         }
-        .btn-send:hover { transform: scale(1.08); }
+        .btn-send:hover { transform: scale(1.06); }
         .btn-send:active { transform: scale(0.92); }
 
         /* عارض الصورة المكبرة */
@@ -1037,7 +1083,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">شارات المطور، حسابات موثقة، رسائل صوتية، وصور مضغوطة ⚡</div>
+                <div class="subtitle">تجربة دردشة فورية، شارات المطور، صوتيات، وصور ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1062,7 +1108,7 @@
             </div>
         </div>
 
-        <!-- 2. شاشة الأصدقاء والغرف والثيمات والإدارة -->
+        <!-- 2. شاشة التطبيق الرئيسية -->
         <div class="screen" id="homeScreen">
             <div class="top-bar">
                 <div class="user-profile">
@@ -1084,6 +1130,9 @@
             <div class="home-tabs">
                 <div class="home-tab active" id="homeTabFriends" onclick="switchHomeTab('friends')">
                     <i class="fas fa-user-friends"></i> الأصدقاء
+                </div>
+                <div class="home-tab" id="homeTabFeatured" onclick="switchHomeTab('featured')">
+                    <i class="fas fa-crown"></i> المميزون
                 </div>
                 <div class="home-tab" id="homeTabRooms" onclick="switchHomeTab('rooms')">
                     <i class="fas fa-hashtag"></i> الغرف
@@ -1107,8 +1156,29 @@
                 </div>
             </div>
 
+            <!-- تبويب المميزون والموثقون -->
+            <div class="home-content" id="featuredSection" style="display:none;">
+                <div class="section-banner-card">
+                    <div>
+                        <h4>الحسابات المميزة والموثقة</h4>
+                        <p>تواصل مباشرة مع المطور والحسابات الموثقة داخل التطبيق</p>
+                    </div>
+                    <span class="pill-tag"><i class="fas fa-crown"></i> VIP</span>
+                </div>
+                <div id="featuredListContainer">
+                    <div class="empty-state">جاري تحميل الحسابات المميزة...</div>
+                </div>
+            </div>
+
             <!-- تبويب غرف الكود -->
             <div class="home-content" id="roomsSection" style="display:none;">
+                <div class="section-banner-card">
+                    <div>
+                        <h4>غرف الدردشة الفورية</h4>
+                        <p>أنشئ غرفة بكود سريع أو انضم إلى غرفة موجودة فوراً</p>
+                    </div>
+                    <span class="pill-tag"><i class="fas fa-bolt"></i> فوري</span>
+                </div>
                 <div class="input-group">
                     <label>إنشاء غرفة سريعة بكود عشوائي:</label>
                     <button class="btn" onclick="createQuickRoom()"><i class="fas fa-rocket"></i> إنشاء غرفة جديدة</button>
@@ -1125,6 +1195,13 @@
 
             <!-- تبويب الثيمات -->
             <div class="home-content" id="themesSection" style="display:none;">
+                <div class="section-banner-card">
+                    <div>
+                        <h4>مظاهر التطبيق (الثيمات)</h4>
+                        <p>اختر الطابع اللوني الذي يناسب ذوقك ويُحفظ تلقائياً</p>
+                    </div>
+                    <span class="pill-tag"><i class="fas fa-palette"></i> ألوان</span>
+                </div>
                 <div class="theme-grid">
                     <div class="theme-card active" data-theme-option="blue" onclick="applyTheme('blue')">
                         <div class="theme-swatch" style="background:linear-gradient(135deg,#00f3ff,#0055ff);"></div>
@@ -1145,7 +1222,7 @@
                 </div>
             </div>
 
-            <!-- لوحة التحكم السرية للمدير / المطور (تظهر فقط لـ abdulrahim أو حسابات الإدارة) -->
+            <!-- لوحة التحكم السرية للمدير / المطور -->
             <div class="home-content" id="adminSection" style="display:none;">
                 <div class="admin-panel-box">
                     <div style="font-weight:900; font-size:1rem; color:var(--accent); margin-bottom:10px;">
@@ -1206,7 +1283,7 @@
                 </button>
             </div>
 
-            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-messages" id="chatMessages" onclick="dismissKeyboard()"></div>
 
             <div class="typing-indicator" id="typingIndicator">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
@@ -1253,9 +1330,9 @@
                     <i class="fas fa-microphone"></i>
                 </button>
                 <div class="input-wrapper">
-                    <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                    <input type="text" id="chatInput" placeholder="اضغط هنا لكتابة رسالة..." autocomplete="off">
                 </div>
-                <button type="button" class="btn-send" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn-send" id="sendChatBtn" title="إرسال"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
 
@@ -1305,7 +1382,8 @@
         let pendingCompressedImage = null;
         let pendingAudioClip = null;
         let latestMessagesData = null;
-        let userBadgeCache = {}; // { usernameKey: { verified: bool, vipAdmin: bool } }
+        let userBadgeCache = {};
+        let isSendingMessage = false;
 
         let mediaRecorder = null;
         let audioChunks = [];
@@ -1323,6 +1401,8 @@
         let partnerPresenceCallback = null;
         let friendsListenerRef = null;
         let friendsListenerCallback = null;
+        let featuredListenerRef = null;
+        let featuredListenerCallback = null;
 
         let typingTimeout = null;
         let isTyping = false;
@@ -1336,6 +1416,12 @@
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const typingIndicator = document.getElementById('typingIndicator');
+
+        function dismissKeyboard() {
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+        }
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
@@ -1417,19 +1503,22 @@
                 return;
             }
 
-            await ref.update({ verified: !!status });
-            const existing = userBadgeCache[targetKey] || { verified: false, vipAdmin: isAdminUsername(targetKey) };
-            existing.verified = !!status;
+            const isVipTarget = !!(snap.val()?.vipAdmin || isAdminUsername(targetKey));
+            await ref.update({ verified: !!(status || isVipTarget) });
+            const existing = userBadgeCache[targetKey] || { verified: false, vipAdmin: isVipTarget };
+            existing.verified = !!(status || isVipTarget);
+            existing.vipAdmin = isVipTarget;
             userBadgeCache[targetKey] = existing;
 
             if (targetKey === currentUser) {
-                currentUserVerified = !!status;
+                currentUserVerified = existing.verified;
                 document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
             }
             statusMsg.style.color = 'var(--neon-green)';
             statusMsg.textContent = status
                 ? `تم توثيق الحساب (@${targetKey}) بالعلامة الزرقاء بنجاح.`
-                : `تم إلغاء توثيق الحساب (@${targetKey}).`;
+                : (isVipTarget ? `حساب المطور (@${targetKey}) يحتفظ بشاراته المميزة.` : `تم إلغاء توثيق الحساب (@${targetKey}).`);
+            dismissKeyboard();
         }
 
         async function hashPassword(password) {
@@ -1467,6 +1556,7 @@
         }
 
         async function toggleVoiceRecording() {
+            dismissKeyboard();
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
                 return alert('متصفحك لا يدعم تسجيل الرسائل الصوتية.');
             }
@@ -1505,7 +1595,7 @@
                     const recBtn = document.getElementById('voiceRecordBtn');
                     recBtn.classList.remove('recording');
                     recBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-                    chatInput.placeholder = 'اكتب رسالتك هنا...';
+                    chatInput.placeholder = 'اضغط هنا لكتابة رسالة...';
 
                     const finalMime = mediaRecorder.mimeType || 'audio/webm';
                     const blob = new Blob(audioChunks, { type: finalMime });
@@ -1611,7 +1701,7 @@
                 document.getElementById('imagePreviewThumb').src = result.dataUrl;
                 document.getElementById('imagePreviewInfo').textContent = `صورة مضغوطة (${result.sizeKb} KB)`;
                 document.getElementById('imagePreviewBanner').classList.add('active');
-                chatInput.focus();
+                dismissKeyboard();
             } catch (err) {
                 alert('حدث خطأ أثناء ضغط الصورة.');
             }
@@ -1625,6 +1715,7 @@
 
         function openLightbox(src) {
             if (!src) return;
+            dismissKeyboard();
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightboxModal').classList.add('active');
         }
@@ -1677,6 +1768,7 @@
         }
 
         async function handleAuthSubmit() {
+            dismissKeyboard();
             hideAuthError();
             const rawUsername = document.getElementById('authUsername').value.trim();
             const password = document.getElementById('authPassword').value;
@@ -1759,6 +1851,7 @@
             myPresenceRef.child('online').onDisconnect().set(false);
             myPresenceRef.child('lastSeen').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
 
+            myPresenceRef.off();
             myPresenceRef.on('value', (snap) => {
                 const uVal = snap.val() || {};
                 currentUserVipAdmin = !!(uVal.vipAdmin || isAdminUsername(currentUser));
@@ -1771,7 +1864,7 @@
             document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
             document.getElementById('myAvatar').textContent = displayName.charAt(0).toUpperCase();
 
-            document.getElementById('homeTabAdmin').style.display = isCurrentUserAdmin() ? 'block' : 'none';
+            document.getElementById('homeTabAdmin').style.display = isCurrentUserAdmin() ? 'flex' : 'none';
             switchHomeTab('friends');
 
             authScreen.classList.remove('active');
@@ -1779,15 +1872,20 @@
             chatScreen.classList.remove('active');
 
             listenToFriends();
+            listenToFeaturedUsers();
         }
 
         function logoutUser() {
             if (!currentUser) return;
+            dismissKeyboard();
             db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
             db.ref('users/' + currentUser).off();
             cleanupChatListeners();
             if (friendsListenerRef && friendsListenerCallback) {
                 friendsListenerRef.off('value', friendsListenerCallback);
+            }
+            if (featuredListenerRef && featuredListenerCallback) {
+                featuredListenerRef.off('value', featuredListenerCallback);
             }
             localStorage.removeItem('legendary_chat_session');
             currentUser = null;
@@ -1827,17 +1925,20 @@
         });
 
         // ==========================================
-        // 7. الأصدقاء والغرف والثيمات والإدارة
+        // 7. التبويبات والأصدقاء والمميزون والإدارة
         // ==========================================
         function switchHomeTab(tab) {
             if (tab === 'admin' && !isCurrentUserAdmin()) return;
+            dismissKeyboard();
 
             document.getElementById('homeTabFriends').classList.toggle('active', tab === 'friends');
+            document.getElementById('homeTabFeatured').classList.toggle('active', tab === 'featured');
             document.getElementById('homeTabRooms').classList.toggle('active', tab === 'rooms');
             document.getElementById('homeTabThemes').classList.toggle('active', tab === 'themes');
             document.getElementById('homeTabAdmin').classList.toggle('active', tab === 'admin');
 
             document.getElementById('friendsSection').style.display = tab === 'friends' ? 'block' : 'none';
+            document.getElementById('featuredSection').style.display = tab === 'featured' ? 'block' : 'none';
             document.getElementById('roomsSection').style.display = tab === 'rooms' ? 'block' : 'none';
             document.getElementById('themesSection').style.display = tab === 'themes' ? 'block' : 'none';
             document.getElementById('adminSection').style.display = tab === 'admin' ? 'block' : 'none';
@@ -1848,6 +1949,7 @@
         }
 
         async function addFriend() {
+            dismissKeyboard();
             const input = document.getElementById('friendUsernameInput');
             const friendKey = sanitizeKey(input.value);
             if (!friendKey) return alert('اكتب اسم مستخدم صديقك أولاً.');
@@ -1968,7 +2070,69 @@
             });
         }
 
+        function listenToFeaturedUsers() {
+            if (featuredListenerRef && featuredListenerCallback) {
+                featuredListenerRef.off('value', featuredListenerCallback);
+            }
+            featuredListenerRef = db.ref('users');
+            featuredListenerCallback = featuredListenerRef.on('value', (snapshot) => {
+                const container = document.getElementById('featuredListContainer');
+                if (!container) return;
+                const usersObj = snapshot.val() || {};
+                const featuredList = Object.entries(usersObj)
+                    .map(([key, val]) => {
+                        const isVip = !!(val.vipAdmin || isAdminUsername(key));
+                        const isVer = !!(val.verified || isVip);
+                        return {
+                            username: key,
+                            displayName: val.displayName || key,
+                            bio: val.bio || 'حساب مميز في الدردشة الأسطورية',
+                            online: !!val.online,
+                            verified: isVer,
+                            vipAdmin: isVip
+                        };
+                    })
+                    .filter(u => (u.verified || u.vipAdmin) && u.username !== currentUser)
+                    .sort((a, b) => (b.vipAdmin ? 1 : 0) - (a.vipAdmin ? 1 : 0));
+
+                if (featuredList.length === 0) {
+                    container.innerHTML = '<div class="empty-state">لا توجد حسابات مميزة أخرى حالياً.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                featuredList.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'friend-item';
+                    div.onclick = () => {
+                        const chatId = getDirectChatId(currentUser, item.username);
+                        openDirectChat(item.username, item.displayName, chatId, item.verified, item.vipAdmin);
+                    };
+                    div.innerHTML = `
+                        <div class="friend-left">
+                            <div class="friend-avatar">
+                                ${item.displayName.charAt(0).toUpperCase()}
+                                <span class="status-dot ${item.online ? 'online' : ''}"></span>
+                            </div>
+                            <div class="friend-info">
+                                <div class="fname">
+                                    <span>${escapeHtml(item.displayName)}</span>
+                                    ${getBadgesHtml(item.verified, item.vipAdmin)}
+                                </div>
+                                <div class="flast">${escapeHtml(item.bio)}</div>
+                            </div>
+                        </div>
+                        <div class="friend-right">
+                            <i class="fas fa-comment-dots" style="color:var(--accent); font-size:1rem;"></i>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
         function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false) {
+            dismissKeyboard();
             activeChatType = 'direct';
             activeRoomCode = null;
             activePartner = partnerKey;
@@ -1989,11 +2153,13 @@
         // 8. غرف الكود السريعة
         // ==========================================
         function createQuickRoom() {
+            dismissKeyboard();
             const code = Math.random().toString(36).substring(2, 6).toUpperCase();
             openRoomChat(code);
         }
 
         function joinQuickRoom() {
+            dismissKeyboard();
             const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
             if (!code) return alert('يرجى كتابة كود الغرفة.');
             openRoomChat(code);
@@ -2042,6 +2208,7 @@
             document.getElementById('searchBarBox').classList.remove('active');
             document.getElementById('chatSearchInput').value = '';
             typingIndicator.classList.remove('active');
+            dismissKeyboard();
         }
 
         function cleanupChatListeners() {
@@ -2063,6 +2230,7 @@
         }
 
         function backToHome() {
+            dismissKeyboard();
             cleanupChatListeners();
             activeChatId = null;
             activeChatType = null;
@@ -2076,6 +2244,7 @@
             chatScreen.classList.remove('active');
             homeScreen.classList.add('active');
             listenToFriends();
+            listenToFeaturedUsers();
         }
 
         function listenPartnerPresence(partnerKey) {
@@ -2142,6 +2311,7 @@
                 searchInput.focus();
             } else {
                 searchInput.value = '';
+                dismissKeyboard();
                 renderMessagesList();
             }
         }
@@ -2176,7 +2346,6 @@
 
         function insertEmoji(emoji) {
             chatInput.value += emoji;
-            chatInput.focus();
         }
 
         function copyTextToClipboard(text) {
@@ -2264,6 +2433,7 @@
 
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
+                wrapper.onclick = (e) => e.stopPropagation();
 
                 const nameHtml = isMe
                     ? ''
@@ -2351,64 +2521,88 @@
         }
 
         async function sendMessage() {
+            if (isSendingMessage) return;
+
             if (isRecordingVoice) {
                 stopVoiceRecording();
+                dismissKeyboard();
                 return;
             }
 
             const text = chatInput.value.trim();
-            if ((!text && !pendingCompressedImage && !pendingAudioClip) || !activeChatId || !currentUser) return;
-
-            if (editingMsgId) {
-                if (!text) return alert('لا يمكن ترك نص الرسالة المعدّلة فارغاً.');
-                await db.ref(`chats/${activeChatId}/messages/${editingMsgId}`).update({
-                    text: text,
-                    edited: true,
-                    editedAt: Date.now()
-                });
-                chatInput.value = '';
-                cancelEdit();
-                chatInput.focus();
+            if ((!text && !pendingCompressedImage && !pendingAudioClip) || !activeChatId || !currentUser) {
+                dismissKeyboard();
                 return;
             }
 
-            const payload = {
-                sender: currentUser,
-                senderName: currentDisplayName || currentUser,
-                text: text,
-                timestamp: Date.now(),
-                read: false
-            };
+            isSendingMessage = true;
+            try {
+                if (editingMsgId) {
+                    if (!text) {
+                        isSendingMessage = false;
+                        return alert('لا يمكن ترك نص الرسالة المعدّلة فارغاً.');
+                    }
+                    await db.ref(`chats/${activeChatId}/messages/${editingMsgId}`).update({
+                        text: text,
+                        edited: true,
+                        editedAt: Date.now()
+                    });
+                    chatInput.value = '';
+                    cancelEdit();
+                } else {
+                    const payload = {
+                        sender: currentUser,
+                        senderName: currentDisplayName || currentUser,
+                        text: text,
+                        timestamp: Date.now(),
+                        read: false
+                    };
 
-            if (pendingCompressedImage && pendingCompressedImage.dataUrl) {
-                payload.image = pendingCompressedImage.dataUrl;
+                    if (pendingCompressedImage && pendingCompressedImage.dataUrl) {
+                        payload.image = pendingCompressedImage.dataUrl;
+                    }
+
+                    if (pendingAudioClip && pendingAudioClip.dataUrl) {
+                        payload.audio = pendingAudioClip.dataUrl;
+                        payload.audioDuration = pendingAudioClip.durationSec || 0;
+                    }
+
+                    if (replyingTo) {
+                        payload.replyTo = {
+                            senderName: replyingTo.senderName,
+                            text: replyingTo.text
+                        };
+                    }
+
+                    await db.ref(`chats/${activeChatId}/messages`).push(payload);
+
+                    chatInput.value = '';
+                    cancelReply();
+                    clearPendingImage();
+                    clearPendingAudio();
+                }
+
+                isTyping = false;
+                clearTimeout(typingTimeout);
+                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
+                dismissKeyboard();
+            } finally {
+                isSendingMessage = false;
             }
-
-            if (pendingAudioClip && pendingAudioClip.dataUrl) {
-                payload.audio = pendingAudioClip.dataUrl;
-                payload.audioDuration = pendingAudioClip.durationSec || 0;
-            }
-
-            if (replyingTo) {
-                payload.replyTo = {
-                    senderName: replyingTo.senderName,
-                    text: replyingTo.text
-                };
-            }
-
-            await db.ref(`chats/${activeChatId}/messages`).push(payload);
-
-            chatInput.value = '';
-            cancelReply();
-            clearPendingImage();
-            clearPendingAudio();
-            chatInput.focus();
-            db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
         }
 
-        document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
+        document.getElementById('sendChatBtn').addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
+        document.getElementById('sendChatBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
         chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
         function listenForTyping() {
