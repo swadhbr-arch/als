@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>العقل المدبر | تحويل PDF إلى اختبار</title>
+    <title>العقل المدبر | قراءة الصور و PDF</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- مكتبة قراءة ملفات PDF -->
+    <!-- مكتبة قراءة PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- مكتبة قراءة الصور OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
         :root {
@@ -73,7 +75,6 @@
         .score-val { color: var(--primary); font-size: 1.2rem; }
         .lives-val { font-size: 1.2rem; letter-spacing: 2px; }
         
-        /* مؤقت الـ 2 دقيقة */
         .global-timer { 
             color: var(--gold); font-size: 1.3rem; font-weight: 900;
             display: flex; align-items: center; gap: 5px;
@@ -104,7 +105,7 @@
         }
 
         .drop-zone {
-            width: 100%; height: 200px;
+            width: 100%; height: 220px;
             border: 3px dashed rgba(255,255,255,0.2);
             border-radius: 20px;
             display: flex; flex-direction: column;
@@ -126,7 +127,7 @@
         }
         .drop-zone:hover i { transform: translateY(-5px) scale(1.1); }
 
-        .drop-zone p { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .drop-zone p { font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center; padding: 0 10px;}
         .drop-zone span { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
 
         input[type="file"] { display: none; }
@@ -143,7 +144,8 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .loading-text { font-size: 1.2rem; font-weight: 700; color: var(--primary); animation: pulse 1s infinite alternate; }
+        .loading-text { font-size: 1.1rem; font-weight: 700; color: var(--primary); text-align: center; padding: 0 20px; line-height: 1.5;}
+        .loading-progress { font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;}
 
         /* شاشة الأسئلة */
         .question-screen {
@@ -195,7 +197,7 @@
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
         
         .rank-text { font-size: 1.5rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
-        .final-score { font-size: 1.2rem; color: #fff; margin-bottom: 30px; }
+        .final-score { font-size: 1.2rem; color: #fff; margin-bottom: 30px; line-height: 1.6;}
 
         .btn {
             padding: 15px 30px; font-size: 1.1rem; font-weight: 900;
@@ -238,22 +240,23 @@
             <div class="upload-screen" id="uploadScreen">
                 <div class="upload-title">العقل المدبر 🧠</div>
                 <div class="upload-subtitle">
-                    ارفع ملف PDF (ملخص، محاضرة، كتاب) وسيقوم التطبيق<br>
-                    بقراءته وتوليد اختبار ذكي لك خلال 2 دقيقة!
+                    ارفع صورة (JPG/PNG) أو ملف PDF.<br>
+                    التطبيق سيقرأ النص من الصور تلقائياً ويصنع لك اختباراً!
                 </div>
                 
                 <div class="drop-zone" id="dropZone">
-                    <i class="fas fa-file-pdf"></i>
-                    <p>اسحب ملف الـ PDF هنا أو اضغط للاختيار</p>
-                    <span>يدعم ملفات PDF فقط</span>
-                    <input type="file" id="fileInput" accept=".pdf">
+                    <i class="fas fa-file-image"></i>
+                    <p>اسحب الصورة أو الـ PDF هنا<br>أو اضغط للاختيار</p>
+                    <span>يدعم: صور، ملفات PDF (نصية أو ممسوحة)</span>
+                    <input type="file" id="fileInput" accept=".pdf, image/*">
                 </div>
             </div>
 
-            <!-- شاشة التحميل (أثناء قراءة الـ PDF) -->
+            <!-- شاشة التحميل (أثناء قراءة الملف أو الصورة) -->
             <div class="loading-screen" id="loadingScreen">
                 <div class="loader"></div>
-                <div class="loading-text" id="loadingText">جاري استخراج النص وتحليل المعلومات...</div>
+                <div class="loading-text" id="loadingText">جاري استخراج النص...</div>
+                <div class="loading-progress" id="loadingProgress"></div>
             </div>
 
             <!-- شاشة الأسئلة -->
@@ -288,6 +291,7 @@
         const uploadScreen = document.getElementById('uploadScreen');
         const loadingScreen = document.getElementById('loadingScreen');
         const loadingText = document.getElementById('loadingText');
+        const loadingProgress = document.getElementById('loadingProgress');
         const questionScreen = document.getElementById('questionScreen');
         
         const dropZone = document.getElementById('dropZone');
@@ -309,7 +313,6 @@
         let questions = [];
         let currentQuestionIndex = 0;
         
-        // مؤقت الـ 2 دقيقة (120 ثانية)
         let globalTimeLeft = 120; 
         let timerInterval;
 
@@ -332,11 +335,6 @@
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
                 gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            } else if (type === 'generate') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.4);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             }
 
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
@@ -362,11 +360,7 @@
             e.preventDefault();
             dropZone.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
-            if (file && file.type === 'application/pdf') {
-                handleFile(file);
-            } else {
-                alert("الرجاء إرفاق ملف PDF صالح.");
-            }
+            if (file) handleFile(file);
         });
 
         fileInput.addEventListener('change', (e) => {
@@ -374,19 +368,64 @@
             if (file) handleFile(file);
         });
 
-        // ================= قراءة الـ PDF =================
+        // ================= التوجيه: صورة أم PDF؟ =================
         function handleFile(file) {
             uploadScreen.style.display = 'none';
             loadingScreen.style.display = 'flex';
+            loadingText.innerHTML = "جاري معالجة الملف...";
+            loadingProgress.textContent = "";
+
+            if (file.type.startsWith('image/')) {
+                // إذا كان صورة، نستخدم Tesseract OCR مباشرة
+                processImageWithOCR(file);
+            } else if (file.type === 'application/pdf') {
+                // إذا كان PDF، نستخدم PDF.js
+                processPDF(file);
+            } else {
+                alert("الرجاء إرفاق صورة (JPG, PNG) أو ملف PDF.");
+                resetToStart();
+            }
+        }
+
+        // ================= معالجة الصور بالـ OCR =================
+        function processImageWithOCR(file) {
+            loadingText.innerHTML = "جاري قراءة النص من الصورة باستخدام الذكاء الاصطناعي...<br><span style='font-size:0.8rem; color:var(--gold);'>(قد يستغرق هذا بضع ثوانٍ)</span>";
             
+            // استخدام Tesseract.js لقراءة اللغة العربية
+            Tesseract.recognize(
+                file,
+                'ara',
+                {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            loadingProgress.textContent = `نسبة القراءة: ${Math.round(m.progress * 100)}%`;
+                        }
+                    }
+                }
+            ).then(({ data: { text } }) => {
+                if (text.trim().length < 50) {
+                    alert("لم نتمكن من قراءة نص واضح من هذه الصورة. تأكد من جودة الصورة ووضوح الخط.");
+                    resetToStart();
+                } else {
+                    processTextAndStartGame(text);
+                }
+            }).catch(err => {
+                console.error(err);
+                alert("حدث خطأ أثناء قراءة الصورة.");
+                resetToStart();
+            });
+        }
+
+        // ================= معالجة ملفات PDF =================
+        function processPDF(file) {
+            loadingText.innerHTML = "جاري استخراج النص من ملف PDF...";
             const fileReader = new FileReader();
             
             fileReader.onload = function() {
                 const typedarray = new Uint8Array(this.result);
                 
-                // استخدام مكتبة PDF.js لقراءة الملف
                 pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-                    let maxPages = Math.min(pdf.numPages, 10); // قراءة أول 10 صفحات كحد أقصى لسرعة الأداء
+                    let maxPages = Math.min(pdf.numPages, 5); // قراءة أول 5 صفحات كحد أقصى
                     let countPromises = [];
                     let fullText = "";
 
@@ -400,11 +439,33 @@
 
                     Promise.all(countPromises).then(function(texts) {
                         fullText = texts.join(" \n ");
-                        processTextAndStartGame(fullText);
+                        
+                        // إذا كان النص المستخرج قصير جداً، فهذا يعني أن الـ PDF عبارة عن صور (ممسوح ضوئياً)
+                        if (fullText.replace(/\s/g, '').length < 100) {
+                            loadingText.innerHTML = "الملف يبدو ممسوحاً ضوئياً (صور).<br>جاري استخدام الذكاء الاصطناعي لقراءته...";
+                            // نأخذ الصفحة الأولى كصورة ونمررها للـ OCR (لتسريع العملية)
+                            pdf.getPage(1).then(page => {
+                                const viewport = page.getViewport({ scale: 1.5 });
+                                const canvas = document.createElement('canvas');
+                                const context = canvas.getContext('2d');
+                                canvas.height = viewport.height;
+                                canvas.width = viewport.width;
+                                
+                                page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
+                                    // تحويل الكانفاس إلى صورة وتمريرها للـ OCR
+                                    canvas.toBlob(blob => {
+                                        processImageWithOCR(blob);
+                                    });
+                                });
+                            });
+                        } else {
+                            // النص جيد، نكمل
+                            processTextAndStartGame(fullText);
+                        }
                     });
                 }).catch(error => {
                     console.error(error);
-                    alert("حدث خطأ أثناء قراءة الملف. تأكد من أن الملف غير محمي بكلمة مرور.");
+                    alert("حدث خطأ أثناء قراءة ملف PDF.");
                     resetToStart();
                 });
             };
@@ -415,25 +476,25 @@
         // ================= الخوارزمية الذكية لصنع الأسئلة =================
         function processTextAndStartGame(text) {
             loadingText.textContent = "جاري صياغة الأسئلة بذكاء...";
+            loadingProgress.textContent = "";
             
-            // مهلة بسيطة لإعطاء انطباع بصري بالمعالجة
             setTimeout(() => {
-                // تنظيف النص وإزالة الأسطر الجديدة المتكررة
+                // تنظيف النص
                 text = text.replace(/\s+/g, ' ').trim();
                 
                 // تقسيم النص إلى جمل
                 const sentences = text.match(/[^.!?]+[.!?]+/g) || text.split('.'); 
                 
-                // تصفية الجمل الطويلة (أكثر من 6 كلمات) لضمان جودتها
+                // تصفية الجمل الطويلة
                 const validSentences = sentences.filter(s => s.trim().split(/\s+/).length >= 6);
                 
-                if (validSentences.length < 3) {
-                    alert("النص المستخرج من الـ PDF قصير جداً أو غير واضح. يرجى استخدام ملف يحتوي على نص حقيقي (وليس صوراً).");
+                if (validSentences.length < 2) {
+                    alert("النص المستخرج قصير جداً لتوليد أسئلة. جرب ملفاً يحتوي على نص أطول.");
                     resetToStart();
                     return;
                 }
 
-                // استخراج الكلمات الفريدة لاستخدامها كإجابات خاطئة
+                // استخراج الكلمات الفريدة
                 const allWords = text.match(/[\u0600-\u06FFa-zA-Z]{4,}/g) || []; 
                 const uniqueWords = [...new Set(allWords.map(w => w.replace(/[^\u0600-\u06FFa-zA-Z]/g, '')))].filter(w => w.length > 3);
 
@@ -442,7 +503,6 @@
                 validSentences.forEach(sentence => {
                     const words = sentence.trim().split(/\s+/);
                     
-                    // البحث عن كلمة عشوائية صالحة (أطول من 4 أحرف)
                     const candidates = words.map((w, i) => ({w, i}))
                         .filter(obj => obj.w.replace(/[^\u0600-\u06FFa-zA-Z]/g, '').length > 4);
                     
@@ -452,7 +512,6 @@
                         
                         let options = [correctWord];
                         
-                        // اختيار 3 كلمات خاطئة من نفس النص
                         let attempts = 0;
                         while(options.length < 4 && attempts < 150) {
                             const randomWord = uniqueWords[Math.floor(Math.random() * uniqueWords.length)];
@@ -462,7 +521,6 @@
                             attempts++;
                         }
                         
-                        // إنشاء السؤال
                         if (options.length === 4) {
                             const questionString = words.map((w, i) => i === targetObj.i ? '<span class="blank-highlight">______</span>' : w).join(' ');
                             
@@ -475,17 +533,15 @@
                     }
                 });
 
-                // خلط الأسئلة وأخذ أول 10 أسئلة لتكون مدة اللعبة مناسبة للمؤقت
                 questions = generatedQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
 
                 if (questions.length > 0) {
-                    playSound('generate');
                     startGame();
                 } else {
                     alert("لم نتمكن من توليد أسئلة من هذا الملف. جرب ملفاً آخر.");
                     resetToStart();
                 }
-            }, 1500); // تأخير 1.5 ثانية لمحاكاة التفكير
+            }, 1000);
         }
 
         // ================= بدء اللعبة =================
@@ -493,7 +549,7 @@
             score = 0;
             lives = 3;
             currentQuestionIndex = 0;
-            globalTimeLeft = 120; // 2 دقيقة
+            globalTimeLeft = 120; 
             isPlaying = true;
             
             scoreVal.textContent = score;
@@ -505,7 +561,6 @@
             hud.style.display = 'flex';
             endScreen.classList.add('hidden');
             
-            // بدء المؤقت العام
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 globalTimeLeft--;
@@ -528,7 +583,6 @@
             const seconds = globalTimeLeft % 60;
             globalTimerEl.innerHTML = `<i class="fas fa-stopwatch"></i> ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            // تحويل اللون للأحمر إذا بقي أقل من 20 ثانية
             if (globalTimeLeft <= 20) {
                 globalTimerEl.classList.add('danger');
             } else {
@@ -568,7 +622,6 @@
                 playSound('correct');
                 clickedBtn.classList.add('correct');
                 
-                // النقاط تعتمد على الوقت المتبقي (مكافأة السرعة)
                 const points = Math.round(10 + (globalTimeLeft * 0.2)); 
                 score += points;
                 scoreVal.textContent = score;
@@ -649,9 +702,6 @@
             setTimeout(() => el.remove(), 800);
         }
 
-        // العودة للبداية
-        restartBtn.addEventListener('click', resetToStart);
-
         function resetToStart() {
             endScreen.classList.add('hidden');
             loadingScreen.style.display = 'none';
@@ -662,6 +712,7 @@
             clearInterval(timerInterval);
         }
 
+        restartBtn.addEventListener('click', resetToStart);
         document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
