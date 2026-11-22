@@ -15,7 +15,7 @@
     <style>
         :root {
             --bg-dark: #05050a;
-            --bg-panel: rgba(20, 25, 40, 0.82);
+            --bg-panel: rgba(20, 25, 40, 0.85);
             --accent: #00f3ff;
             --accent-secondary: #ff0055;
             --accent-glow: rgba(0, 243, 255, 0.32);
@@ -73,7 +73,6 @@
             background-image: 
                 radial-gradient(circle at 15% 50%, var(--bg-glow-1), transparent 28%),
                 radial-gradient(circle at 85% 30%, var(--bg-glow-2), transparent 28%);
-            transition: background 0.25s ease;
         }
 
         .app-container {
@@ -84,34 +83,16 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            background: rgba(6, 9, 16, 0.92);
+            background: rgba(6, 9, 16, 0.94);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             box-shadow: 0 0 50px var(--accent-glow);
             border-left: 1px solid rgba(255,255,255,0.06);
             border-right: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
         }
 
-        /* ===== شريط حقوق المطور ===== */
-        .dev-banner {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.09));
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            padding: 8px 10px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #fff;
-            flex-shrink: 0;
-            z-index: 10;
-        }
-        .dev-banner span { 
-            color: var(--accent);
-            font-size: 0.95rem;
-            font-weight: 900;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        /* علامة التوثيق الزرقاء وشارة التوثيق الذهبية المميزة للمطور/الإداري */
+        /* شارات التوثيق */
         .verified-badge {
             display: inline-flex;
             align-items: center;
@@ -147,7 +128,7 @@
             flex-shrink: 0;
         }
 
-        /* ===== الشاشات ===== */
+        /* الشاشات */
         .screen {
             display: none;
             flex-direction: column;
@@ -157,7 +138,7 @@
         }
         .screen.active { display: flex; }
 
-        /* ===== 1. شاشة تسجيل الدخول / إنشاء الحساب ===== */
+        /* 1. شاشة تسجيل الدخول */
         #authScreen {
             padding: 20px;
             justify-content: center;
@@ -172,7 +153,6 @@
             border-radius: 24px;
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-            backdrop-filter: blur(15px);
             text-align: center;
         }
 
@@ -210,7 +190,6 @@
             font-weight: 800;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.2s;
         }
         .auth-tab.active {
             background: rgba(255, 255, 255, 0.1);
@@ -238,7 +217,6 @@
             color: #fff;
             font-size: 0.95rem;
             outline: none;
-            transition: 0.2s;
         }
         .input-group input:focus {
             border-color: var(--accent);
@@ -258,15 +236,15 @@
         }
 
         .btn {
-            padding: 13px;
-            font-size: 0.98rem;
+            padding: 12px;
+            font-size: 0.95rem;
             font-weight: 900;
             color: #05050a; 
             background: linear-gradient(135deg, var(--accent), #0088ff);
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.15s;
             width: 100%;
             display: flex;
             align-items: center;
@@ -274,13 +252,13 @@
             gap: 8px;
             box-shadow: 0 5px 15px var(--accent-glow);
         }
-        .btn:hover { transform: translateY(-1px); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .btn-outline { 
             background: transparent;
             color: var(--accent-secondary);
-            border: 2px solid var(--accent-secondary); 
+            border: 2px solid var(--accent-secondary);
+            box-shadow: none;
         }
         .btn-outline:hover {
             background: var(--accent-secondary);
@@ -293,175 +271,123 @@
             box-shadow: 0 5px 15px rgba(29, 155, 240, 0.35);
         }
 
-        /* ===== 2. شاشة التطبيق الرئيسية والتبويبات ===== */
-        .top-bar {
-            background: rgba(15, 20, 32, 0.95);
-            backdrop-filter: blur(12px);
-            padding: 12px 16px;
+        /* 2. الشاشة الرئيسية مثل تطبيقات التواصل */
+        .main-header {
+            background: rgba(13, 18, 30, 0.97);
+            padding: 12px 14px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             flex-shrink: 0;
+            gap: 10px;
         }
-        .user-profile {
+
+        .header-start {
             display: flex;
             align-items: center;
             gap: 10px;
             min-width: 0;
         }
-        .avatar-circle {
-            width: 44px;
-            height: 44px;
-            border-radius: 15px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
-            display: flex;
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            color: #05050a;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-            box-shadow: 0 4px 14px var(--accent-glow);
-        }
-        .user-meta .uname {
-            font-weight: 900;
-            font-size: 0.94rem;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .user-meta .u-bio {
-            font-size: 0.74rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 2px;
-        }
-        .user-meta .u-bio:hover { color: var(--accent); }
-
-        .btn-logout {
-            background: rgba(255, 0, 85, 0.12);
-            color: #ff4d79;
-            border: 1px solid rgba(255, 0, 85, 0.35);
-            padding: 7px 12px;
-            border-radius: 11px;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 0.8rem;
-            transition: 0.2s;
             flex-shrink: 0;
         }
-        .btn-logout:hover { background: #ff0055; color: #fff; }
-
-        .home-tabs {
-            display: flex;
-            gap: 4px;
-            padding: 8px 10px;
-            background: rgba(11, 15, 25, 0.96);
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            flex-shrink: 0;
-            overflow-x: auto;
-        }
-        .home-tabs::-webkit-scrollbar { display: none; }
-        .home-tab {
-            flex: 1;
-            min-width: 72px;
-            padding: 9px 6px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 12px;
-            border: 1px solid transparent;
-            transition: 0.18s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
-        .home-tab i { font-size: 0.92rem; }
-        .home-tab.active {
-            color: #05050a;
-            background: linear-gradient(135deg, var(--accent), #0099ff);
-            border-color: rgba(255,255,255,0.25);
-            box-shadow: 0 4px 14px var(--accent-glow);
+        .icon-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
-        .home-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .home-content::-webkit-scrollbar { width: 4px; }
-        .home-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-        .section-banner-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 18px;
-            padding: 14px 16px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .section-banner-card h4 {
-            font-size: 0.92rem;
+        .main-brand-title {
+            font-size: 1.15rem;
             font-weight: 900;
             color: #fff;
-            margin-bottom: 2px;
-        }
-        .section-banner-card p {
-            font-size: 0.76rem;
-            color: var(--text-muted);
-        }
-        .pill-tag {
-            background: rgba(255, 215, 0, 0.14);
-            color: #ffd700;
-            border: 1px solid rgba(255, 215, 0, 0.35);
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 900;
             white-space: nowrap;
         }
-
-        .add-friend-box {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
+        .main-brand-title span {
+            color: var(--accent);
         }
-        .add-friend-box input {
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* شريط البحث الفوري في القائمة الرئيسية */
+        .home-search-bar {
+            display: none;
+            padding: 8px 14px;
+            background: rgba(10, 14, 24, 0.98);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .home-search-bar.active { display: flex; }
+        .home-search-bar input {
             flex: 1;
-            padding: 11px 14px;
+            padding: 9px 12px;
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(0,0,0,0.45);
+            background: rgba(0,0,0,0.5);
             color: #fff;
             outline: none;
             font-size: 0.9rem;
         }
-        .add-friend-box input:focus { border-color: var(--accent); }
-        .add-friend-box button {
-            padding: 0 16px;
+        .home-search-bar input:focus { border-color: var(--accent); }
+
+        /* قائمة الدردشات الرئيسية */
+        .chats-list-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 14px 80px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chats-list-area::-webkit-scrollbar { width: 4px; }
+        .chats-list-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .quick-add-inline {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .quick-add-inline input {
+            flex: 1;
+            padding: 10px 13px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.11);
+            background: rgba(0,0,0,0.45);
+            color: #fff;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .quick-add-inline input:focus { border-color: var(--accent); }
+        .quick-add-inline button {
+            padding: 0 15px;
             border-radius: 12px;
             border: none;
             background: linear-gradient(135deg, var(--accent), #0088ff);
             color: #05050a;
             font-weight: 900;
+            font-size: 0.85rem;
             cursor: pointer;
-            font-size: 0.88rem;
             white-space: nowrap;
         }
 
-        .friend-item {
+        .chat-row-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -471,29 +397,29 @@
             border-radius: 16px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: 0.15s;
+            transition: 0.14s;
         }
-        .friend-item:hover {
+        .chat-row-card:hover {
             background: rgba(255,255,255,0.08);
             border-color: var(--accent);
         }
-        .friend-left {
+        .row-left {
             display: flex;
             align-items: center;
             gap: 12px;
             min-width: 0;
         }
-        .friend-avatar {
+        .row-avatar {
             position: relative;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
             background: rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--accent);
             flex-shrink: 0;
         }
@@ -511,7 +437,7 @@
             background: var(--neon-green);
             box-shadow: 0 0 8px var(--neon-green);
         }
-        .friend-info .fname {
+        .row-info .rname {
             font-weight: 800;
             font-size: 0.94rem;
             color: #fff;
@@ -519,16 +445,16 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        .friend-info .flast {
+        .row-info .rlast {
             font-size: 0.78rem;
             color: var(--text-muted);
             margin-top: 2px;
-            max-width: 220px;
+            max-width: 225px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .friend-right {
+        .row-right {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -547,6 +473,223 @@
             padding: 0 6px;
         }
 
+        /* زر عائم سريع للغرف الفورية */
+        .fab-room-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--accent), #0077ff);
+            color: #05050a;
+            border: none;
+            font-size: 1.15rem;
+            font-weight: 900;
+            box-shadow: 0 8px 24px var(--accent-glow);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 12;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 35px 15px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* 3. القائمة الجانبية المتكاملة (Drawer) */
+        .drawer-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 40;
+            backdrop-filter: blur(3px);
+        }
+        .drawer-backdrop.active { display: block; }
+
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 84%;
+            max-width: 340px;
+            height: 100dvh;
+            background: #0b101d;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            z-index: 45;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.22s ease;
+            box-shadow: -10px 0 35px rgba(0,0,0,0.7);
+        }
+        .side-drawer.open { right: 0; }
+
+        .drawer-header {
+            padding: 18px 16px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .drawer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: #05050a;
+            font-weight: 900;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .drawer-user-info {
+            min-width: 0;
+            flex: 1;
+        }
+        .drawer-user-name {
+            font-weight: 900;
+            font-size: 0.95rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .drawer-user-bio {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .drawer-user-bio:hover { color: var(--accent); }
+
+        .drawer-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .drawer-item {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.14s;
+        }
+        .drawer-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent);
+        }
+        .drawer-item-left {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+        .drawer-item i.main-icon {
+            color: var(--accent);
+            width: 18px;
+            text-align: center;
+        }
+
+        .drawer-footer {
+            padding: 14px 16px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.25);
+        }
+
+        .btn-confirm-logout {
+            width: 100%;
+            padding: 11px;
+            border-radius: 12px;
+            background: rgba(255, 0, 85, 0.14);
+            border: 1px solid rgba(255, 0, 85, 0.45);
+            color: #ff5c87;
+            font-weight: 900;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-confirm-logout:hover {
+            background: #ff0055;
+            color: #fff;
+        }
+
+        /* نوافذ الميزات الفرعية داخل القائمة الجانبية */
+        .subpanel-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 8, 15, 0.94);
+            z-index: 55;
+            flex-direction: column;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+        .subpanel-modal.active { display: flex; }
+
+        .subpanel-header {
+            padding: 13px 16px;
+            background: rgba(15, 20, 32, 0.98);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .subpanel-title {
+            font-weight: 900;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+        .subpanel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+            line-height: 1.75;
+        }
+        .info-card h4 {
+            color: var(--accent);
+            font-size: 0.98rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .info-card p {
+            color: #e2e8f0;
+            font-size: 0.88rem;
+        }
+
         .theme-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -559,12 +702,10 @@
             padding: 16px;
             cursor: pointer;
             text-align: center;
-            transition: 0.15s;
         }
         .theme-card.active {
             border-color: var(--accent);
             background: rgba(255,255,255,0.09);
-            box-shadow: 0 0 18px var(--accent-glow);
         }
         .theme-swatch {
             width: 42px;
@@ -577,12 +718,6 @@
             font-size: 0.9rem;
         }
 
-        .admin-panel-box {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 18px;
-            padding: 16px;
-        }
         .admin-actions-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -597,30 +732,58 @@
             min-height: 20px;
         }
 
-        .empty-state {
+        /* نافذة تأكيد الخروج */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            z-index: 70;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .confirm-modal.active { display: flex; }
+        .confirm-box {
+            width: 100%;
+            max-width: 340px;
+            background: #101626;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 22px 18px;
             text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+        }
+        .confirm-box h4 {
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .confirm-box p {
+            font-size: 0.85rem;
             color: var(--text-muted);
-            padding: 35px 15px;
-            font-size: 0.9rem;
-            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+        .confirm-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
-        /* ===== 3. شاشة الدردشة ===== */
+        /* 4. شاشة الدردشة */
         #chatScreen { background: transparent; }
 
         .chat-header {
-            background: rgba(15, 20, 32, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 20, 32, 0.96);
             padding: 11px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.07);
             flex-shrink: 0;
-            z-index: 5;
             gap: 8px;
         }
-        
         .chat-header-info {
             display: flex;
             flex-direction: column;
@@ -653,28 +816,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .chat-header-actions {
             display: flex;
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
         }
-        .icon-btn-sm {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-        }
-        .icon-btn-sm:hover { border-color: var(--accent); color: var(--accent); }
-
         .btn-leave {
             background: rgba(255, 0, 85, 0.12);
             color: #ff4d79;
@@ -684,7 +831,6 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 0.8rem;
-            transition: 0.15s;
         }
         .btn-leave:hover { background: #ff0055; color: #fff; }
 
@@ -737,7 +883,6 @@
             gap: 14px;
             -webkit-overflow-scrolling: touch;
         }
-        
         .chat-messages::-webkit-scrollbar { width: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
@@ -745,13 +890,12 @@
             display: flex;
             flex-direction: column;
             max-width: 85%;
-            animation: slideUp 0.18s ease-out;
+            animation: slideUp 0.15s ease-out;
         }
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
         .message-wrapper.me { align-self: flex-end; }
         .message-wrapper.other { align-self: flex-start; }
 
@@ -797,7 +941,6 @@
             color: #fff;
             border-bottom-left-radius: 4px;
             border: 1px solid rgba(255,255,255,0.06);
-            backdrop-filter: blur(5px);
         }
 
         .msg-image {
@@ -846,7 +989,6 @@
             cursor: pointer;
             font-size: 0.72rem;
             padding: 2px 4px;
-            transition: 0.15s;
         }
         .msg-action-btn:hover { color: var(--accent); }
         .msg-action-btn.del:hover { color: #ff4d79; }
@@ -865,7 +1007,6 @@
             font-size: 0.74rem;
             cursor: pointer;
             color: #fff;
-            transition: 0.15s;
         }
         .reaction-chip.active {
             background: rgba(255, 255, 255, 0.18);
@@ -915,11 +1056,6 @@
             padding: 3px 9px;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: 0.15s;
-        }
-        .quick-emoji-btn:hover {
-            transform: scale(1.1);
-            border-color: var(--accent);
         }
 
         .typing-indicator {
@@ -955,7 +1091,6 @@
         .chat-input-area {
             padding: 10px 15px 12px;
             background: rgba(15, 20, 30, 0.97);
-            backdrop-filter: blur(12px);
             display: flex;
             gap: 7px;
             align-items: center;
@@ -976,17 +1111,11 @@
             align-items: center;
             font-size: 0.98rem;
             flex-shrink: 0;
-            transition: 0.15s;
-        }
-        .btn-attach:hover {
-            border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.14);
         }
         .btn-attach.recording {
             background: rgba(255, 0, 85, 0.22);
             border-color: #ff4d79;
             color: #ff4d79;
-            animation: pulse 1s infinite;
         }
 
         .input-wrapper {
@@ -997,7 +1126,6 @@
             border: 1px solid rgba(255,255,255,0.1);
             padding: 4px 12px;
             align-items: center;
-            transition: 0.2s;
         }
         .input-wrapper:focus-within {
             border-color: var(--accent);
@@ -1028,11 +1156,8 @@
             align-items: center;
             font-size: 1.15rem;
             flex-shrink: 0;
-            transition: 0.2s;
             box-shadow: 0 0 15px var(--accent-glow);
         }
-        .btn-send:hover { transform: scale(1.05); }
-        .btn-send:active { transform: scale(0.92); }
 
         /* عارض الصورة المكبرة */
         .lightbox-modal {
@@ -1040,7 +1165,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.92);
-            z-index: 999;
+            z-index: 80;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -1051,7 +1176,6 @@
             max-width: 100%;
             max-height: 88dvh;
             border-radius: 14px;
-            box-shadow: 0 0 35px rgba(0,0,0,0.8);
         }
 
         .divider {
@@ -1075,11 +1199,6 @@
 
     <div class="app-container">
         
-        <!-- شريط حقوق المطور -->
-        <div class="dev-banner">
-            تطوير المبدع: <span>عبدالرحيم الجياشي الشمري</span>
-        </div>
-
         <!-- 1. شاشة تسجيل الدخول / إنشاء الحساب -->
         <div class="screen active" id="authScreen">
             <div class="auth-card">
@@ -1109,144 +1228,124 @@
             </div>
         </div>
 
-        <!-- 2. شاشة التطبيق الرئيسية -->
+        <!-- 2. الشاشة الرئيسية (الدردشات + أيقونة البحث + القائمة الجانبية) -->
         <div class="screen" id="homeScreen">
-            <div class="top-bar">
-                <div class="user-profile">
-                    <div class="avatar-circle" id="myAvatar">ع</div>
-                    <div class="user-meta">
-                        <div class="uname">
-                            <span id="myDisplayName">المستخدم</span>
-                            <span id="myBadgesContainer"></span>
-                        </div>
-                        <div class="u-bio" id="myBioDisplay" onclick="editMyBio()">
-                            <i class="fas fa-pen" style="font-size:10px;"></i>
-                            <span id="myBioText">متاح للدردشة ⚡</span>
-                        </div>
-                    </div>
+            <div class="main-header">
+                <div class="header-start">
+                    <button type="button" class="icon-btn" title="القائمة الجانبية" onclick="openSideDrawer()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="main-brand-title">الدردشة <span>الأسطورية</span></div>
                 </div>
-                <button class="btn-logout" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> خروج</button>
-            </div>
 
-            <div class="home-tabs">
-                <div class="home-tab active" id="homeTabFriends" onclick="switchHomeTab('friends')">
-                    <i class="fas fa-user-friends"></i> الأصدقاء
-                </div>
-                <div class="home-tab" id="homeTabFeatured" onclick="switchHomeTab('featured')">
-                    <i class="fas fa-crown"></i> المميزون
-                </div>
-                <div class="home-tab" id="homeTabRooms" onclick="switchHomeTab('rooms')">
-                    <i class="fas fa-hashtag"></i> الغرف
-                </div>
-                <div class="home-tab" id="homeTabThemes" onclick="switchHomeTab('themes')">
-                    <i class="fas fa-palette"></i> الثيمات
-                </div>
-                <div class="home-tab" id="homeTabAdmin" style="display:none;" onclick="switchHomeTab('admin')">
-                    <i class="fas fa-shield-halved"></i> التوثيق
+                <div class="header-actions">
+                    <button type="button" class="icon-btn" title="بحث في الدردشات" onclick="toggleHomeSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- تبويب الأصدقاء -->
-            <div class="home-content" id="friendsSection">
-                <div class="add-friend-box">
-                    <input type="text" id="friendUsernameInput" placeholder="أدخل اسم مستخدم صديقك..." maxlength="20">
-                    <button onclick="addFriend()"><i class="fas fa-user-plus"></i> إضافة</button>
+            <div class="home-search-bar" id="homeSearchBar">
+                <input type="text" id="homeSearchInput" placeholder="ابحث عن صديق أو آخر رسالة..." oninput="renderChatsList()">
+                <button type="button" class="icon-btn" onclick="toggleHomeSearch(false)"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="chats-list-area" id="chatsListArea">
+                <div class="quick-add-inline">
+                    <input type="text" id="friendUsernameInput" placeholder="إضافة صديق باسم المستخدم..." maxlength="20">
+                    <button type="button" onclick="addFriend()"><i class="fas fa-user-plus"></i> إضافة</button>
                 </div>
-                <div id="friendsListContainer">
-                    <div class="empty-state">جاري تحميل قائمة الأصدقاء...</div>
+
+                <div id="chatsListContainer">
+                    <div class="empty-state">جاري تحميل الدردشات...</div>
                 </div>
             </div>
 
-            <!-- تبويب المميزون والموثقون -->
-            <div class="home-content" id="featuredSection" style="display:none;">
-                <div class="section-banner-card">
-                    <div>
-                        <h4>الحسابات المميزة والموثقة</h4>
-                        <p>تواصل مباشرة مع المطور والحسابات الموثقة داخل التطبيق</p>
-                    </div>
-                    <span class="pill-tag"><i class="fas fa-crown"></i> VIP</span>
-                </div>
-                <div id="featuredListContainer">
-                    <div class="empty-state">جاري تحميل الحسابات المميزة...</div>
-                </div>
-            </div>
+            <button type="button" class="fab-room-btn" title="الغرف الفورية" onclick="openSubpanel('rooms')">
+                <i class="fas fa-hashtag"></i>
+            </button>
+        </div>
 
-            <!-- تبويب غرف الكود -->
-            <div class="home-content" id="roomsSection" style="display:none;">
-                <div class="section-banner-card">
-                    <div>
-                        <h4>غرف الدردشة الفورية</h4>
-                        <p>أنشئ غرفة بكود سريع أو انضم إلى غرفة موجودة فوراً</p>
+        <!-- 3. القائمة الجانبية المتكاملة -->
+        <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeSideDrawer(true)"></div>
+        <aside class="side-drawer" id="sideDrawer">
+            <div class="drawer-header">
+                <div class="drawer-avatar" id="drawerAvatar">ع</div>
+                <div class="drawer-user-info">
+                    <div class="drawer-user-name">
+                        <span id="drawerDisplayName">المستخدم</span>
+                        <span id="drawerBadgesContainer"></span>
                     </div>
-                    <span class="pill-tag"><i class="fas fa-bolt"></i> فوري</span>
-                </div>
-                <div class="input-group">
-                    <label>إنشاء غرفة سريعة بكود عشوائي:</label>
-                    <button class="btn" onclick="createQuickRoom()"><i class="fas fa-rocket"></i> إنشاء غرفة جديدة</button>
-                </div>
-
-                <div class="divider"><span>أو</span></div>
-
-                <div class="input-group">
-                    <label>الدخول إلى غرفة موجودة بالكود:</label>
-                    <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform:uppercase; text-align:center;" maxlength="6">
-                </div>
-                <button class="btn btn-outline" onclick="joinQuickRoom()"><i class="fas fa-sign-in-alt"></i> انضم للغرفة</button>
-            </div>
-
-            <!-- تبويب الثيمات -->
-            <div class="home-content" id="themesSection" style="display:none;">
-                <div class="section-banner-card">
-                    <div>
-                        <h4>مظاهر التطبيق (الثيمات)</h4>
-                        <p>اختر الطابع اللوني الذي يناسب ذوقك ويُحفظ تلقائياً</p>
-                    </div>
-                    <span class="pill-tag"><i class="fas fa-palette"></i> ألوان</span>
-                </div>
-                <div class="theme-grid">
-                    <div class="theme-card active" data-theme-option="blue" onclick="applyTheme('blue')">
-                        <div class="theme-swatch" style="background:linear-gradient(135deg,#00f3ff,#0055ff);"></div>
-                        <div class="theme-name">نيون أزرق</div>
-                    </div>
-                    <div class="theme-card" data-theme-option="purple" onclick="applyTheme('purple')">
-                        <div class="theme-swatch" style="background:linear-gradient(135deg,#b84dff,#ff2a85);"></div>
-                        <div class="theme-name">بنفسجي ملكي</div>
-                    </div>
-                    <div class="theme-card" data-theme-option="emerald" onclick="applyTheme('emerald')">
-                        <div class="theme-swatch" style="background:linear-gradient(135deg,#00f5a0,#009e60);"></div>
-                        <div class="theme-name">أخضر زمردي</div>
-                    </div>
-                    <div class="theme-card" data-theme-option="gold" onclick="applyTheme('gold')">
-                        <div class="theme-swatch" style="background:linear-gradient(135deg,#ffd166,#d48806);"></div>
-                        <div class="theme-name">ذهبي VIP</div>
+                    <div class="drawer-user-bio" onclick="editMyBio()">
+                        <i class="fas fa-pen" style="font-size:10px;"></i>
+                        <span id="drawerBioText">متاح للدردشة ⚡</span>
                     </div>
                 </div>
             </div>
 
-            <!-- لوحة التحكم السرية للمدير / المطور -->
-            <div class="home-content" id="adminSection" style="display:none;">
-                <div class="admin-panel-box">
-                    <div style="font-weight:900; font-size:1rem; color:var(--accent); margin-bottom:10px;">
-                        <i class="fas fa-crown" style="color:#ffd700;"></i> لوحة إدارة التوثيق (المطور: abdulrahim)
-                    </div>
-                    <div class="input-group" style="margin-bottom:8px;">
-                        <label>اسم المستخدم المراد توثيقه أو إلغاء توثيقه:</label>
-                        <input type="text" id="verifyTargetInput" placeholder="مثال: ali_ahmed" maxlength="20">
-                    </div>
-                    <div class="admin-actions-row">
-                        <button type="button" class="btn btn-verify-blue" onclick="setVerificationStatus(true)">
-                            <i class="fas fa-check-circle"></i> توثيق الحساب
-                        </button>
-                        <button type="button" class="btn btn-outline" onclick="setVerificationStatus(false)">
-                            <i class="fas fa-xmark-circle"></i> إلغاء التوثيق
-                        </button>
-                    </div>
-                    <div class="admin-status-msg" id="adminStatusMsg"></div>
+            <div class="drawer-menu">
+                <button type="button" class="drawer-item" onclick="openSubpanel('featured')">
+                    <span class="drawer-item-left"><i class="fas fa-crown main-icon"></i> الحسابات المميزة</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
+                <button type="button" class="drawer-item" onclick="openSubpanel('rooms')">
+                    <span class="drawer-item-left"><i class="fas fa-hashtag main-icon"></i> غرف الكود الفورية</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
+                <button type="button" class="drawer-item" onclick="openSubpanel('themes')">
+                    <span class="drawer-item-left"><i class="fas fa-palette main-icon"></i> الثيمات والمظهر</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
+                <button type="button" class="drawer-item" id="drawerAdminItem" style="display:none;" onclick="openSubpanel('admin')">
+                    <span class="drawer-item-left"><i class="fas fa-shield-halved main-icon" style="color:#ffd700;"></i> إدارة التوثيق</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
+                <div class="divider" style="margin:8px 0;"><span>معلومات</span></div>
+
+                <button type="button" class="drawer-item" onclick="openSubpanel('aboutApp')">
+                    <span class="drawer-item-left"><i class="fas fa-circle-info main-icon"></i> معلومات عن التطبيق</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
+                <button type="button" class="drawer-item" onclick="openSubpanel('aboutDev')">
+                    <span class="drawer-item-left"><i class="fas fa-code main-icon"></i> معلومات عن المطور</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+            </div>
+
+            <div class="drawer-footer">
+                <button type="button" class="btn-confirm-logout" onclick="askLogoutConfirm()">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- لوحات المميزات والمعلومات الفرعية -->
+        <div class="subpanel-modal" id="subpanelModal">
+            <div class="subpanel-header">
+                <span class="subpanel-title" id="subpanelTitle">المميزات</span>
+                <button type="button" class="icon-btn" onclick="closeSubpanel(true)"><i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="subpanel-body" id="subpanelBody"></div>
+        </div>
+
+        <!-- نافذة تأكيد الخروج -->
+        <div class="confirm-modal" id="confirmLogoutModal">
+            <div class="confirm-box">
+                <h4>تأكيد الخروج</h4>
+                <p>هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟</p>
+                <div class="confirm-btns">
+                    <button type="button" class="btn btn-outline" onclick="closeLogoutConfirm()">إلغاء</button>
+                    <button type="button" class="btn" style="background:linear-gradient(135deg,#ff0055,#b8003c); color:#fff;" onclick="executeLogout()">تأكيد الخروج</button>
                 </div>
             </div>
         </div>
 
-        <!-- 3. شاشة الدردشة -->
+        <!-- 4. شاشة الدردشة -->
         <div class="screen" id="chatScreen">
             <div class="chat-header">
                 <div class="chat-header-info">
@@ -1260,7 +1359,7 @@
                     <span class="chat-status" id="chatPartnerStatus">متصل الآن</span>
                 </div>
                 <div class="chat-header-actions">
-                    <button type="button" class="icon-btn-sm" title="بحث في الرسائل" onclick="toggleSearchBar()">
+                    <button type="button" class="icon-btn" title="بحث في الرسائل" onclick="toggleSearchBar()">
                         <i class="fas fa-search"></i>
                     </button>
                     <button type="button" class="btn-leave" onclick="backToHome(true)">
@@ -1271,7 +1370,7 @@
 
             <div class="search-bar-box" id="searchBarBox">
                 <input type="text" id="chatSearchInput" placeholder="ابحث داخل هذه الدردشة..." oninput="renderMessagesList()">
-                <button type="button" class="icon-btn-sm" onclick="toggleSearchBar(true)"><i class="fas fa-times"></i></button>
+                <button type="button" class="icon-btn" onclick="toggleSearchBar(false)"><i class="fas fa-times"></i></button>
             </div>
 
             <div class="pinned-bar" id="pinnedBar">
@@ -1331,7 +1430,7 @@
                     <i class="fas fa-microphone"></i>
                 </button>
                 <div class="input-wrapper">
-                    <input type="text" id="chatInput" placeholder="اضغط هنا لكتابة رسالة..." autocomplete="off">
+                    <input type="text" id="chatInput" placeholder="اكتب رسالة..." autocomplete="off">
                 </div>
                 <button type="button" class="btn-send" id="sendChatBtn" title="إرسال"><i class="fas fa-paper-plane"></i></button>
             </div>
@@ -1339,7 +1438,7 @@
 
     </div>
 
-    <!-- نافذة معاينة الصورة بحجم كامل -->
+    <!-- عارض الصورة المكبرة -->
     <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(true)">
         <img id="lightboxImg" src="" alt="صورة مكبرة">
     </div>
@@ -1358,7 +1457,6 @@
             appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
         };
 
-        // حساب المطور / الإداري الأساسي
         const ADMIN_USERNAMES = ['abdulrahim'];
 
         if (!firebase.apps.length) {
@@ -1378,6 +1476,7 @@
         let activeChatType = null;
         let activeRoomCode = null;
         let activePartner = null;
+        let activeSubpanelType = null;
         let replyingTo = null;
         let editingMsgId = null;
         let pendingCompressedImage = null;
@@ -1385,6 +1484,7 @@
         let latestMessagesData = null;
         let userBadgeCache = {};
         let friendsCache = {};
+        let featuredUsersCache = [];
         let isSendingMessage = false;
         let ignoreNextPopState = false;
 
@@ -1440,11 +1540,22 @@
             }
             dismissKeyboard();
 
+            if (document.getElementById('confirmLogoutModal').classList.contains('active')) {
+                closeLogoutConfirm();
+                return;
+            }
             if (document.getElementById('lightboxModal').classList.contains('active')) {
                 closeLightbox(false);
                 return;
             }
-
+            if (document.getElementById('subpanelModal').classList.contains('active')) {
+                closeSubpanel(false);
+                return;
+            }
+            if (document.getElementById('sideDrawer').classList.contains('open')) {
+                closeSideDrawer(false);
+                return;
+            }
             if (chatScreen.classList.contains('active')) {
                 if (document.getElementById('searchBarBox').classList.contains('active')) {
                     toggleSearchBar(false);
@@ -1511,6 +1622,15 @@
             return badges;
         }
 
+        function refreshUserIdentityUI() {
+            const bio = document.getElementById('drawerBioText').textContent;
+            document.getElementById('drawerDisplayName').textContent = `${currentDisplayName || currentUser} (@${currentUser})`;
+            document.getElementById('drawerBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
+            document.getElementById('drawerAvatar').textContent = (currentDisplayName || currentUser || 'ع').charAt(0).toUpperCase();
+            document.getElementById('drawerAdminItem').style.display = isCurrentUserAdmin() ? 'flex' : 'none';
+            document.getElementById('drawerBioText').textContent = bio;
+        }
+
         async function setVerificationStatus(status) {
             const input = document.getElementById('verifyTargetInput');
             const statusMsg = document.getElementById('adminStatusMsg');
@@ -1531,24 +1651,24 @@
             const snap = await ref.once('value');
             if (!snap.exists()) {
                 statusMsg.style.color = '#ff4d79';
-                statusMsg.textContent = `الحساب (@${targetKey}) غير موجود في قاعدة البيانات.`;
+                statusMsg.textContent = `الحساب (@${targetKey}) غير موجود.`;
                 return;
             }
 
             const isVipTarget = !!(snap.val()?.vipAdmin || isAdminUsername(targetKey));
             await ref.update({ verified: !!(status || isVipTarget) });
-            const existing = userBadgeCache[targetKey] || { verified: false, vipAdmin: isVipTarget };
-            existing.verified = !!(status || isVipTarget);
-            existing.vipAdmin = isVipTarget;
-            userBadgeCache[targetKey] = existing;
+            userBadgeCache[targetKey] = {
+                verified: !!(status || isVipTarget),
+                vipAdmin: isVipTarget
+            };
 
             if (targetKey === currentUser) {
-                currentUserVerified = existing.verified;
-                document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
+                currentUserVerified = userBadgeCache[targetKey].verified;
+                refreshUserIdentityUI();
             }
             statusMsg.style.color = 'var(--neon-green)';
             statusMsg.textContent = status
-                ? `تم توثيق الحساب (@${targetKey}) بالعلامة الزرقاء بنجاح.`
+                ? `تم توثيق الحساب (@${targetKey}) بنجاح.`
                 : (isVipTarget ? `حساب المطور (@${targetKey}) يحتفظ بشاراته المميزة.` : `تم إلغاء توثيق الحساب (@${targetKey}).`);
             dismissKeyboard();
         }
@@ -1571,15 +1691,10 @@
         }
 
         // ==========================================
-        // 3. تسجيل الرسائل الصوتية القصيرة
+        // 3. تسجيل الرسائل الصوتية وضغط الصور
         // ==========================================
         function pickSupportedAudioMimeType() {
-            const candidates = [
-                'audio/webm;codecs=opus',
-                'audio/webm',
-                'audio/ogg;codecs=opus',
-                'audio/mp4'
-            ];
+            const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
             if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported) return '';
             for (const mime of candidates) {
                 if (MediaRecorder.isTypeSupported(mime)) return mime;
@@ -1590,7 +1705,7 @@
         async function toggleVoiceRecording() {
             dismissKeyboard();
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
-                return alert('متصفحك لا يدعم تسجيل الرسائل الصوتية.');
+                return;
             }
 
             if (isRecordingVoice && mediaRecorder) {
@@ -1614,9 +1729,7 @@
                 chatInput.placeholder = 'جاري التسجيل... 0ث';
 
                 mediaRecorder.ondataavailable = (e) => {
-                    if (e.data && e.data.size > 0) {
-                        audioChunks.push(e.data);
-                    }
+                    if (e.data && e.data.size > 0) audioChunks.push(e.data);
                 };
 
                 mediaRecorder.onstop = () => {
@@ -1627,17 +1740,11 @@
                     const recBtn = document.getElementById('voiceRecordBtn');
                     recBtn.classList.remove('recording');
                     recBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-                    chatInput.placeholder = 'اضغط هنا لكتابة رسالة...';
+                    chatInput.placeholder = 'اكتب رسالة...';
 
                     const finalMime = mediaRecorder.mimeType || 'audio/webm';
                     const blob = new Blob(audioChunks, { type: finalMime });
-                    if (blob.size < 200 || recordingSeconds < 1) {
-                        return alert('الرسالة الصوتية قصيرة جداً أو فارغة.');
-                    }
-
-                    if (blob.size > 450000) {
-                        return alert('الرسالة الصوتية أطول من الحد المسموح، يرجى تسجيل مقطع أقصر.');
-                    }
+                    if (blob.size < 200 || recordingSeconds < 1 || blob.size > 450000) return;
 
                     const reader = new FileReader();
                     reader.onloadend = () => {
@@ -1648,7 +1755,7 @@
                             sizeKb
                         };
                         document.getElementById('audioPreviewInfo').innerHTML =
-                            `<i class="fas fa-microphone" style="color:var(--accent);"></i> صوت جاهز (${recordingSeconds}ث • ${sizeKb} KB) — اضغط إرسال`;
+                            `<i class="fas fa-microphone" style="color:var(--accent);"></i> صوت جاهز (${recordingSeconds}ث • ${sizeKb} KB)`;
                         document.getElementById('audioPreviewBanner').classList.add('active');
                     };
                     reader.readAsDataURL(blob);
@@ -1658,13 +1765,9 @@
                 recordingTimer = setInterval(() => {
                     recordingSeconds += 1;
                     chatInput.placeholder = `جاري التسجيل... ${recordingSeconds}ث`;
-                    if (recordingSeconds >= 60) {
-                        stopVoiceRecording();
-                    }
+                    if (recordingSeconds >= 60) stopVoiceRecording();
                 }, 1000);
-            } catch (err) {
-                alert('تعذر الوصول إلى الميكروفون. تأكد من منح الإذن للمتصفح.');
-            }
+            } catch (err) {}
         }
 
         function stopVoiceRecording() {
@@ -1678,38 +1781,30 @@
             document.getElementById('audioPreviewBanner').classList.remove('active');
         }
 
-        // ==========================================
-        // 4. ضغط الصور ومعاينتها
-        // ==========================================
         function compressImageFile(file, maxWidth = 720, quality = 0.65) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.onerror = () => reject(new Error('تعذر قراءة الصورة'));
+                reader.onerror = () => reject(new Error('error'));
                 reader.onload = (e) => {
                     const img = new Image();
-                    img.onerror = () => reject(new Error('ملف صورة غير صالح'));
+                    img.onerror = () => reject(new Error('error'));
                     img.onload = () => {
                         let width = img.width;
                         let height = img.height;
-
                         if (width > maxWidth) {
                             height = Math.round((height * maxWidth) / width);
                             width = maxWidth;
                         }
-
                         const canvas = document.createElement('canvas');
                         canvas.width = width;
                         canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
 
                         let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
                         if (compressedDataUrl.length > 350000) {
                             compressedDataUrl = canvas.toDataURL('image/jpeg', 0.45);
                         }
-
-                        const byteLength = Math.round((compressedDataUrl.length * 3) / 4);
-                        const sizeKb = Math.max(1, Math.round(byteLength / 1024));
+                        const sizeKb = Math.max(1, Math.round(((compressedDataUrl.length * 3) / 4) / 1024));
                         resolve({ dataUrl: compressedDataUrl, sizeKb });
                     };
                     img.src = e.target.result;
@@ -1721,12 +1816,7 @@
         async function handleImageFileSelected(event) {
             const file = event.target.files && event.target.files[0];
             event.target.value = '';
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                return alert('يرجى اختيار ملف صورة فقط.');
-            }
-
+            if (!file || !file.type.startsWith('image/')) return;
             try {
                 const result = await compressImageFile(file);
                 pendingCompressedImage = result;
@@ -1734,9 +1824,7 @@
                 document.getElementById('imagePreviewInfo').textContent = `صورة مضغوطة (${result.sizeKb} KB)`;
                 document.getElementById('imagePreviewBanner').classList.add('active');
                 dismissKeyboard();
-            } catch (err) {
-                alert('حدث خطأ أثناء ضغط الصورة.');
-            }
+            } catch (err) {}
         }
 
         function clearPendingImage() {
@@ -1763,7 +1851,7 @@
         }
 
         // ==========================================
-        // 5. الثيمات والحالة الشخصية
+        // 4. الثيمات والحالة والقائمة الجانبية وتأكيد الخروج
         // ==========================================
         function applyTheme(themeName) {
             const valid = ['blue', 'purple', 'emerald', 'gold'];
@@ -1782,17 +1870,144 @@
 
         async function editMyBio() {
             if (!currentUser) return;
-            const currentBio = document.getElementById('myBioText').textContent;
+            const currentBio = document.getElementById('drawerBioText').textContent;
             const updated = prompt('اكتب حالتك أو نبذتك القصيرة:', currentBio);
             if (updated !== null && updated.trim() !== '') {
                 const cleanBio = updated.trim().slice(0, 60);
-                document.getElementById('myBioText').textContent = cleanBio;
+                document.getElementById('drawerBioText').textContent = cleanBio;
                 await db.ref('users/' + currentUser + '/bio').set(cleanBio);
             }
         }
 
+        function openSideDrawer() {
+            dismissKeyboard();
+            document.getElementById('drawerBackdrop').classList.add('active');
+            document.getElementById('sideDrawer').classList.add('open');
+            pushNavState('drawer');
+        }
+
+        function closeSideDrawer(syncHistory = false) {
+            document.getElementById('drawerBackdrop').classList.remove('active');
+            document.getElementById('sideDrawer').classList.remove('open');
+            if (syncHistory && history.state && history.state.legendaryView === 'drawer') {
+                ignoreNextPopState = true;
+                history.back();
+            }
+        }
+
+        function openSubpanel(type) {
+            dismissKeyboard();
+            activeSubpanelType = type;
+            const modal = document.getElementById('subpanelModal');
+            const titleEl = document.getElementById('subpanelTitle');
+            const bodyEl = document.getElementById('subpanelBody');
+            const currentTheme = document.body.getAttribute('data-theme') || 'blue';
+
+            if (type === 'featured') {
+                titleEl.textContent = 'الحسابات المميزة والموثقة';
+                bodyEl.innerHTML = '<div id="subpanelFeaturedList"></div>';
+                renderFeaturedInSubpanel();
+            } else if (type === 'rooms') {
+                titleEl.textContent = 'غرف الكود الفورية';
+                bodyEl.innerHTML = `
+                    <div class="info-card">
+                        <h4>إنشاء غرفة سريعة</h4>
+                        <p style="margin-bottom:10px;">أنشئ غرفة فورية بكود عشوائي وشاركه مع من تحب.</p>
+                        <button type="button" class="btn" onclick="createQuickRoom()"><i class="fas fa-rocket"></i> إنشاء غرفة جديدة</button>
+                    </div>
+                    <div class="divider"><span>أو</span></div>
+                    <div class="info-card">
+                        <h4>الانضمام إلى غرفة</h4>
+                        <div class="input-group" style="margin-bottom:10px;">
+                            <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform:uppercase; text-align:center;" maxlength="6">
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="joinQuickRoom()"><i class="fas fa-sign-in-alt"></i> انضم للغرفة</button>
+                    </div>
+                `;
+            } else if (type === 'themes') {
+                titleEl.textContent = 'الثيمات والمظهر';
+                bodyEl.innerHTML = `
+                    <div class="theme-grid">
+                        <div class="theme-card ${currentTheme === 'blue' ? 'active' : ''}" data-theme-option="blue" onclick="applyTheme('blue')">
+                            <div class="theme-swatch" style="background:linear-gradient(135deg,#00f3ff,#0055ff);"></div>
+                            <div class="theme-name">نيون أزرق</div>
+                        </div>
+                        <div class="theme-card ${currentTheme === 'purple' ? 'active' : ''}" data-theme-option="purple" onclick="applyTheme('purple')">
+                            <div class="theme-swatch" style="background:linear-gradient(135deg,#b84dff,#ff2a85);"></div>
+                            <div class="theme-name">بنفسجي ملكي</div>
+                        </div>
+                        <div class="theme-card ${currentTheme === 'emerald' ? 'active' : ''}" data-theme-option="emerald" onclick="applyTheme('emerald')">
+                            <div class="theme-swatch" style="background:linear-gradient(135deg,#00f5a0,#009e60);"></div>
+                            <div class="theme-name">أخضر زمردي</div>
+                        </div>
+                        <div class="theme-card ${currentTheme === 'gold' ? 'active' : ''}" data-theme-option="gold" onclick="applyTheme('gold')">
+                            <div class="theme-swatch" style="background:linear-gradient(135deg,#ffd166,#d48806);"></div>
+                            <div class="theme-name">ذهبي VIP</div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'admin' && isCurrentUserAdmin()) {
+                titleEl.textContent = 'إدارة التوثيق';
+                bodyEl.innerHTML = `
+                    <div class="info-card">
+                        <h4>توثيق الحسابات (المطور: abdulrahim)</h4>
+                        <div class="input-group" style="margin-bottom:10px;">
+                            <label>اسم المستخدم:</label>
+                            <input type="text" id="verifyTargetInput" placeholder="مثال: ali_ahmed" maxlength="20">
+                        </div>
+                        <div class="admin-actions-row">
+                            <button type="button" class="btn btn-verify-blue" onclick="setVerificationStatus(true)">
+                                <i class="fas fa-check-circle"></i> توثيق الحساب
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="setVerificationStatus(false)">
+                                <i class="fas fa-xmark-circle"></i> إلغاء التوثيق
+                            </button>
+                        </div>
+                        <div class="admin-status-msg" id="adminStatusMsg"></div>
+                    </div>
+                `;
+            } else if (type === 'aboutApp') {
+                titleEl.textContent = 'معلومات عن التطبيق';
+                bodyEl.innerHTML = `
+                    <div class="info-card">
+                        <h4>الدردشة الأسطورية</h4>
+                        <p>تطبيق تواصل فوري يركز على السرعة والاستجابة السلسة، ويدعم الدردشات المباشرة، غرف الكود الفورية، الرسائل الصوتية، الصور المضغوطة، التفاعلات، التثبيت، البحث، ودعم زر الرجوع في الهاتف بشكل طبيعي.</p>
+                    </div>
+                `;
+            } else if (type === 'aboutDev') {
+                titleEl.textContent = 'معلومات عن المطور';
+                bodyEl.innerHTML = `
+                    <div class="info-card">
+                        <h4>المطور: عبدالرحيم الجياشي الشمري</h4>
+                        <p>صُمم وطُوّر التطبيق بأسلوب يجمع بين السرعة والبساطة والهوية البصرية المميزة، مع شارات توثيق خاصة لحساب المطور والإدارة والحسابات الموثقة.</p>
+                    </div>
+                `;
+            }
+
+            modal.classList.add('active');
+            pushNavState('subpanel');
+        }
+
+        function closeSubpanel(syncHistory = false) {
+            activeSubpanelType = null;
+            document.getElementById('subpanelModal').classList.remove('active');
+            if (syncHistory && history.state && history.state.legendaryView === 'subpanel') {
+                ignoreNextPopState = true;
+                history.back();
+            }
+        }
+
+        function askLogoutConfirm() {
+            dismissKeyboard();
+            document.getElementById('confirmLogoutModal').classList.add('active');
+        }
+
+        function closeLogoutConfirm() {
+            document.getElementById('confirmLogoutModal').classList.remove('active');
+        }
+
         // ==========================================
-        // 6. نظام الحسابات
+        // 5. الحسابات وتأكيد الخروج
         // ==========================================
         function switchAuthMode(mode) {
             authMode = mode;
@@ -1830,7 +2045,7 @@
 
                 if (authMode === 'register') {
                     if (snapshot.exists()) {
-                        showAuthError('اسم المستخدم هذا محجوز مسبقاً، اختر اسماً آخر أو سجّل الدخول.');
+                        showAuthError('اسم المستخدم هذا محجوز مسبقاً.');
                         btn.disabled = false;
                         return;
                     }
@@ -1849,7 +2064,7 @@
                     completeLogin(usernameKey, rawUsername, 'متاح للدردشة ⚡', savedTheme, isAdminAccount, isAdminAccount);
                 } else {
                     if (!snapshot.exists()) {
-                        showAuthError('هذا الحساب غير موجود. يمكنك إنشاء حساب جديد من التبويب المجاور.');
+                        showAuthError('هذا الحساب غير موجود.');
                         btn.disabled = false;
                         return;
                     }
@@ -1881,7 +2096,8 @@
             localStorage.setItem('legendary_chat_session', JSON.stringify({ username: usernameKey, displayName }));
 
             applyTheme(themeName);
-            document.getElementById('myBioText').textContent = bioText;
+            document.getElementById('drawerBioText').textContent = bioText;
+            refreshUserIdentityUI();
 
             const myPresenceRef = db.ref('users/' + currentUser);
             myPresenceRef.update({ online: true, lastSeen: Date.now() });
@@ -1894,15 +2110,8 @@
                 currentUserVipAdmin = !!(uVal.vipAdmin || isAdminUsername(currentUser));
                 currentUserVerified = !!(uVal.verified || currentUserVipAdmin);
                 userBadgeCache[currentUser] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
-                document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
+                refreshUserIdentityUI();
             });
-
-            document.getElementById('myDisplayName').textContent = `${displayName} (@${usernameKey})`;
-            document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
-            document.getElementById('myAvatar').textContent = displayName.charAt(0).toUpperCase();
-
-            document.getElementById('homeTabAdmin').style.display = isCurrentUserAdmin() ? 'flex' : 'none';
-            switchHomeTab('friends');
 
             authScreen.classList.remove('active');
             homeScreen.classList.add('active');
@@ -1913,34 +2122,36 @@
         }
 
         function cleanupFriendSubListeners() {
-            Object.entries(lastMsgListeners).forEach(([chatId, entry]) => {
-                if (entry && entry.ref && entry.cb) {
-                    entry.ref.off('value', entry.cb);
-                }
+            Object.values(lastMsgListeners).forEach(entry => {
+                if (entry && entry.ref && entry.cb) entry.ref.off('value', entry.cb);
             });
             lastMsgListeners = {};
         }
 
-        function logoutUser() {
+        function executeLogout() {
+            closeLogoutConfirm();
+            closeSideDrawer(false);
+            closeSubpanel(false);
             if (!currentUser) return;
             dismissKeyboard();
+
             db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
             db.ref('users/' + currentUser).off();
             cleanupChatListeners();
             cleanupFriendSubListeners();
-            if (friendsListenerRef && friendsListenerCallback) {
-                friendsListenerRef.off('value', friendsListenerCallback);
-            }
-            if (featuredListenerRef && featuredListenerCallback) {
-                featuredListenerRef.off('value', featuredListenerCallback);
-            }
+
+            if (friendsListenerRef && friendsListenerCallback) friendsListenerRef.off('value', friendsListenerCallback);
+            if (featuredListenerRef && featuredListenerCallback) featuredListenerRef.off('value', featuredListenerCallback);
+
             friendsCache = {};
+            featuredUsersCache = [];
             localStorage.removeItem('legendary_chat_session');
             currentUser = null;
             currentDisplayName = null;
             currentUserVerified = false;
             currentUserVipAdmin = false;
-            document.getElementById('homeTabAdmin').style.display = 'none';
+            document.getElementById('drawerAdminItem').style.display = 'none';
+
             homeScreen.classList.remove('active');
             chatScreen.classList.remove('active');
             authScreen.classList.add('active');
@@ -1973,23 +2184,20 @@
         });
 
         // ==========================================
-        // 7. التبويبات والأصدقاء والمميزون والإدارة
+        // 6. البحث الرئيسي وقائمة الدردشات والمميزون
         // ==========================================
-        function switchHomeTab(tab) {
-            if (tab === 'admin' && !isCurrentUserAdmin()) return;
-            dismissKeyboard();
-
-            document.getElementById('homeTabFriends').classList.toggle('active', tab === 'friends');
-            document.getElementById('homeTabFeatured').classList.toggle('active', tab === 'featured');
-            document.getElementById('homeTabRooms').classList.toggle('active', tab === 'rooms');
-            document.getElementById('homeTabThemes').classList.toggle('active', tab === 'themes');
-            document.getElementById('homeTabAdmin').classList.toggle('active', tab === 'admin');
-
-            document.getElementById('friendsSection').style.display = tab === 'friends' ? 'block' : 'none';
-            document.getElementById('featuredSection').style.display = tab === 'featured' ? 'block' : 'none';
-            document.getElementById('roomsSection').style.display = tab === 'rooms' ? 'block' : 'none';
-            document.getElementById('themesSection').style.display = tab === 'themes' ? 'block' : 'none';
-            document.getElementById('adminSection').style.display = tab === 'admin' ? 'block' : 'none';
+        function toggleHomeSearch(show = null) {
+            const bar = document.getElementById('homeSearchBar');
+            const input = document.getElementById('homeSearchInput');
+            const shouldOpen = show === null ? !bar.classList.contains('active') : !!show;
+            bar.classList.toggle('active', shouldOpen);
+            if (shouldOpen) {
+                input.focus();
+            } else {
+                input.value = '';
+                dismissKeyboard();
+                renderChatsList();
+            }
         }
 
         function getDirectChatId(userA, userB) {
@@ -2000,13 +2208,10 @@
             dismissKeyboard();
             const input = document.getElementById('friendUsernameInput');
             const friendKey = sanitizeKey(input.value);
-            if (!friendKey) return alert('اكتب اسم مستخدم صديقك أولاً.');
-            if (friendKey === currentUser) return alert('لا يمكنك إضافة نفسك كصديق.');
+            if (!friendKey || friendKey === currentUser) return;
 
             const friendSnap = await db.ref('users/' + friendKey).once('value');
-            if (!friendSnap.exists()) {
-                return alert('لا يوجد مستخدم بهذا الاسم. تأكد من كتابته بشكل صحيح.');
-            }
+            if (!friendSnap.exists()) return;
 
             const friendData = friendSnap.val();
             const friendDisplay = friendData.displayName || friendKey;
@@ -2015,14 +2220,14 @@
             await db.ref(`friends/${currentUser}/${friendKey}`).update({
                 username: friendKey,
                 displayName: friendDisplay,
-                chatId: chatId,
+                chatId,
                 addedAt: Date.now()
             });
 
             await db.ref(`friends/${friendKey}/${currentUser}`).update({
                 username: currentUser,
                 displayName: currentDisplayName || currentUser,
-                chatId: chatId,
+                chatId,
                 addedAt: Date.now()
             });
 
@@ -2031,13 +2236,25 @@
             openDirectChat(friendKey, friendDisplay, chatId, !!(friendData.verified || isVip), isVip);
         }
 
-        function renderFriendsFromCache() {
-            const container = document.getElementById('friendsListContainer');
+        function renderChatsList() {
+            const container = document.getElementById('chatsListContainer');
             if (!container) return;
 
-            const list = Object.values(friendsCache);
+            const q = (document.getElementById('homeSearchInput')?.value || '').trim().toLowerCase();
+            let list = Object.values(friendsCache);
+
+            if (q) {
+                list = list.filter(item =>
+                    (item.displayName || '').toLowerCase().includes(q) ||
+                    (item.username || '').toLowerCase().includes(q) ||
+                    (item.lastText || '').toLowerCase().includes(q)
+                );
+            }
+
             if (!list.length) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا يوجد أصدقاء بعد.<br>أضف صديقاً باسم المستخدم الخاص به لبدء الدردشة وحفظها!</div>';
+                container.innerHTML = q
+                    ? '<div class="empty-state">لا توجد دردشات مطابقة للبحث.</div>'
+                    : '<div class="empty-state"><i class="fas fa-comments" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا توجد محادثات بعد.<br>أضف صديقاً باسم المستخدم لبدء الدردشة!</div>';
                 return;
             }
 
@@ -2046,26 +2263,25 @@
 
             list.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'friend-item';
+                div.className = 'chat-row-card';
                 div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin);
                 div.innerHTML = `
-                    <div class="friend-left">
-                        <div class="friend-avatar">
+                    <div class="row-left">
+                        <div class="row-avatar">
                             ${item.displayName.charAt(0).toUpperCase()}
                             <span class="status-dot ${item.online ? 'online' : ''}"></span>
                         </div>
-                        <div class="friend-info">
-                            <div class="fname">
+                        <div class="row-info">
+                            <div class="rname">
                                 <span>${escapeHtml(item.displayName)}</span>
                                 ${getBadgesHtml(item.verified, item.vipAdmin)}
-                                <span style="font-size:0.75rem; color:var(--text-muted); margin-right:4px;">(@${item.username})</span>
                             </div>
-                            <div class="flast">${escapeHtml(item.lastText || item.bio || 'ابدأ المحادثة الآن...')}</div>
+                            <div class="rlast">${escapeHtml(item.lastText || item.bio || 'ابدأ المحادثة الآن...')}</div>
                         </div>
                     </div>
-                    <div class="friend-right">
+                    <div class="row-right">
                         ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
-                        <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.9rem;"></i>
+                        <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.85rem;"></i>
                     </div>
                 `;
                 container.appendChild(div);
@@ -2087,7 +2303,7 @@
                         const last = msgs[msgs.length - 1];
                         let summary = last.text || '';
                         if (last.image) summary = '📷 صورة' + (last.text ? ' • ' + last.text : '');
-                        else if (last.audio) summary = `🎤 رسالة صوتية (${last.audioDuration || 0}ث)`;
+                        else if (last.audio) summary = `🎤 صوتية (${last.audioDuration || 0}ث)`;
                         lastText = (last.sender === currentUser ? 'أنت: ' : '') + summary;
                         lastTime = last.timestamp || lastTime;
                         unreadCount = msgs.filter(m => m.sender !== currentUser && !m.read).length;
@@ -2097,7 +2313,7 @@
                 friendsCache[friendKey].lastText = lastText;
                 friendsCache[friendKey].lastTime = lastTime;
                 friendsCache[friendKey].unreadCount = unreadCount;
-                renderFriendsFromCache();
+                renderChatsList();
             });
             lastMsgListeners[chatId] = { ref, cb };
         }
@@ -2114,7 +2330,7 @@
                 const friendsObj = snapshot.val();
                 if (!friendsObj) {
                     friendsCache = {};
-                    renderFriendsFromCache();
+                    renderChatsList();
                     return;
                 }
 
@@ -2150,7 +2366,43 @@
                     attachFriendLiveSummary(f.username, chatId);
                 }));
 
-                renderFriendsFromCache();
+                renderChatsList();
+            });
+        }
+
+        function renderFeaturedInSubpanel() {
+            const container = document.getElementById('subpanelFeaturedList');
+            if (!container) return;
+            if (!featuredUsersCache.length) {
+                container.innerHTML = '<div class="empty-state">لا توجد حسابات مميزة أخرى حالياً.</div>';
+                return;
+            }
+            container.innerHTML = '';
+            featuredUsersCache.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'chat-row-card';
+                div.onclick = () => {
+                    closeSubpanel(false);
+                    closeSideDrawer(false);
+                    openDirectChat(item.username, item.displayName, getDirectChatId(currentUser, item.username), item.verified, item.vipAdmin);
+                };
+                div.innerHTML = `
+                    <div class="row-left">
+                        <div class="row-avatar">
+                            ${item.displayName.charAt(0).toUpperCase()}
+                            <span class="status-dot ${item.online ? 'online' : ''}"></span>
+                        </div>
+                        <div class="row-info">
+                            <div class="rname">
+                                <span>${escapeHtml(item.displayName)}</span>
+                                ${getBadgesHtml(item.verified, item.vipAdmin)}
+                            </div>
+                            <div class="rlast">${escapeHtml(item.bio)}</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
+                `;
+                container.appendChild(div);
             });
         }
 
@@ -2160,10 +2412,8 @@
             }
             featuredListenerRef = db.ref('users');
             featuredListenerCallback = featuredListenerRef.on('value', (snapshot) => {
-                const container = document.getElementById('featuredListContainer');
-                if (!container) return;
                 const usersObj = snapshot.val() || {};
-                const featuredList = Object.entries(usersObj)
+                featuredUsersCache = Object.entries(usersObj)
                     .map(([key, val]) => {
                         const isVip = !!(val.vipAdmin || isAdminUsername(key));
                         const isVer = !!(val.verified || isVip);
@@ -2179,44 +2429,16 @@
                     .filter(u => (u.verified || u.vipAdmin) && u.username !== currentUser)
                     .sort((a, b) => (b.vipAdmin ? 1 : 0) - (a.vipAdmin ? 1 : 0));
 
-                if (featuredList.length === 0) {
-                    container.innerHTML = '<div class="empty-state">لا توجد حسابات مميزة أخرى حالياً.</div>';
-                    return;
+                if (activeSubpanelType === 'featured') {
+                    renderFeaturedInSubpanel();
                 }
-
-                container.innerHTML = '';
-                featuredList.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'friend-item';
-                    div.onclick = () => {
-                        const chatId = getDirectChatId(currentUser, item.username);
-                        openDirectChat(item.username, item.displayName, chatId, item.verified, item.vipAdmin);
-                    };
-                    div.innerHTML = `
-                        <div class="friend-left">
-                            <div class="friend-avatar">
-                                ${item.displayName.charAt(0).toUpperCase()}
-                                <span class="status-dot ${item.online ? 'online' : ''}"></span>
-                            </div>
-                            <div class="friend-info">
-                                <div class="fname">
-                                    <span>${escapeHtml(item.displayName)}</span>
-                                    ${getBadgesHtml(item.verified, item.vipAdmin)}
-                                </div>
-                                <div class="flast">${escapeHtml(item.bio)}</div>
-                            </div>
-                        </div>
-                        <div class="friend-right">
-                            <i class="fas fa-comment-dots" style="color:var(--accent); font-size:1rem;"></i>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
             });
         }
 
         function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false) {
             dismissKeyboard();
+            closeSideDrawer(false);
+            closeSubpanel(false);
             activeChatType = 'direct';
             activeRoomCode = null;
             activePartner = partnerKey;
@@ -2234,7 +2456,7 @@
         }
 
         // ==========================================
-        // 8. غرف الكود السريعة
+        // 7. غرف الكود السريعة
         // ==========================================
         function createQuickRoom() {
             dismissKeyboard();
@@ -2244,12 +2466,14 @@
 
         function joinQuickRoom() {
             dismissKeyboard();
-            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
-            if (!code) return alert('يرجى كتابة كود الغرفة.');
+            const code = (document.getElementById('roomCodeInput')?.value || '').trim().toUpperCase();
+            if (!code) return;
             openRoomChat(code);
         }
 
         function openRoomChat(code) {
+            closeSubpanel(false);
+            closeSideDrawer(false);
             activeChatType = 'room';
             activeRoomCode = code;
             activePartner = null;
@@ -2271,11 +2495,10 @@
         function copyActiveRoomCode() {
             if (!activeRoomCode) return;
             navigator.clipboard?.writeText(activeRoomCode);
-            alert(`تم نسخ كود الغرفة: ${activeRoomCode}`);
         }
 
         // ==========================================
-        // 9. الرسائل والصوت والصور والتعديل والتثبيت والشارات
+        // 8. الرسائل والتفاعل والبحث والرجوع
         // ==========================================
         function enterChatScreen() {
             homeScreen.classList.remove('active');
@@ -2297,18 +2520,10 @@
         }
 
         function cleanupChatListeners() {
-            if (messagesRefCurrent && messagesCallbackCurrent) {
-                messagesRefCurrent.off('value', messagesCallbackCurrent);
-            }
-            if (pinnedRefCurrent && pinnedCallbackCurrent) {
-                pinnedRefCurrent.off('value', pinnedCallbackCurrent);
-            }
-            if (typingRefCurrent && typingCallbackCurrent) {
-                typingRefCurrent.off('value', typingCallbackCurrent);
-            }
-            if (partnerPresenceRef && partnerPresenceCallback) {
-                partnerPresenceRef.off('value', partnerPresenceCallback);
-            }
+            if (messagesRefCurrent && messagesCallbackCurrent) messagesRefCurrent.off('value', messagesCallbackCurrent);
+            if (pinnedRefCurrent && pinnedCallbackCurrent) pinnedRefCurrent.off('value', pinnedCallbackCurrent);
+            if (typingRefCurrent && typingCallbackCurrent) typingRefCurrent.off('value', typingCallbackCurrent);
+            if (partnerPresenceRef && partnerPresenceCallback) partnerPresenceRef.off('value', partnerPresenceCallback);
             if (activeChatId && currentUser) {
                 db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
             }
@@ -2328,7 +2543,7 @@
             if (isRecordingVoice) stopVoiceRecording();
             chatScreen.classList.remove('active');
             homeScreen.classList.add('active');
-            renderFriendsFromCache();
+            renderChatsList();
 
             if (syncHistory && history.state && history.state.legendaryView === 'chat') {
                 ignoreNextPopState = true;
@@ -2337,9 +2552,7 @@
         }
 
         function listenPartnerPresence(partnerKey) {
-            if (partnerPresenceRef && partnerPresenceCallback) {
-                partnerPresenceRef.off('value', partnerPresenceCallback);
-            }
+            if (partnerPresenceRef && partnerPresenceCallback) partnerPresenceRef.off('value', partnerPresenceCallback);
             partnerPresenceRef = db.ref('users/' + partnerKey);
             partnerPresenceCallback = partnerPresenceRef.on('value', (snap) => {
                 const val = snap.val() || {};
@@ -2360,16 +2573,13 @@
         }
 
         function listenPinnedMessage() {
-            if (pinnedRefCurrent && pinnedCallbackCurrent) {
-                pinnedRefCurrent.off('value', pinnedCallbackCurrent);
-            }
+            if (pinnedRefCurrent && pinnedCallbackCurrent) pinnedRefCurrent.off('value', pinnedCallbackCurrent);
             pinnedRefCurrent = db.ref(`chats/${activeChatId}/pinned`);
             pinnedCallbackCurrent = pinnedRefCurrent.on('value', (snap) => {
                 const bar = document.getElementById('pinnedBar');
                 const val = snap.val();
                 if (val && (val.text || val.hasMedia)) {
-                    const summary = val.text || 'رسالة وسائط مثبتة';
-                    document.getElementById('pinnedMessageText').textContent = `${val.senderName || ''}: ${summary}`;
+                    document.getElementById('pinnedMessageText').textContent = `${val.senderName || ''}: ${val.text || 'رسالة وسائط مثبتة'}`;
                     bar.classList.add('active');
                 } else {
                     bar.classList.remove('active');
@@ -2392,21 +2602,17 @@
             await db.ref(`chats/${activeChatId}/pinned`).remove();
         }
 
-        function toggleSearchBar(syncHistory = false) {
+        function toggleSearchBar(show = null) {
             const box = document.getElementById('searchBarBox');
-            const isOpen = box.classList.toggle('active');
-            const searchInput = document.getElementById('chatSearchInput');
-            if (isOpen) {
-                searchInput.focus();
-                pushNavState('search');
+            const input = document.getElementById('chatSearchInput');
+            const shouldOpen = show === null ? !box.classList.contains('active') : !!show;
+            box.classList.toggle('active', shouldOpen);
+            if (shouldOpen) {
+                input.focus();
             } else {
-                searchInput.value = '';
+                input.value = '';
                 dismissKeyboard();
                 renderMessagesList();
-                if (syncHistory && history.state && history.state.legendaryView === 'search') {
-                    ignoreNextPopState = true;
-                    history.back();
-                }
             }
         }
 
@@ -2444,33 +2650,24 @@
 
         function copyTextToClipboard(text) {
             navigator.clipboard?.writeText(text);
-            alert('تم نسخ النص');
         }
 
         async function toggleReaction(msgId, emoji) {
             if (!activeChatId || !currentUser) return;
             const ref = db.ref(`chats/${activeChatId}/messages/${msgId}/reactions/${emoji}/${currentUser}`);
             const snap = await ref.once('value');
-            if (snap.exists()) {
-                await ref.remove();
-            } else {
-                await ref.set(true);
-            }
+            if (snap.exists()) await ref.remove();
+            else await ref.set(true);
         }
 
         async function deleteMessage(msgId) {
             if (!activeChatId || !msgId) return;
-            if (confirm('هل تريد حذف هذه الرسالة؟')) {
-                if (editingMsgId === msgId) cancelEdit();
-                await db.ref(`chats/${activeChatId}/messages/${msgId}`).remove();
-            }
+            if (editingMsgId === msgId) cancelEdit();
+            await db.ref(`chats/${activeChatId}/messages/${msgId}`).remove();
         }
 
         function listenForMessages() {
-            if (messagesRefCurrent && messagesCallbackCurrent) {
-                messagesRefCurrent.off('value', messagesCallbackCurrent);
-            }
-
+            if (messagesRefCurrent && messagesCallbackCurrent) messagesRefCurrent.off('value', messagesCallbackCurrent);
             messagesRefCurrent = db.ref(`chats/${activeChatId}/messages`);
             messagesCallbackCurrent = messagesRefCurrent.on('value', async (snapshot) => {
                 const data = snapshot.val();
@@ -2488,7 +2685,6 @@
                     const senders = [...new Set(Object.values(data).map(m => m.sender).filter(Boolean))];
                     await Promise.all(senders.map(s => fetchUserBadges(s)));
                 }
-
                 renderMessagesList();
             });
         }
@@ -2568,7 +2764,7 @@
                     `<button type="button" class="msg-action-btn" onclick="toggleReaction('${msg.id}', '${emo}')">${emo}</button>`
                 ).join('');
 
-                const pinSummary = msg.text || (msg.image ? '📷 صورة' : (msg.audio ? `🎤 رسالة صوتية (${msg.audioDuration || 0}ث)` : ''));
+                const pinSummary = msg.text || (msg.image ? '📷 صورة' : (msg.audio ? `🎤 صوتية (${msg.audioDuration || 0}ث)` : ''));
 
                 wrapper.innerHTML = `
                     ${nameHtml}
@@ -2634,10 +2830,10 @@
                 if (editingMsgId) {
                     if (!text) {
                         isSendingMessage = false;
-                        return alert('لا يمكن ترك نص الرسالة المعدّلة فارغاً.');
+                        return;
                     }
                     await db.ref(`chats/${activeChatId}/messages/${editingMsgId}`).update({
-                        text: text,
+                        text,
                         edited: true,
                         editedAt: Date.now()
                     });
@@ -2647,7 +2843,7 @@
                     const payload = {
                         sender: currentUser,
                         senderName: currentDisplayName || currentUser,
-                        text: text,
+                        text,
                         timestamp: Date.now(),
                         read: false
                     };
@@ -2655,12 +2851,10 @@
                     if (pendingCompressedImage && pendingCompressedImage.dataUrl) {
                         payload.image = pendingCompressedImage.dataUrl;
                     }
-
                     if (pendingAudioClip && pendingAudioClip.dataUrl) {
                         payload.audio = pendingAudioClip.dataUrl;
                         payload.audioDuration = pendingAudioClip.durationSec || 0;
                     }
-
                     if (replyingTo) {
                         payload.replyTo = {
                             senderName: replyingTo.senderName,
@@ -2669,7 +2863,6 @@
                     }
 
                     await db.ref(`chats/${activeChatId}/messages`).push(payload);
-
                     chatInput.value = '';
                     cancelReply();
                     clearPendingImage();
@@ -2685,9 +2878,7 @@
             }
         }
 
-        document.getElementById('sendChatBtn').addEventListener('mousedown', (e) => {
-            e.preventDefault();
-        });
+        document.getElementById('sendChatBtn').addEventListener('mousedown', (e) => e.preventDefault());
         document.getElementById('sendChatBtn').addEventListener('click', (e) => {
             e.preventDefault();
             sendMessage();
@@ -2700,9 +2891,7 @@
         });
 
         function listenForTyping() {
-            if (typingRefCurrent && typingCallbackCurrent) {
-                typingRefCurrent.off('value', typingCallbackCurrent);
-            }
+            if (typingRefCurrent && typingCallbackCurrent) typingRefCurrent.off('value', typingCallbackCurrent);
             typingRefCurrent = db.ref(`chats/${activeChatId}/typing`);
             typingCallbackCurrent = typingRefCurrent.on('value', (snapshot) => {
                 const typingData = snapshot.val();
