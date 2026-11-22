@@ -808,4 +808,1055 @@
 
         .chat-input-area {
             padding: 10px 15px 12px;
-            background: rgba(15, 20, 30, 0
+            background: rgba(15, 20, 30, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            background: rgba(0,0,0,0.45);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 4px 14px;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 4px;
+            border: none;
+            background: transparent;
+            color: #fff;
+            outline: none;
+            font-size: 0.94rem;
+        }
+
+        .btn-send {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--accent), #0077ff);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            transition: 0.3s;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .btn-send:hover { transform: scale(1.08); }
+        .btn-send:active { transform: scale(0.92); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            color: #666;
+            margin: 16px 0;
+            font-size: 0.82rem;
+            font-weight: bold;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        .divider span { padding: 0 12px; }
+    </style>
+</head>
+<body data-theme="blue">
+
+    <div class="app-container">
+        
+        <!-- شريط حقوق المطور -->
+        <div class="dev-banner">
+            تطوير المبدع: <span>عبدالرحيم الجياشي الشمري</span>
+        </div>
+
+        <!-- 1. شاشة تسجيل الدخول / إنشاء الحساب -->
+        <div class="screen active" id="authScreen">
+            <div class="auth-card">
+                <div class="title">الدردشة الأسطورية</div>
+                <div class="subtitle">تعديل، تثبيت، بحث، ثيمات، ودردشة فورية عالمية ⚡</div>
+
+                <div class="auth-tabs">
+                    <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
+                    <button type="button" class="auth-tab" id="tabRegister" onclick="switchAuthMode('register')">حساب جديد</button>
+                </div>
+
+                <div class="auth-error" id="authError"></div>
+
+                <div class="input-group">
+                    <label>اسم المستخدم:</label>
+                    <input type="text" id="authUsername" placeholder="مثال: abdulraheem" maxlength="20" autocomplete="username">
+                </div>
+
+                <div class="input-group">
+                    <label>كلمة السر:</label>
+                    <input type="password" id="authPassword" placeholder="••••••••" maxlength="32" autocomplete="current-password">
+                </div>
+
+                <button class="btn" id="authSubmitBtn" onclick="handleAuthSubmit()">
+                    <i class="fas fa-right-to-bracket"></i> دخول إلى حسابي
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. شاشة الأصدقاء والغرف والثيمات -->
+        <div class="screen" id="homeScreen">
+            <div class="top-bar">
+                <div class="user-profile">
+                    <div class="avatar-circle" id="myAvatar">ع</div>
+                    <div class="user-meta">
+                        <div class="uname" id="myDisplayName">المستخدم</div>
+                        <div class="u-bio" id="myBioDisplay" onclick="editMyBio()">
+                            <i class="fas fa-pen" style="font-size:10px;"></i>
+                            <span id="myBioText">متاح للدردشة ⚡</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> خروج</button>
+            </div>
+
+            <div class="home-tabs">
+                <div class="home-tab active" id="homeTabFriends" onclick="switchHomeTab('friends')">
+                    <i class="fas fa-user-friends"></i> الأصدقاء
+                </div>
+                <div class="home-tab" id="homeTabRooms" onclick="switchHomeTab('rooms')">
+                    <i class="fas fa-hashtag"></i> الغرف
+                </div>
+                <div class="home-tab" id="homeTabThemes" onclick="switchHomeTab('themes')">
+                    <i class="fas fa-palette"></i> الثيمات
+                </div>
+            </div>
+
+            <!-- تبويب الأصدقاء -->
+            <div class="home-content" id="friendsSection">
+                <div class="add-friend-box">
+                    <input type="text" id="friendUsernameInput" placeholder="أدخل اسم مستخدم صديقك..." maxlength="20">
+                    <button onclick="addFriend()"><i class="fas fa-user-plus"></i> إضافة</button>
+                </div>
+                <div id="friendsListContainer">
+                    <div class="empty-state">جاري تحميل قائمة الأصدقاء...</div>
+                </div>
+            </div>
+
+            <!-- تبويب غرف الكود -->
+            <div class="home-content" id="roomsSection" style="display:none;">
+                <div class="input-group">
+                    <label>إنشاء غرفة سريعة بكود عشوائي:</label>
+                    <button class="btn" onclick="createQuickRoom()"><i class="fas fa-rocket"></i> إنشاء غرفة جديدة</button>
+                </div>
+
+                <div class="divider"><span>أو</span></div>
+
+                <div class="input-group">
+                    <label>الدخول إلى غرفة موجودة بالكود:</label>
+                    <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform:uppercase; text-align:center;" maxlength="6">
+                </div>
+                <button class="btn btn-outline" onclick="joinQuickRoom()"><i class="fas fa-sign-in-alt"></i> انضم للغرفة</button>
+            </div>
+
+            <!-- تبويب الثيمات -->
+            <div class="home-content" id="themesSection" style="display:none;">
+                <div class="theme-grid">
+                    <div class="theme-card active" data-theme-option="blue" onclick="applyTheme('blue')">
+                        <div class="theme-swatch" style="background:linear-gradient(135deg,#00f3ff,#0055ff);"></div>
+                        <div class="theme-name">نيون أزرق</div>
+                    </div>
+                    <div class="theme-card" data-theme-option="purple" onclick="applyTheme('purple')">
+                        <div class="theme-swatch" style="background:linear-gradient(135deg,#b84dff,#ff2a85);"></div>
+                        <div class="theme-name">بنفسجي ملكي</div>
+                    </div>
+                    <div class="theme-card" data-theme-option="emerald" onclick="applyTheme('emerald')">
+                        <div class="theme-swatch" style="background:linear-gradient(135deg,#00f5a0,#009e60);"></div>
+                        <div class="theme-name">أخضر زمردي</div>
+                    </div>
+                    <div class="theme-card" data-theme-option="gold" onclick="applyTheme('gold')">
+                        <div class="theme-swatch" style="background:linear-gradient(135deg,#ffd166,#d48806);"></div>
+                        <div class="theme-name">ذهبي VIP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. شاشة الدردشة -->
+        <div class="screen" id="chatScreen">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <span class="chat-room-code" id="displayChatTitle">
+                        <span id="chatTitleText">الدردشة</span>
+                        <button class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
+                            <i class="fas fa-copy"></i> نسخ الكود
+                        </button>
+                    </span>
+                    <span class="chat-status" id="chatPartnerStatus">متصل الآن</span>
+                </div>
+                <div class="chat-header-actions">
+                    <button type="button" class="icon-btn-sm" title="بحث في الرسائل" onclick="toggleSearchBar()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button type="button" class="btn-leave" onclick="backToHome()">
+                        <i class="fas fa-arrow-right"></i> رجوع
+                    </button>
+                </div>
+            </div>
+
+            <div class="search-bar-box" id="searchBarBox">
+                <input type="text" id="chatSearchInput" placeholder="ابحث داخل هذه الدردشة..." oninput="renderMessagesList()">
+                <button type="button" class="icon-btn-sm" onclick="toggleSearchBar()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="pinned-bar" id="pinnedBar">
+                <div class="pinned-text">
+                    <i class="fas fa-thumbtack" style="color:var(--accent); margin-left:6px;"></i>
+                    <span id="pinnedMessageText"></span>
+                </div>
+                <button type="button" class="msg-action-btn del" title="إلغاء التثبيت" onclick="unpinMessage()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+
+            <div class="edit-banner" id="editBanner">
+                <span><i class="fas fa-edit"></i> جاري تعديل الرسالة...</span>
+                <button type="button" onclick="cancelEdit()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="reply-banner" id="replyBanner">
+                <span id="replyBannerText">رد على رسالة...</span>
+                <button type="button" onclick="cancelReply()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="quick-emojis" id="quickEmojis">
+                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
+                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('😂')">😂</button>
+                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
+                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('👍')">👍</button>
+                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('⚡')">⚡</button>
+                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('🫡')">🫡</button>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                </div>
+                <button type="button" class="btn-send" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. إعدادات Firebase
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
+            authDomain: "arrahimm.firebaseapp.com",
+            databaseURL: "https://arrahimm-default-rtdb.firebaseio.com/",
+            projectId: "arrahimm",
+            storageBucket: "arrahimm.firebasestorage.app",
+            messagingSenderId: "150237867312",
+            appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // ==========================================
+        // 2. المتغيرات العامة
+        // ==========================================
+        let authMode = 'login';
+        let currentUser = null;
+        let currentDisplayName = null;
+        let activeChatId = null;
+        let activeChatType = null;
+        let activeRoomCode = null;
+        let activePartner = null;
+        let replyingTo = null;
+        let editingMsgId = null;
+        let latestMessagesData = null;
+
+        let messagesRefCurrent = null;
+        let messagesCallbackCurrent = null;
+        let pinnedRefCurrent = null;
+        let pinnedCallbackCurrent = null;
+        let typingRefCurrent = null;
+        let typingCallbackCurrent = null;
+        let partnerPresenceRef = null;
+        let partnerPresenceCallback = null;
+        let friendsListenerRef = null;
+        let friendsListenerCallback = null;
+
+        let typingTimeout = null;
+        let isTyping = false;
+        let lastMessageCount = 0;
+
+        const REACTION_EMOJIS = ['👍', '❤️', '😂', '🔥'];
+
+        const authScreen = document.getElementById('authScreen');
+        const homeScreen = document.getElementById('homeScreen');
+        const chatScreen = document.getElementById('chatScreen');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        function playNotificationSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function sanitizeKey(str) {
+            return str.trim().toLowerCase().replace(/[.#$\[\]/\s]+/g, '_');
+        }
+
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function showAuthError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+        function hideAuthError() {
+            document.getElementById('authError').style.display = 'none';
+        }
+
+        // ==========================================
+        // 3. الثيمات والحالة الشخصية
+        // ==========================================
+        function applyTheme(themeName) {
+            const valid = ['blue', 'purple', 'emerald', 'gold'];
+            const chosen = valid.includes(themeName) ? themeName : 'blue';
+            document.body.setAttribute('data-theme', chosen);
+            localStorage.setItem('legendary_chat_theme', chosen);
+
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.toggle('active', card.getAttribute('data-theme-option') === chosen);
+            });
+
+            if (currentUser) {
+                db.ref('users/' + currentUser + '/theme').set(chosen);
+            }
+        }
+
+        async function editMyBio() {
+            if (!currentUser) return;
+            const currentBio = document.getElementById('myBioText').textContent;
+            const updated = prompt('اكتب حالتك أو نبذتك القصيرة:', currentBio);
+            if (updated !== null && updated.trim() !== '') {
+                const cleanBio = updated.trim().slice(0, 60);
+                document.getElementById('myBioText').textContent = cleanBio;
+                await db.ref('users/' + currentUser + '/bio').set(cleanBio);
+            }
+        }
+
+        // ==========================================
+        // 4. نظام الحسابات
+        // ==========================================
+        function switchAuthMode(mode) {
+            authMode = mode;
+            hideAuthError();
+            document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+            document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+            document.getElementById('authSubmitBtn').innerHTML = mode === 'login'
+                ? '<i class="fas fa-right-to-bracket"></i> دخول إلى حسابي'
+                : '<i class="fas fa-user-check"></i> إنشاء الحساب والبدء';
+        }
+
+        async function handleAuthSubmit() {
+            hideAuthError();
+            const rawUsername = document.getElementById('authUsername').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const usernameKey = sanitizeKey(rawUsername);
+
+            if (!usernameKey || usernameKey.length < 2) {
+                return showAuthError('يرجى إدخال اسم مستخدم صحيح (حرفين على الأقل).');
+            }
+            if (!password || password.length < 4) {
+                return showAuthError('يرجى إدخال كلمة سر لا تقل عن 4 أحرف/أرقام.');
+            }
+
+            const btn = document.getElementById('authSubmitBtn');
+            btn.disabled = true;
+
+            try {
+                const userRef = db.ref('users/' + usernameKey);
+                const snapshot = await userRef.once('value');
+                const passHash = await hashPassword(password);
+                const savedTheme = localStorage.getItem('legendary_chat_theme') || 'blue';
+
+                if (authMode === 'register') {
+                    if (snapshot.exists()) {
+                        showAuthError('اسم المستخدم هذا محجوز مسبقاً، اختر اسماً آخر أو سجّل الدخول.');
+                        btn.disabled = false;
+                        return;
+                    }
+                    await userRef.set({
+                        username: usernameKey,
+                        displayName: rawUsername,
+                        passwordHash: passHash,
+                        bio: 'متاح للدردشة ⚡',
+                        theme: savedTheme,
+                        createdAt: Date.now(),
+                        online: true,
+                        lastSeen: Date.now()
+                    });
+                    completeLogin(usernameKey, rawUsername, 'متاح للدردشة ⚡', savedTheme);
+                } else {
+                    if (!snapshot.exists()) {
+                        showAuthError('هذا الحساب غير موجود. يمكنك إنشاء حساب جديد من التبويب المجاور.');
+                        btn.disabled = false;
+                        return;
+                    }
+                    const userData = snapshot.val();
+                    if (userData.passwordHash !== passHash) {
+                        showAuthError('كلمة السر غير صحيحة.');
+                        btn.disabled = false;
+                        return;
+                    }
+                    const userTheme = userData.theme || savedTheme;
+                    const userBio = userData.bio || 'متاح للدردشة ⚡';
+                    await userRef.update({ online: true, lastSeen: Date.now() });
+                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme);
+                }
+            } catch (err) {
+                showAuthError('حدث خطأ في الاتصال بقاعدة البيانات.');
+            }
+            btn.disabled = false;
+        }
+
+        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة ⚡', themeName = 'blue') {
+            currentUser = usernameKey;
+            currentDisplayName = displayName;
+            localStorage.setItem('legendary_chat_session', JSON.stringify({ username: usernameKey, displayName }));
+
+            applyTheme(themeName);
+            document.getElementById('myBioText').textContent = bioText;
+
+            const myPresenceRef = db.ref('users/' + currentUser);
+            myPresenceRef.update({ online: true, lastSeen: Date.now() });
+            myPresenceRef.child('online').onDisconnect().set(false);
+            myPresenceRef.child('lastSeen').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+
+            document.getElementById('myDisplayName').textContent = `${displayName} (@${usernameKey})`;
+            document.getElementById('myAvatar').textContent = displayName.charAt(0).toUpperCase();
+
+            authScreen.classList.remove('active');
+            homeScreen.classList.add('active');
+            chatScreen.classList.remove('active');
+
+            listenToFriends();
+        }
+
+        function logoutUser() {
+            if (!currentUser) return;
+            db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
+            cleanupChatListeners();
+            if (friendsListenerRef && friendsListenerCallback) {
+                friendsListenerRef.off('value', friendsListenerCallback);
+            }
+            localStorage.removeItem('legendary_chat_session');
+            currentUser = null;
+            currentDisplayName = null;
+            homeScreen.classList.remove('active');
+            chatScreen.classList.remove('active');
+            authScreen.classList.add('active');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('legendary_chat_theme') || 'blue';
+            applyTheme(savedTheme);
+
+            const saved = localStorage.getItem('legendary_chat_session');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.username) {
+                        completeLogin(parsed.username, parsed.displayName || parsed.username, 'متاح للدردشة ⚡', savedTheme);
+                    }
+                } catch (e) {}
+            }
+        });
+
+        // ==========================================
+        // 5. الأصدقاء والغرف والثيمات
+        // ==========================================
+        function switchHomeTab(tab) {
+            document.getElementById('homeTabFriends').classList.toggle('active', tab === 'friends');
+            document.getElementById('homeTabRooms').classList.toggle('active', tab === 'rooms');
+            document.getElementById('homeTabThemes').classList.toggle('active', tab === 'themes');
+
+            document.getElementById('friendsSection').style.display = tab === 'friends' ? 'block' : 'none';
+            document.getElementById('roomsSection').style.display = tab === 'rooms' ? 'block' : 'none';
+            document.getElementById('themesSection').style.display = tab === 'themes' ? 'block' : 'none';
+        }
+
+        function getDirectChatId(userA, userB) {
+            return 'direct_' + [sanitizeKey(userA), sanitizeKey(userB)].sort().join('__');
+        }
+
+        async function addFriend() {
+            const input = document.getElementById('friendUsernameInput');
+            const friendKey = sanitizeKey(input.value);
+            if (!friendKey) return alert('اكتب اسم مستخدم صديقك أولاً.');
+            if (friendKey === currentUser) return alert('لا يمكنك إضافة نفسك كصديق.');
+
+            const friendSnap = await db.ref('users/' + friendKey).once('value');
+            if (!friendSnap.exists()) {
+                return alert('لا يوجد مستخدم بهذا الاسم. تأكد من كتابته بشكل صحيح.');
+            }
+
+            const friendData = friendSnap.val();
+            const friendDisplay = friendData.displayName || friendKey;
+            const chatId = getDirectChatId(currentUser, friendKey);
+
+            await db.ref(`friends/${currentUser}/${friendKey}`).update({
+                username: friendKey,
+                displayName: friendDisplay,
+                chatId: chatId,
+                addedAt: Date.now()
+            });
+
+            await db.ref(`friends/${friendKey}/${currentUser}`).update({
+                username: currentUser,
+                displayName: currentDisplayName || currentUser,
+                chatId: chatId,
+                addedAt: Date.now()
+            });
+
+            input.value = '';
+            openDirectChat(friendKey, friendDisplay, chatId);
+        }
+
+        function listenToFriends() {
+            if (friendsListenerRef && friendsListenerCallback) {
+                friendsListenerRef.off('value', friendsListenerCallback);
+            }
+            friendsListenerRef = db.ref('friends/' + currentUser);
+            friendsListenerCallback = friendsListenerRef.on('value', async (snapshot) => {
+                const container = document.getElementById('friendsListContainer');
+                const friendsObj = snapshot.val();
+                if (!friendsObj) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا يوجد أصدقاء بعد.<br>أضف صديقاً باسم المستخدم الخاص به لبدء الدردشة وحفظها!</div>';
+                    return;
+                }
+
+                const list = Object.values(friendsObj);
+                const enriched = await Promise.all(list.map(async (f) => {
+                    const uSnap = await db.ref('users/' + f.username).once('value');
+                    const uVal = uSnap.val() || {};
+                    const chatId = f.chatId || getDirectChatId(currentUser, f.username);
+                    const msgsSnap = await db.ref(`chats/${chatId}/messages`).once('value');
+
+                    let lastText = uVal.bio || 'ابدأ المحادثة الآن...';
+                    let lastTime = f.addedAt || 0;
+                    let unreadCount = 0;
+
+                    if (msgsSnap.exists()) {
+                        const msgs = Object.values(msgsSnap.val()).sort((a, b) => a.timestamp - b.timestamp);
+                        if (msgs.length > 0) {
+                            const last = msgs[msgs.length - 1];
+                            lastText = (last.sender === currentUser ? 'أنت: ' : '') + last.text;
+                            lastTime = last.timestamp || lastTime;
+                            unreadCount = msgs.filter(m => m.sender !== currentUser && !m.read).length;
+                        }
+                    }
+
+                    return {
+                        username: f.username,
+                        displayName: uVal.displayName || f.displayName || f.username,
+                        bio: uVal.bio || '',
+                        online: !!uVal.online,
+                        lastText,
+                        lastTime,
+                        unreadCount,
+                        chatId
+                    };
+                }));
+
+                enriched.sort((a, b) => b.lastTime - a.lastTime);
+
+                container.innerHTML = '';
+                enriched.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'friend-item';
+                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId);
+                    div.innerHTML = `
+                        <div class="friend-left">
+                            <div class="friend-avatar">
+                                ${item.displayName.charAt(0).toUpperCase()}
+                                <span class="status-dot ${item.online ? 'online' : ''}"></span>
+                            </div>
+                            <div class="friend-info">
+                                <div class="fname">${escapeHtml(item.displayName)} <span style="font-size:0.75rem; color:var(--text-muted);">(@${item.username})</span></div>
+                                <div class="flast">${escapeHtml(item.lastText)}</div>
+                            </div>
+                        </div>
+                        <div class="friend-right">
+                            ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
+                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.9rem;"></i>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        function openDirectChat(partnerKey, partnerDisplay, chatId) {
+            activeChatType = 'direct';
+            activeRoomCode = null;
+            activePartner = partnerKey;
+            activeChatId = chatId;
+
+            document.getElementById('chatTitleText').textContent = partnerDisplay;
+            document.getElementById('copyRoomBtn').style.display = 'none';
+            enterChatScreen();
+            listenPartnerPresence(partnerKey);
+            listenPinnedMessage();
+            listenForMessages();
+            listenForTyping();
+        }
+
+        // ==========================================
+        // 6. غرف الكود السريعة
+        // ==========================================
+        function createQuickRoom() {
+            const code = Math.random().toString(36).substring(2, 6).toUpperCase();
+            openRoomChat(code);
+        }
+
+        function joinQuickRoom() {
+            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!code) return alert('يرجى كتابة كود الغرفة.');
+            openRoomChat(code);
+        }
+
+        function openRoomChat(code) {
+            activeChatType = 'room';
+            activeRoomCode = code;
+            activePartner = null;
+            activeChatId = 'room_' + code;
+
+            document.getElementById('chatTitleText').textContent = `الغرفة: ${code}`;
+            document.getElementById('copyRoomBtn').style.display = 'inline-block';
+            const statusEl = document.getElementById('chatPartnerStatus');
+            statusEl.textContent = 'غرفة نشطة';
+            statusEl.style.color = 'var(--neon-green)';
+
+            enterChatScreen();
+            listenPinnedMessage();
+            listenForMessages();
+            listenForTyping();
+        }
+
+        function copyActiveRoomCode() {
+            if (!activeRoomCode) return;
+            navigator.clipboard?.writeText(activeRoomCode);
+            alert(`تم نسخ كود الغرفة: ${activeRoomCode}`);
+        }
+
+        // ==========================================
+        // 7. الرسائل والتعديل والتثبيت والبحث
+        // ==========================================
+        function enterChatScreen() {
+            homeScreen.classList.remove('active');
+            chatScreen.classList.add('active');
+            chatMessages.innerHTML = '';
+            chatInput.value = '';
+            lastMessageCount = 0;
+            latestMessagesData = null;
+            cancelReply();
+            cancelEdit();
+            document.getElementById('searchBarBox').classList.remove('active');
+            document.getElementById('chatSearchInput').value = '';
+            typingIndicator.classList.remove('active');
+        }
+
+        function cleanupChatListeners() {
+            if (messagesRefCurrent && messagesCallbackCurrent) {
+                messagesRefCurrent.off('value', messagesCallbackCurrent);
+            }
+            if (pinnedRefCurrent && pinnedCallbackCurrent) {
+                pinnedRefCurrent.off('value', pinnedCallbackCurrent);
+            }
+            if (typingRefCurrent && typingCallbackCurrent) {
+                typingRefCurrent.off('value', typingCallbackCurrent);
+            }
+            if (partnerPresenceRef && partnerPresenceCallback) {
+                partnerPresenceRef.off('value', partnerPresenceCallback);
+            }
+            if (activeChatId && currentUser) {
+                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
+            }
+        }
+
+        function backToHome() {
+            cleanupChatListeners();
+            activeChatId = null;
+            activeChatType = null;
+            activeRoomCode = null;
+            activePartner = null;
+            cancelReply();
+            cancelEdit();
+            chatScreen.classList.remove('active');
+            homeScreen.classList.add('active');
+            listenToFriends();
+        }
+
+        function listenPartnerPresence(partnerKey) {
+            if (partnerPresenceRef && partnerPresenceCallback) {
+                partnerPresenceRef.off('value', partnerPresenceCallback);
+            }
+            partnerPresenceRef = db.ref('users/' + partnerKey);
+            partnerPresenceCallback = partnerPresenceRef.on('value', (snap) => {
+                const val = snap.val();
+                const statusEl = document.getElementById('chatPartnerStatus');
+                if (val && val.online) {
+                    statusEl.textContent = val.bio ? `متصل • ${val.bio}` : 'متصل الآن';
+                    statusEl.style.color = 'var(--neon-green)';
+                } else {
+                    statusEl.textContent = val && val.bio ? `غير متصل • ${val.bio}` : 'غير متصل';
+                    statusEl.style.color = 'var(--text-muted)';
+                }
+            });
+        }
+
+        function listenPinnedMessage() {
+            if (pinnedRefCurrent && pinnedCallbackCurrent) {
+                pinnedRefCurrent.off('value', pinnedCallbackCurrent);
+            }
+            pinnedRefCurrent = db.ref(`chats/${activeChatId}/pinned`);
+            pinnedCallbackCurrent = pinnedRefCurrent.on('value', (snap) => {
+                const bar = document.getElementById('pinnedBar');
+                const val = snap.val();
+                if (val && val.text) {
+                    document.getElementById('pinnedMessageText').textContent = `${val.senderName || ''}: ${val.text}`;
+                    bar.classList.add('active');
+                } else {
+                    bar.classList.remove('active');
+                }
+            });
+        }
+
+        async function pinMessage(senderName, text) {
+            if (!activeChatId) return;
+            await db.ref(`chats/${activeChatId}/pinned`).set({
+                senderName: senderName || '',
+                text: text || '',
+                pinnedAt: Date.now()
+            });
+        }
+
+        async function unpinMessage() {
+            if (!activeChatId) return;
+            await db.ref(`chats/${activeChatId}/pinned`).remove();
+        }
+
+        function toggleSearchBar() {
+            const box = document.getElementById('searchBarBox');
+            const isOpen = box.classList.toggle('active');
+            const searchInput = document.getElementById('chatSearchInput');
+            if (isOpen) {
+                searchInput.focus();
+            } else {
+                searchInput.value = '';
+                renderMessagesList();
+            }
+        }
+
+        function startEditMessage(msgId, currentText) {
+            cancelReply();
+            editingMsgId = msgId;
+            document.getElementById('editBanner').classList.add('active');
+            chatInput.value = currentText;
+            chatInput.focus();
+        }
+
+        function cancelEdit() {
+            editingMsgId = null;
+            document.getElementById('editBanner').classList.remove('active');
+        }
+
+        function setReplyTarget(msgId, senderName, text) {
+            cancelEdit();
+            replyingTo = { id: msgId, senderName, text };
+            document.getElementById('replyBannerText').textContent = `الرد على ${senderName}: ${text}`;
+            document.getElementById('replyBanner').classList.add('active');
+            chatInput.focus();
+        }
+
+        function cancelReply() {
+            replyingTo = null;
+            document.getElementById('replyBanner').classList.remove('active');
+        }
+
+        function insertEmoji(emoji) {
+            chatInput.value += emoji;
+            chatInput.focus();
+        }
+
+        function copyTextToClipboard(text) {
+            navigator.clipboard?.writeText(text);
+            alert('تم نسخ الرسالة');
+        }
+
+        async function toggleReaction(msgId, emoji) {
+            if (!activeChatId || !currentUser) return;
+            const ref = db.ref(`chats/${activeChatId}/messages/${msgId}/reactions/${emoji}/${currentUser}`);
+            const snap = await ref.once('value');
+            if (snap.exists()) {
+                await ref.remove();
+            } else {
+                await ref.set(true);
+            }
+        }
+
+        async function deleteMessage(msgId) {
+            if (!activeChatId || !msgId) return;
+            if (confirm('هل تريد حذف هذه الرسالة؟')) {
+                if (editingMsgId === msgId) cancelEdit();
+                await db.ref(`chats/${activeChatId}/messages/${msgId}`).remove();
+            }
+        }
+
+        function listenForMessages() {
+            if (messagesRefCurrent && messagesCallbackCurrent) {
+                messagesRefCurrent.off('value', messagesCallbackCurrent);
+            }
+
+            messagesRefCurrent = db.ref(`chats/${activeChatId}/messages`);
+            messagesCallbackCurrent = messagesRefCurrent.on('value', (snapshot) => {
+                const data = snapshot.val();
+                const currentCount = data ? Object.keys(data).length : 0;
+
+                if (currentCount > lastMessageCount && lastMessageCount !== 0) {
+                    const msgs = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
+                    const lastMsg = msgs[msgs.length - 1];
+                    if (lastMsg.sender !== currentUser) playNotificationSound();
+                }
+                lastMessageCount = currentCount;
+                latestMessagesData = data;
+
+                renderMessagesList();
+            });
+        }
+
+        function renderMessagesList() {
+            const data = latestMessagesData;
+            const query = (document.getElementById('chatSearchInput')?.value || '').trim().toLowerCase();
+
+            chatMessages.innerHTML = '';
+            if (!data) {
+                chatMessages.innerHTML = '<div style="text-align:center; color:#666; margin-top:25px; font-size:0.9rem;"><i class="fas fa-comments"></i> لا توجد رسائل بعد. ابدأ المحادثة!</div>';
+                return;
+            }
+
+            let messagesArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            messagesArray.sort((a, b) => a.timestamp - b.timestamp);
+
+            if (query) {
+                messagesArray = messagesArray.filter(m => (m.text || '').toLowerCase().includes(query));
+            }
+
+            if (messagesArray.length === 0) {
+                chatMessages.innerHTML = '<div style="text-align:center; color:#666; margin-top:25px; font-size:0.88rem;">لا توجد نتائج مطابقة للبحث.</div>';
+                return;
+            }
+
+            messagesArray.forEach(msg => {
+                if (msg.sender !== currentUser && !msg.read) {
+                    db.ref(`chats/${activeChatId}/messages/${msg.id}/read`).set(true);
+                }
+
+                const isMe = msg.sender === currentUser;
+                const wrapper = document.createElement('div');
+                wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
+
+                const nameHtml = isMe ? '' : `<div class="msg-name">${escapeHtml(msg.senderName || msg.sender)}</div>`;
+                const replyHtml = msg.replyTo
+                    ? `<div class="reply-quote"><strong>${escapeHtml(msg.replyTo.senderName || '')}:</strong> ${escapeHtml(msg.replyTo.text || '')}</div>`
+                    : '';
+
+                const date = new Date(msg.timestamp);
+                const timeString = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                const editedLabel = msg.edited ? ' • (معدّلة)' : '';
+                const readIcon = isMe ? `<span style="color:${msg.read ? '#00ff66' : 'rgba(255,255,255,0.65)'};">${msg.read ? '✓✓' : '✓'}</span>` : '';
+
+                let chipsHtml = '';
+                if (msg.reactions) {
+                    for (const [emo, usersObj] of Object.entries(msg.reactions)) {
+                        const count = usersObj ? Object.keys(usersObj).length : 0;
+                        if (count > 0) {
+                            const iReacted = !!(usersObj && usersObj[currentUser]);
+                            chipsHtml += `<button type="button" class="reaction-chip ${iReacted ? 'active' : ''}" onclick="toggleReaction('${msg.id}', '${emo}')">${emo} ${count}</button>`;
+                        }
+                    }
+                }
+
+                const quickAddChips = REACTION_EMOJIS.map(emo =>
+                    `<button type="button" class="msg-action-btn" onclick="toggleReaction('${msg.id}', '${emo}')">${emo}</button>`
+                ).join('');
+
+                wrapper.innerHTML = `
+                    ${nameHtml}
+                    <div class="msg-bubble">
+                        ${replyHtml}
+                        <div>${escapeHtml(msg.text)}</div>
+                        <div class="msg-meta-row">
+                            <span class="msg-time" style="margin-top:0;">${timeString}${editedLabel}</span>
+                            ${readIcon}
+                        </div>
+                    </div>
+                    ${chipsHtml ? `<div class="reactions-bar">${chipsHtml}</div>` : ''}
+                    <div class="msg-actions">
+                        <button type="button" class="msg-action-btn" onclick="setReplyTarget('${msg.id}', '${escapeJs(msg.senderName || msg.sender)}', '${escapeJs(msg.text)}')">
+                            <i class="fas fa-reply"></i> رد
+                        </button>
+                        <button type="button" class="msg-action-btn" title="تثبيت الرسالة" onclick="pinMessage('${escapeJs(msg.senderName || msg.sender)}', '${escapeJs(msg.text)}')">
+                            <i class="fas fa-thumbtack"></i>
+                        </button>
+                        <button type="button" class="msg-action-btn" title="نسخ" onclick="copyTextToClipboard('${escapeJs(msg.text)}')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        ${quickAddChips}
+                        ${isMe ? `<button type="button" class="msg-action-btn" title="تعديل" onclick="startEditMessage('${msg.id}', '${escapeJs(msg.text)}')"><i class="fas fa-edit"></i></button>` : ''}
+                        ${isMe ? `<button type="button" class="msg-action-btn del" title="حذف" onclick="deleteMessage('${msg.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                    </div>
+                `;
+                chatMessages.appendChild(wrapper);
+            });
+
+            if (!query) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        function escapeJs(str) {
+            return String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, ' ');
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text || !activeChatId || !currentUser) return;
+
+            if (editingMsgId) {
+                await db.ref(`chats/${activeChatId}/messages/${editingMsgId}`).update({
+                    text: text,
+                    edited: true,
+                    editedAt: Date.now()
+                });
+                chatInput.value = '';
+                cancelEdit();
+                chatInput.focus();
+                return;
+            }
+
+            const payload = {
+                sender: currentUser,
+                senderName: currentDisplayName || currentUser,
+                text: text,
+                timestamp: Date.now(),
+                read: false
+            };
+
+            if (replyingTo) {
+                payload.replyTo = {
+                    senderName: replyingTo.senderName,
+                    text: replyingTo.text
+                };
+            }
+
+            await db.ref(`chats/${activeChatId}/messages`).push(payload);
+
+            chatInput.value = '';
+            cancelReply();
+            chatInput.focus();
+            db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
+        }
+
+        document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function listenForTyping() {
+            if (typingRefCurrent && typingCallbackCurrent) {
+                typingRefCurrent.off('value', typingCallbackCurrent);
+            }
+            typingRefCurrent = db.ref(`chats/${activeChatId}/typing`);
+            typingCallbackCurrent = typingRefCurrent.on('value', (snapshot) => {
+                const typingData = snapshot.val();
+                if (!typingData) return typingIndicator.classList.remove('active');
+
+                let otherTyping = false;
+                for (let user in typingData) {
+                    if (user !== currentUser && typingData[user] === true) {
+                        otherTyping = true;
+                    }
+                }
+                typingIndicator.classList.toggle('active', otherTyping);
+            });
+        }
+
+        chatInput.addEventListener('input', () => {
+            if (!activeChatId || !currentUser) return;
+            if (!isTyping) {
+                isTyping = true;
+                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(true);
+            }
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
