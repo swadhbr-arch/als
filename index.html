@@ -111,7 +111,7 @@
             text-shadow: 0 0 10px var(--accent-glow);
         }
 
-        /* علامة التوثيق الزرقاء وشارة VIP الذهبية */
+        /* علامة التوثيق الزرقاء وشارة التوثيق الذهبية المميزة للمطور/الإداري */
         .verified-badge {
             display: inline-flex;
             align-items: center;
@@ -133,18 +133,18 @@
             align-items: center;
             justify-content: center;
             gap: 3px;
-            padding: 1px 6px;
-            height: 17px;
+            padding: 1px 7px;
+            height: 18px;
             border-radius: 999px;
-            background: linear-gradient(135deg, #ffd700, #ff9900);
-            color: #140d00;
+            background: linear-gradient(135deg, #ffe066, #ff9f00);
+            color: #160e00;
             font-size: 8.5px;
             font-weight: 900;
             margin-right: 4px;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            border: 1px solid rgba(255, 245, 190, 0.75);
+            box-shadow: 0 0 12px rgba(255, 196, 0, 0.75);
             vertical-align: middle;
             flex-shrink: 0;
-            letter-spacing: 0.3px;
         }
 
         /* ===== الشاشات ===== */
@@ -1037,7 +1037,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">شارات VIP، حسابات موثقة، رسائل صوتية، وصور مضغوطة ⚡</div>
+                <div class="subtitle">شارات المطور، حسابات موثقة، رسائل صوتية، وصور مضغوطة ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1048,7 +1048,7 @@
 
                 <div class="input-group">
                     <label>اسم المستخدم:</label>
-                    <input type="text" id="authUsername" placeholder="مثال: abdulraheem" maxlength="20" autocomplete="username">
+                    <input type="text" id="authUsername" placeholder="مثال: abdulrahim" maxlength="20" autocomplete="username">
                 </div>
 
                 <div class="input-group">
@@ -1145,11 +1145,11 @@
                 </div>
             </div>
 
-            <!-- لوحة التحكم السرية للمدير (تظهر فقط لحسابات الإدارة) -->
+            <!-- لوحة التحكم السرية للمدير / المطور (تظهر فقط لـ abdulrahim أو حسابات الإدارة) -->
             <div class="home-content" id="adminSection" style="display:none;">
                 <div class="admin-panel-box">
                     <div style="font-weight:900; font-size:1rem; color:var(--accent); margin-bottom:10px;">
-                        <i class="fas fa-certificate"></i> لوحة إدارة توثيق الحسابات
+                        <i class="fas fa-crown" style="color:#ffd700;"></i> لوحة إدارة التوثيق (المطور: abdulrahim)
                     </div>
                     <div class="input-group" style="margin-bottom:8px;">
                         <label>اسم المستخدم المراد توثيقه أو إلغاء توثيقه:</label>
@@ -1268,7 +1268,7 @@
 
     <script>
         // ==========================================
-        // 1. إعدادات Firebase وحسابات الإدارة
+        // 1. إعدادات Firebase وحساب المدير / المطور
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
@@ -1280,7 +1280,7 @@
             appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
         };
 
-        // أضف أسماء المستخدمين المصرّح لهم بفتح لوحة التوثيق وشارة VIP الذهبية هنا
+        // حساب المطور / الإداري الأساسي
         const ADMIN_USERNAMES = ['abdulrahim'];
 
         if (!firebase.apps.length) {
@@ -1371,7 +1371,7 @@
                 ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>'
                 : '';
             const vipHtml = isVipAdmin
-                ? '<span class="vip-badge" title="مدير VIP"><i class="fas fa-crown"></i> VIP</span>'
+                ? '<span class="vip-badge" title="توثيق المطور / الإداري المميز"><i class="fas fa-crown"></i> مطور • VIP</span>'
                 : '';
             return verHtml + vipHtml;
         }
@@ -1384,9 +1384,10 @@
             }
             const snap = await db.ref('users/' + key).once('value');
             const val = snap.val() || {};
+            const isVip = !!(val.vipAdmin || isAdminUsername(key));
             const badges = {
-                verified: !!val.verified,
-                vipAdmin: !!(val.vipAdmin || isAdminUsername(key))
+                verified: !!(val.verified || isVip),
+                vipAdmin: isVip
             };
             userBadgeCache[key] = badges;
             return badges;
@@ -1731,9 +1732,9 @@
                     }
                     const userTheme = userData.theme || savedTheme;
                     const userBio = userData.bio || 'متاح للدردشة ⚡';
-                    const isVer = !!(userData.verified || isAdminAccount);
                     const isVip = !!(userData.vipAdmin || isAdminAccount);
-                    await userRef.update({ online: true, lastSeen: Date.now(), vipAdmin: isVip });
+                    const isVer = !!(userData.verified || isVip);
+                    await userRef.update({ online: true, lastSeen: Date.now(), vipAdmin: isVip, verified: isVer });
                     completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme, isVer, isVip);
                 }
             } catch (err) {
@@ -1745,8 +1746,8 @@
         function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة ⚡', themeName = 'blue', isVerified = false, isVipAdmin = false) {
             currentUser = usernameKey;
             currentDisplayName = displayName;
-            currentUserVerified = !!isVerified;
             currentUserVipAdmin = !!(isVipAdmin || isAdminUsername(usernameKey));
+            currentUserVerified = !!(isVerified || currentUserVipAdmin);
             userBadgeCache[usernameKey] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
             localStorage.setItem('legendary_chat_session', JSON.stringify({ username: usernameKey, displayName }));
 
@@ -1760,8 +1761,8 @@
 
             myPresenceRef.on('value', (snap) => {
                 const uVal = snap.val() || {};
-                currentUserVerified = !!uVal.verified;
                 currentUserVipAdmin = !!(uVal.vipAdmin || isAdminUsername(currentUser));
+                currentUserVerified = !!(uVal.verified || currentUserVipAdmin);
                 userBadgeCache[currentUser] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
                 document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
             });
@@ -1811,13 +1812,14 @@
                         const key = sanitizeKey(parsed.username);
                         const snap = await db.ref('users/' + key).once('value');
                         const uVal = snap.val() || {};
+                        const isVip = !!(uVal.vipAdmin || isAdminUsername(key));
                         completeLogin(
                             key,
                             uVal.displayName || parsed.displayName || key,
                             uVal.bio || 'متاح للدردشة ⚡',
                             uVal.theme || savedTheme,
-                            !!uVal.verified,
-                            !!(uVal.vipAdmin || isAdminUsername(key))
+                            !!(uVal.verified || isVip),
+                            isVip
                         );
                     }
                 } catch (e) {}
@@ -1875,7 +1877,8 @@
             });
 
             input.value = '';
-            openDirectChat(friendKey, friendDisplay, chatId, !!friendData.verified, !!(friendData.vipAdmin || isAdminUsername(friendKey)));
+            const isVip = !!(friendData.vipAdmin || isAdminUsername(friendKey));
+            openDirectChat(friendKey, friendDisplay, chatId, !!(friendData.verified || isVip), isVip);
         }
 
         function listenToFriends() {
@@ -1895,8 +1898,8 @@
                 const enriched = await Promise.all(list.map(async (f) => {
                     const uSnap = await db.ref('users/' + f.username).once('value');
                     const uVal = uSnap.val() || {};
-                    const isVer = !!uVal.verified;
                     const isVip = !!(uVal.vipAdmin || isAdminUsername(f.username));
+                    const isVer = !!(uVal.verified || isVip);
                     userBadgeCache[f.username] = { verified: isVer, vipAdmin: isVip };
 
                     const chatId = f.chatId || getDirectChatId(currentUser, f.username);
@@ -1971,8 +1974,9 @@
             activePartner = partnerKey;
             activeChatId = chatId;
 
+            const isVip = !!(partnerVipAdmin || isAdminUsername(partnerKey));
             document.getElementById('chatTitleText').textContent = partnerDisplay;
-            document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(partnerVerified, partnerVipAdmin || isAdminUsername(partnerKey));
+            document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(partnerVerified || isVip, isVip);
             document.getElementById('copyRoomBtn').style.display = 'none';
             enterChatScreen();
             listenPartnerPresence(partnerKey);
@@ -2081,8 +2085,8 @@
             partnerPresenceRef = db.ref('users/' + partnerKey);
             partnerPresenceCallback = partnerPresenceRef.on('value', (snap) => {
                 const val = snap.val() || {};
-                const isVer = !!val.verified;
                 const isVip = !!(val.vipAdmin || isAdminUsername(partnerKey));
+                const isVer = !!(val.verified || isVip);
                 userBadgeCache[partnerKey] = { verified: isVer, vipAdmin: isVip };
                 document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(isVer, isVip);
 
@@ -2255,8 +2259,8 @@
 
                 const isMe = msg.sender === currentUser;
                 const cachedBadges = userBadgeCache[msg.sender] || { verified: false, vipAdmin: isAdminUsername(msg.sender) };
-                const senderVerified = isMe ? currentUserVerified : !!cachedBadges.verified;
                 const senderVipAdmin = isMe ? currentUserVipAdmin : !!(cachedBadges.vipAdmin || isAdminUsername(msg.sender));
+                const senderVerified = isMe ? currentUserVerified : !!(cachedBadges.verified || senderVipAdmin);
 
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
