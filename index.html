@@ -267,7 +267,6 @@
                 const playersList = document.getElementById('playersList');
                 playersList.innerHTML = '';
                 let playerCount = 0;
-                let opName = "الخصم";
 
                 for (let pid in roomData.players) {
                     playerCount++;
@@ -275,26 +274,33 @@
                     playersList.innerHTML += `<div class="p-badge">${p.name} ${pid === roomData.host ? '👑' : ''}</div>`;
                     
                     if (pid === myId) document.getElementById('myScoreDisplay').textContent = `أنت: ${p.score}`;
-                    else { opName = p.name; document.getElementById('opponentScoreDisplay').textContent = `${p.name}: ${p.score}`; }
+                    else document.getElementById('opponentScoreDisplay').textContent = `${p.name}: ${p.score}`;
                 }
 
-                // بدء اللعب
-                if (roomData.status === 'playing' && gameScreen.classList.contains('active') === false) {
+                // الانتقال لشاشة اللعب
+                if (roomData.status === 'playing' && !gameScreen.classList.contains('active')) {
                     lobbyScreen.classList.remove('active');
                     gameScreen.classList.add('active');
                 }
 
-                // التحكم باللعبة
-                if (roomData.status === 'playing') {
-                    if (playerCount === 2 && isHost && roomData.gameState === 'idle') {
+                // إظهار زر البدء للمضيف (تم إصلاح هذا الجزء)
+                if (playerCount === 2 && isHost) {
+                    if (roomData.status === 'waiting' || roomData.gameState === 'idle') {
                         document.getElementById('hostStartBtn').style.display = 'block';
                         document.getElementById('waitMsg').style.display = 'none';
-                    } else if (playerCount < 2 && isHost) {
+                    } else {
                         document.getElementById('hostStartBtn').style.display = 'none';
-                        document.getElementById('waitMsg').style.display = 'block';
                     }
+                } else if (playerCount < 2 && isHost) {
+                    document.getElementById('hostStartBtn').style.display = 'none';
+                    document.getElementById('waitMsg').style.display = 'block';
+                }
+
+                // تحديث واجهة اللعبة
+                if (roomData.status === 'playing') {
                     updateGameUI();
                 }
+                
                 renderChat();
             });
         }
@@ -303,9 +309,11 @@
         // منطق اللعبة (مبارزة الأعصاب)
         // ==========================================
         document.getElementById('hostStartBtn').addEventListener('click', () => {
-            // بدء الجولة (الشاشة الحمراء)
             const delay = Math.floor(Math.random() * 3000) + 2000; // بين 2 إلى 5 ثواني
+            
+            // هنا كان الخطأ، قمنا بإضافة status: 'playing'
             db.ref('rooms/' + currentRoom).update({
+                status: 'playing', 
                 gameState: 'red',
                 startTime: Date.now(),
                 greenDelay: delay,
@@ -349,8 +357,8 @@
             if (roomData.gameState === 'idle') {
                 gameArea.classList.add('waiting');
                 text.textContent = "استعد...";
-                sub.textContent = isHost ? "اضغط على 'ابدأ المبارزة'" : "انتظر المضيف ليبدأ";
-                document.getElementById('nextRoundBtn').style.display = 'none';
+                sub.textContent = isHost ? "اضغط على 'الجولة التالية' للبدء" : "انتظر المضيف ليبدأ";
+                document.getElementById('nextRoundBtn').style.display = isHost ? 'block' : 'none';
                 hasClickedThisRound = false;
 
             } else if (roomData.gameState === 'red') {
@@ -401,7 +409,6 @@
             if (scoreUpdatedThisRound) return;
             scoreUpdatedThisRound = true;
             
-            // زيادة النقاط
             const currentScore = roomData.players[winnerId].score || 0;
             db.ref(`rooms/${currentRoom}/players/${winnerId}/score`).set(currentScore + 1);
             
@@ -414,7 +421,6 @@
                 winner: null,
                 foulPlayer: null
             });
-            document.getElementById('hostStartBtn').style.display = 'block';
             document.getElementById('nextRoundBtn').style.display = 'none';
         });
 
