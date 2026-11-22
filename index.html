@@ -3,717 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>العقل المدبر | قراءة الصور و PDF</title>
+    <title>مبارزة الأعصاب | Reaction Duel</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- مكتبة قراءة PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- مكتبة قراءة الصور OCR -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- مكتبة Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
     <style>
         :root {
-            --bg-color: #080a10;
-            --card-bg: rgba(20, 25, 40, 0.7);
-            --primary: #00f3ff;
-            --secondary: #7000ff;
-            --success: #00ff66;
-            --danger: #ff0055;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --gold: #ffcc00;
+            --bg: #0f1015; --card: #1a1c29; --primary: #00f3ff;
+            --danger: #ff0055; --success: #00ff66; --gold: #ffcc00;
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-            user-select: none; -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; }
+        
         body {
-            background-color: var(--bg-color);
-            height: 100vh; display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 40%);
+            background-color: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; color: #fff;
         }
 
         .app-container {
-            position: relative;
-            width: 100%; max-width: 550px; height: 100vh; max-height: 850px;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            overflow: hidden;
-            display: flex; flex-direction: column;
+            position: relative; width: 100%; max-width: 500px; height: 100vh; max-height: 900px;
+            background: var(--card); display: flex; flex-direction: column; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        .app-container.shake {
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-            border-color: var(--danger);
-        }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(4px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-            40%, 60% { transform: translate3d(6px, 0, 0); }
-        }
+        /* الشاشات */
+        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; overflow-y: auto; }
+        .screen.active { display: flex; }
 
-        /* ===== الشريط العلوي ===== */
-        .hud {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: rgba(0,0,0,0.3);
-            border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 10;
-        }
-
-        .hud-item { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text-muted); }
-        .score-val { color: var(--primary); font-size: 1.2rem; }
-        .lives-val { font-size: 1.2rem; letter-spacing: 2px; }
+        /* شاشة الدخول */
+        .title { font-size: 2rem; text-align: center; margin: 40px 0 10px; color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 0.9rem; }
         
-        .global-timer { 
-            color: var(--gold); font-size: 1.3rem; font-weight: 900;
-            display: flex; align-items: center; gap: 5px;
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; color: var(--primary); margin-bottom: 5px; font-weight: 700; }
+        .input-group input {
+            width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; outline: none;
         }
-        .global-timer.danger { color: var(--danger); animation: pulse 1s infinite alternate; }
-        @keyframes pulse { from { transform: scale(0.95); } to { transform: scale(1.05); } }
-
-        /* ===== منطقة اللعب ===== */
-        .play-area {
-            flex: 1; display: flex; flex-direction: column;
-            padding: 20px; position: relative; overflow-y: auto;
-        }
-
-        /* شاشة رفع الملف */
-        .upload-screen {
-            display: flex; flex-direction: column; height: 100%; gap: 15px;
-            justify-content: center; align-items: center;
-        }
-
-        .upload-title {
-            font-size: 1.5rem; font-weight: 900; color: #fff; text-align: center;
-            margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        .upload-subtitle {
-            font-size: 0.9rem; color: var(--text-muted); text-align: center;
-            line-height: 1.6; margin-bottom: 20px;
-        }
-
-        .drop-zone {
-            width: 100%; height: 220px;
-            border: 3px dashed rgba(255,255,255,0.2);
-            border-radius: 20px;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            cursor: pointer; transition: all 0.3s;
-            background: rgba(255,255,255,0.02);
-            position: relative; overflow: hidden;
-        }
-
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: var(--primary);
-            background: rgba(0, 243, 255, 0.05);
-            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.1);
-        }
-
-        .drop-zone i {
-            font-size: 3.5rem; color: var(--primary); margin-bottom: 15px;
-            transition: transform 0.3s;
-        }
-        .drop-zone:hover i { transform: translateY(-5px) scale(1.1); }
-
-        .drop-zone p { font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center; padding: 0 10px;}
-        .drop-zone span { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
-
-        input[type="file"] { display: none; }
-
-        /* شاشة التحميل */
-        .loading-screen {
-            display: none; flex-direction: column; height: 100%;
-            justify-content: center; align-items: center; gap: 20px;
-        }
-        .loader {
-            width: 60px; height: 60px; border-radius: 50%;
-            border: 5px solid rgba(255,255,255,0.1);
-            border-top-color: var(--primary);
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .loading-text { font-size: 1.1rem; font-weight: 700; color: var(--primary); text-align: center; padding: 0 20px; line-height: 1.5;}
-        .loading-progress { font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;}
-
-        /* شاشة الأسئلة */
-        .question-screen {
-            display: none; flex-direction: column; height: 100%; gap: 20px;
-            justify-content: center;
-        }
-
-        .question-text {
-            background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;
-            font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.8;
-            text-align: center; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .blank-highlight {
-            color: var(--primary); font-weight: 900; border-bottom: 3px solid var(--primary);
-            padding: 0 5px; letter-spacing: 2px;
-        }
-
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-
-        .option-btn {
-            background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1);
-            color: #fff; padding: 15px; border-radius: 12px; font-size: 1.05rem;
-            font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center;
-            font-family: 'Cairo', sans-serif;
-        }
-        .option-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--primary); }
-        
-        .option-btn.correct {
-            background: var(--success); border-color: var(--success); color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
-        }
-        .option-btn.wrong {
-            background: var(--danger); border-color: var(--danger); color: #fff;
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
-        }
-
-        /* شاشة النهاية */
-        .overlay {
-            position: absolute; inset: 0; background: rgba(8, 10, 16, 0.95);
-            backdrop-filter: blur(10px); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 50;
-            text-align: center; padding: 20px;
-        }
-        .overlay.hidden { display: none; }
-
-        .result-emoji { font-size: 6rem; margin-bottom: 15px; animation: bounce 1s infinite alternate; }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
-        
-        .rank-text { font-size: 1.5rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
-        .final-score { font-size: 1.2rem; color: #fff; margin-bottom: 30px; line-height: 1.6;}
+        .input-group input:focus { border-color: var(--primary); }
 
         .btn {
-            padding: 15px 30px; font-size: 1.1rem; font-weight: 900;
-            color: #000; background: var(--primary); border: none; border-radius: 50px;
-            cursor: pointer; transition: all 0.2s; width: 100%;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-            font-family: 'Cairo', sans-serif;
+            padding: 15px; font-size: 1.1rem; font-weight: 900; color: #000; background: var(--primary);
+            border: none; border-radius: 50px; cursor: pointer; transition: 0.2s; width: 100%;
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn:hover { background: #fff; box-shadow: 0 0 30px #fff; transform: scale(1.02); }
+        .btn:hover { background: #fff; transform: scale(1.02); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
 
-        /* النصوص الطائرة */
-        .floating-text {
-            position: absolute; font-size: 2rem; font-weight: 900;
-            pointer-events: none; z-index: 20;
-            animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 0 0 10px currentColor;
+        /* شاشة الانتظار */
+        .room-code { font-size: 3rem; font-weight: 900; color: var(--gold); letter-spacing: 5px; text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(255,204,0,0.5); }
+        .players-wait { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .p-badge { background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-weight: bold; }
+
+        /* شاشة اللعب */
+        .score-board { display: flex; justify-content: space-between; padding: 10px 20px; background: rgba(0,0,0,0.5); border-radius: 15px; margin-bottom: 20px; font-weight: 900; font-size: 1.2rem; }
+        .my-score { color: var(--primary); }
+        .op-score { color: var(--danger); }
+
+        .game-area {
+            flex: 1; border-radius: 20px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; transition: background 0.1s;
+            cursor: pointer; text-align: center; padding: 20px;
         }
-        @keyframes floatUp {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
+
+        .game-area.red { background: var(--danger); box-shadow: inset 0 0 50px rgba(0,0,0,0.5); }
+        .game-area.green { background: var(--success); box-shadow: inset 0 0 50px rgba(0,0,0,0.5); color: #000; }
+        .game-area.waiting { background: #222; color: #888; }
+        .game-area.winner { background: var(--gold); color: #000; }
+
+        .game-text { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; }
+        .game-sub { font-size: 1.2rem; font-weight: 700; }
+
+        /* الدردشة */
+        .chat-toggle {
+            position: absolute; bottom: 20px; left: 20px; width: 50px; height: 50px;
+            background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #000; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 100;
         }
+        .chat-box {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: #111;
+            border-top-left-radius: 20px; border-top-right-radius: 20px; display: flex; flex-direction: column;
+            transform: translateY(100%); transition: transform 0.3s; z-index: 99; border-top: 2px solid var(--primary);
+        }
+        .chat-box.open { transform: translateY(0); }
+        .chat-header { padding: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-weight: 900;}
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 0.9rem; }
+        .msg.me { background: var(--primary); color: #000; align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg.other { background: rgba(255,255,255,0.1); color: #fff; align-self: flex-start; border-bottom-left-radius: 0; }
+        .msg-name { font-size: 0.7rem; opacity: 0.7; margin-bottom: 3px; display: block; }
+        .chat-input-area { padding: 10px; display: flex; gap: 10px; background: #000; }
+        .chat-input-area input { flex: 1; padding: 10px; border-radius: 20px; border: none; background: #222; color: #fff; outline: none; }
+        .chat-input-area button { background: var(--primary); border: none; width: 45px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+
+        /* زر بدء الجولة (للمضيف) */
+        #hostStartBtn { margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="appWrapper">
+    <div class="app-container">
         
-        <!-- الشريط العلوي -->
-        <div class="hud" id="hud" style="display: none;">
-            <div class="hud-item">النقاط: <span class="score-val" id="scoreVal">0</span></div>
-            <div class="global-timer" id="globalTimer"><i class="fas fa-stopwatch"></i> 02:00</div>
-            <div class="hud-item lives-val" id="livesVal">❤️❤️❤️</div>
-        </div>
-
-        <!-- منطقة اللعب -->
-        <div class="play-area" id="playArea">
+        <!-- 1. شاشة الدخول -->
+        <div class="screen active" id="authScreen">
+            <div class="title">مبارزة الأعصاب 🧠</div>
+            <div class="subtitle">لعبة سريعة وممتعة، العبها مع صديقك واختبروا سرعة بديهتكم!</div>
             
-            <!-- شاشة رفع الملف -->
-            <div class="upload-screen" id="uploadScreen">
-                <div class="upload-title">العقل المدبر 🧠</div>
-                <div class="upload-subtitle">
-                    ارفع صورة (JPG/PNG) أو ملف PDF.<br>
-                    التطبيق سيقرأ النص من الصور تلقائياً ويصنع لك اختباراً!
-                </div>
-                
-                <div class="drop-zone" id="dropZone">
-                    <i class="fas fa-file-image"></i>
-                    <p>اسحب الصورة أو الـ PDF هنا<br>أو اضغط للاختيار</p>
-                    <span>يدعم: صور، ملفات PDF (نصية أو ممسوحة)</span>
-                    <input type="file" id="fileInput" accept=".pdf, image/*">
-                </div>
+            <div class="input-group">
+                <label>اسمك:</label>
+                <input type="text" id="playerName" placeholder="اكتب اسمك هنا...">
             </div>
-
-            <!-- شاشة التحميل (أثناء قراءة الملف أو الصورة) -->
-            <div class="loading-screen" id="loadingScreen">
-                <div class="loader"></div>
-                <div class="loading-text" id="loadingText">جاري استخراج النص...</div>
-                <div class="loading-progress" id="loadingProgress"></div>
+            
+            <button class="btn" id="createRoomBtn"><i class="fas fa-plus"></i> إنشاء غرفة جديدة</button>
+            
+            <div style="text-align: center; margin: 15px 0; color: #555;">- أو -</div>
+            
+            <div class="input-group">
+                <label>كود الغرفة (للدخول لصديقك):</label>
+                <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform: uppercase;">
             </div>
-
-            <!-- شاشة الأسئلة -->
-            <div class="question-screen" id="questionScreen">
-                <div class="question-text" id="questionText">
-                    سيظهر السؤال هنا...
-                </div>
-                <div class="options-grid" id="optionsContainer"></div>
-            </div>
-
+            <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول الغرفة</button>
         </div>
 
-        <!-- شاشة النهاية -->
-        <div class="overlay hidden" id="endScreen">
-            <div class="result-emoji" id="resultEmoji">🎓</div>
-            <div class="rank-text" id="rankText">رتبتك</div>
-            <div class="final-score" id="finalScoreText">نقاطك: 0</div>
-            <button class="btn" id="restartBtn"><i class="fas fa-rotate-right"></i> العودة للبداية</button>
+        <!-- 2. شاشة الانتظار (Lobby) -->
+        <div class="screen" id="lobbyScreen">
+            <h2 style="text-align: center; color: #fff; margin-top: 20px;">غرفة الانتظار</h2>
+            <p style="text-align: center; color: #aaa;">شارك هذا الكود مع صديقك:</p>
+            <div class="room-code" id="displayRoomCode">----</div>
+            
+            <div class="players-wait" id="playersList"></div>
+
+            <p id="waitMsg" style="text-align: center; color: var(--primary); font-weight: bold; margin-top: 20px;">بانتظار انضمام صديقك...</p>
+            
+            <button class="btn" id="hostStartBtn" style="background: var(--success);"><i class="fas fa-play"></i> ابدأ المبارزة!</button>
+        </div>
+
+        <!-- 3. شاشة اللعب -->
+        <div class="screen" id="gameScreen">
+            <div class="score-board">
+                <div class="my-score" id="myScoreDisplay">أنت: 0</div>
+                <div class="op-score" id="opponentScoreDisplay">الخصم: 0</div>
+            </div>
+            
+            <div class="game-area waiting" id="gameArea">
+                <div class="game-text" id="gameText">استعد...</div>
+                <div class="game-sub" id="gameSub">انتظر المضيف ليبدأ الجولة</div>
+            </div>
+
+            <button class="btn" id="nextRoundBtn" style="background: var(--gold); display: none; margin-top: 15px;"><i class="fas fa-redo"></i> الجولة التالية</button>
+        </div>
+
+        <!-- الدردشة -->
+        <div class="chat-toggle" id="chatToggle" style="display: none;"><i class="fas fa-comment-dots"></i></div>
+        <div class="chat-box" id="chatBox">
+            <div class="chat-header">
+                <span>الدردشة 💬</span>
+                <i class="fas fa-times" id="closeChat" style="cursor: pointer;"></i>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="اكتب رسالة...">
+                <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // إعداد مسار عمل مكتبة PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // ==========================================
+        // إعدادات Firebase الخاصة بك
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
+            authDomain: "arrahimm.firebaseapp.com",
+            databaseURL: "https://arrahimm-default-rtdb.firebaseio.com/",
+            projectId: "arrahimm",
+            storageBucket: "arrahimm.firebasestorage.app",
+            messagingSenderId: "150237867312",
+            appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
+        };
 
-        // ================= العناصر =================
-        const appWrapper = document.getElementById('appWrapper');
-        const hud = document.getElementById('hud');
-        const globalTimerEl = document.getElementById('globalTimer');
-        
-        const uploadScreen = document.getElementById('uploadScreen');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const loadingText = document.getElementById('loadingText');
-        const loadingProgress = document.getElementById('loadingProgress');
-        const questionScreen = document.getElementById('questionScreen');
-        
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        
-        const questionText = document.getElementById('questionText');
-        const optionsContainer = document.getElementById('optionsContainer');
-        
-        const scoreVal = document.getElementById('scoreVal');
-        const livesVal = document.getElementById('livesVal');
-        
-        const endScreen = document.getElementById('endScreen');
-        const restartBtn = document.getElementById('restartBtn');
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
 
-        // ================= متغيرات اللعبة =================
-        let score = 0;
-        let lives = 3;
-        let isPlaying = false;
-        let questions = [];
-        let currentQuestionIndex = 0;
-        
-        let globalTimeLeft = 120; 
-        let timerInterval;
+        // ==========================================
+        // المتغيرات
+        // ==========================================
+        let myId = 'player_' + Math.floor(Math.random() * 10000);
+        let myName = "";
+        let currentRoom = "";
+        let isHost = false;
+        let roomData = {};
+        let hasClickedThisRound = false;
 
-        // الأصوات
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
+        // العناصر
+        const authScreen = document.getElementById('authScreen');
+        const lobbyScreen = document.getElementById('lobbyScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const chatToggle = document.getElementById('chatToggle');
+        const chatBox = document.getElementById('chatBox');
 
-        function playSound(type) {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+        // ==========================================
+        // إنشاء ودخول الغرف
+        // ==========================================
+        document.getElementById('createRoomBtn').addEventListener('click', () => {
+            myName = document.getElementById('playerName').value.trim();
+            if (!myName) return alert("الرجاء كتابة اسمك أولاً");
             
-            if (type === 'correct') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            } else if (type === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            }
-
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.4);
-        }
-
-        // ================= التعامل مع رفع الملفات =================
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file) handleFile(file);
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) handleFile(file);
-        });
-
-        // ================= التوجيه: صورة أم PDF؟ =================
-        function handleFile(file) {
-            uploadScreen.style.display = 'none';
-            loadingScreen.style.display = 'flex';
-            loadingText.innerHTML = "جاري معالجة الملف...";
-            loadingProgress.textContent = "";
-
-            if (file.type.startsWith('image/')) {
-                // إذا كان صورة، نستخدم Tesseract OCR مباشرة
-                processImageWithOCR(file);
-            } else if (file.type === 'application/pdf') {
-                // إذا كان PDF، نستخدم PDF.js
-                processPDF(file);
-            } else {
-                alert("الرجاء إرفاق صورة (JPG, PNG) أو ملف PDF.");
-                resetToStart();
-            }
-        }
-
-        // ================= معالجة الصور بالـ OCR =================
-        function processImageWithOCR(file) {
-            loadingText.innerHTML = "جاري قراءة النص من الصورة باستخدام الذكاء الاصطناعي...<br><span style='font-size:0.8rem; color:var(--gold);'>(قد يستغرق هذا بضع ثوانٍ)</span>";
+            const code = Math.random().toString(36).substring(2, 6).toUpperCase();
+            isHost = true;
+            currentRoom = code;
             
-            // استخدام Tesseract.js لقراءة اللغة العربية
-            Tesseract.recognize(
-                file,
-                'ara',
-                {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            loadingProgress.textContent = `نسبة القراءة: ${Math.round(m.progress * 100)}%`;
-                        }
-                    }
+            db.ref('rooms/' + code).set({
+                host: myId,
+                status: 'waiting',
+                players: {
+                    [myId]: { name: myName, score: 0 }
                 }
-            ).then(({ data: { text } }) => {
-                if (text.trim().length < 50) {
-                    alert("لم نتمكن من قراءة نص واضح من هذه الصورة. تأكد من جودة الصورة ووضوح الخط.");
-                    resetToStart();
+            }).then(() => enterLobby());
+        });
+
+        document.getElementById('joinRoomBtn').addEventListener('click', () => {
+            myName = document.getElementById('playerName').value.trim();
+            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!myName) return alert("الرجاء كتابة اسمك أولاً");
+            if (!code) return alert("الرجاء كتابة كود الغرفة");
+
+            isHost = false;
+            currentRoom = code;
+            
+            db.ref('rooms/' + code).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    db.ref(`rooms/${code}/players/${myId}`).set({ name: myName, score: 0 });
+                    enterLobby();
                 } else {
-                    processTextAndStartGame(text);
+                    alert("الغرفة غير موجودة، تأكد من الكود.");
                 }
-            }).catch(err => {
-                console.error(err);
-                alert("حدث خطأ أثناء قراءة الصورة.");
-                resetToStart();
+            });
+        });
+
+        function enterLobby() {
+            authScreen.classList.remove('active');
+            lobbyScreen.classList.add('active');
+            chatToggle.style.display = 'flex';
+            document.getElementById('displayRoomCode').textContent = currentRoom;
+            listenToRoom();
+        }
+
+        // ==========================================
+        // الاستماع لتحديثات الغرفة
+        // ==========================================
+        function listenToRoom() {
+            db.ref('rooms/' + currentRoom).on('value', (snapshot) => {
+                roomData = snapshot.val();
+                if (!roomData) return;
+
+                // تحديث اللاعبين
+                const playersList = document.getElementById('playersList');
+                playersList.innerHTML = '';
+                let playerCount = 0;
+                let opName = "الخصم";
+
+                for (let pid in roomData.players) {
+                    playerCount++;
+                    const p = roomData.players[pid];
+                    playersList.innerHTML += `<div class="p-badge">${p.name} ${pid === roomData.host ? '👑' : ''}</div>`;
+                    
+                    if (pid === myId) document.getElementById('myScoreDisplay').textContent = `أنت: ${p.score}`;
+                    else { opName = p.name; document.getElementById('opponentScoreDisplay').textContent = `${p.name}: ${p.score}`; }
+                }
+
+                // بدء اللعب
+                if (roomData.status === 'playing' && gameScreen.classList.contains('active') === false) {
+                    lobbyScreen.classList.remove('active');
+                    gameScreen.classList.add('active');
+                }
+
+                // التحكم باللعبة
+                if (roomData.status === 'playing') {
+                    if (playerCount === 2 && isHost && roomData.gameState === 'idle') {
+                        document.getElementById('hostStartBtn').style.display = 'block';
+                        document.getElementById('waitMsg').style.display = 'none';
+                    } else if (playerCount < 2 && isHost) {
+                        document.getElementById('hostStartBtn').style.display = 'none';
+                        document.getElementById('waitMsg').style.display = 'block';
+                    }
+                    updateGameUI();
+                }
+                renderChat();
             });
         }
 
-        // ================= معالجة ملفات PDF =================
-        function processPDF(file) {
-            loadingText.innerHTML = "جاري استخراج النص من ملف PDF...";
-            const fileReader = new FileReader();
-            
-            fileReader.onload = function() {
-                const typedarray = new Uint8Array(this.result);
-                
-                pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-                    let maxPages = Math.min(pdf.numPages, 5); // قراءة أول 5 صفحات كحد أقصى
-                    let countPromises = [];
-                    let fullText = "";
-
-                    for (let i = 1; i <= maxPages; i++) {
-                        countPromises.push(pdf.getPage(i).then(function(page) {
-                            return page.getTextContent().then(function(textContent) {
-                                return textContent.items.map(function(s) { return s.str; }).join(" ");
-                            });
-                        }));
-                    }
-
-                    Promise.all(countPromises).then(function(texts) {
-                        fullText = texts.join(" \n ");
-                        
-                        // إذا كان النص المستخرج قصير جداً، فهذا يعني أن الـ PDF عبارة عن صور (ممسوح ضوئياً)
-                        if (fullText.replace(/\s/g, '').length < 100) {
-                            loadingText.innerHTML = "الملف يبدو ممسوحاً ضوئياً (صور).<br>جاري استخدام الذكاء الاصطناعي لقراءته...";
-                            // نأخذ الصفحة الأولى كصورة ونمررها للـ OCR (لتسريع العملية)
-                            pdf.getPage(1).then(page => {
-                                const viewport = page.getViewport({ scale: 1.5 });
-                                const canvas = document.createElement('canvas');
-                                const context = canvas.getContext('2d');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-                                
-                                page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
-                                    // تحويل الكانفاس إلى صورة وتمريرها للـ OCR
-                                    canvas.toBlob(blob => {
-                                        processImageWithOCR(blob);
-                                    });
-                                });
-                            });
-                        } else {
-                            // النص جيد، نكمل
-                            processTextAndStartGame(fullText);
-                        }
-                    });
-                }).catch(error => {
-                    console.error(error);
-                    alert("حدث خطأ أثناء قراءة ملف PDF.");
-                    resetToStart();
-                });
-            };
-            
-            fileReader.readAsArrayBuffer(file);
-        }
-
-        // ================= الخوارزمية الذكية لصنع الأسئلة =================
-        function processTextAndStartGame(text) {
-            loadingText.textContent = "جاري صياغة الأسئلة بذكاء...";
-            loadingProgress.textContent = "";
-            
-            setTimeout(() => {
-                // تنظيف النص
-                text = text.replace(/\s+/g, ' ').trim();
-                
-                // تقسيم النص إلى جمل
-                const sentences = text.match(/[^.!?]+[.!?]+/g) || text.split('.'); 
-                
-                // تصفية الجمل الطويلة
-                const validSentences = sentences.filter(s => s.trim().split(/\s+/).length >= 6);
-                
-                if (validSentences.length < 2) {
-                    alert("النص المستخرج قصير جداً لتوليد أسئلة. جرب ملفاً يحتوي على نص أطول.");
-                    resetToStart();
-                    return;
-                }
-
-                // استخراج الكلمات الفريدة
-                const allWords = text.match(/[\u0600-\u06FFa-zA-Z]{4,}/g) || []; 
-                const uniqueWords = [...new Set(allWords.map(w => w.replace(/[^\u0600-\u06FFa-zA-Z]/g, '')))].filter(w => w.length > 3);
-
-                let generatedQuestions = [];
-
-                validSentences.forEach(sentence => {
-                    const words = sentence.trim().split(/\s+/);
-                    
-                    const candidates = words.map((w, i) => ({w, i}))
-                        .filter(obj => obj.w.replace(/[^\u0600-\u06FFa-zA-Z]/g, '').length > 4);
-                    
-                    if (candidates.length > 0) {
-                        const targetObj = candidates[Math.floor(Math.random() * candidates.length)];
-                        const correctWord = targetObj.w.replace(/[^\u0600-\u06FFa-zA-Z]/g, ''); 
-                        
-                        let options = [correctWord];
-                        
-                        let attempts = 0;
-                        while(options.length < 4 && attempts < 150) {
-                            const randomWord = uniqueWords[Math.floor(Math.random() * uniqueWords.length)];
-                            if (!options.includes(randomWord)) {
-                                options.push(randomWord);
-                            }
-                            attempts++;
-                        }
-                        
-                        if (options.length === 4) {
-                            const questionString = words.map((w, i) => i === targetObj.i ? '<span class="blank-highlight">______</span>' : w).join(' ');
-                            
-                            generatedQuestions.push({
-                                text: questionString,
-                                options: options.sort(() => 0.5 - Math.random()),
-                                correct: correctWord
-                            });
-                        }
-                    }
-                });
-
-                questions = generatedQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
-
-                if (questions.length > 0) {
-                    startGame();
-                } else {
-                    alert("لم نتمكن من توليد أسئلة من هذا الملف. جرب ملفاً آخر.");
-                    resetToStart();
-                }
-            }, 1000);
-        }
-
-        // ================= بدء اللعبة =================
-        function startGame() {
-            score = 0;
-            lives = 3;
-            currentQuestionIndex = 0;
-            globalTimeLeft = 120; 
-            isPlaying = true;
-            
-            scoreVal.textContent = score;
-            updateLivesUI();
-            updateTimerUI();
-            
-            loadingScreen.style.display = 'none';
-            questionScreen.style.display = 'flex';
-            hud.style.display = 'flex';
-            endScreen.classList.add('hidden');
-            
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                globalTimeLeft--;
-                updateTimerUI();
-                
-                if (globalTimeLeft <= 0) {
-                    endGame("انتهى الوقت! (دقيقتان)");
-                }
-            }, 1000);
-            
-            loadQuestion();
-        }
-
-        function updateLivesUI() {
-            livesVal.textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
-        }
-
-        function updateTimerUI() {
-            const minutes = Math.floor(globalTimeLeft / 60);
-            const seconds = globalTimeLeft % 60;
-            globalTimerEl.innerHTML = `<i class="fas fa-stopwatch"></i> ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (globalTimeLeft <= 20) {
-                globalTimerEl.classList.add('danger');
-            } else {
-                globalTimerEl.classList.remove('danger');
-            }
-        }
-
-        // ================= تحميل السؤال =================
-        function loadQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                endGame("أنت بطل! أكملت جميع الأسئلة");
-                return;
-            }
-
-            const q = questions[currentQuestionIndex];
-            
-            questionText.innerHTML = q.text;
-            optionsContainer.innerHTML = '';
-            
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = opt;
-                btn.addEventListener('click', () => handleAnswer(btn, opt, q.correct));
-                optionsContainer.appendChild(btn);
+        // ==========================================
+        // منطق اللعبة (مبارزة الأعصاب)
+        // ==========================================
+        document.getElementById('hostStartBtn').addEventListener('click', () => {
+            // بدء الجولة (الشاشة الحمراء)
+            const delay = Math.floor(Math.random() * 3000) + 2000; // بين 2 إلى 5 ثواني
+            db.ref('rooms/' + currentRoom).update({
+                gameState: 'red',
+                startTime: Date.now(),
+                greenDelay: delay,
+                winner: null,
+                foulPlayer: null
             });
-        }
+            document.getElementById('hostStartBtn').style.display = 'none';
 
-        // ================= معالجة الإجابات =================
-        function handleAnswer(clickedBtn, chosen, correct) {
-            if (!isPlaying) return;
-
-            const allBtns = optionsContainer.querySelectorAll('.option-btn');
-            allBtns.forEach(btn => btn.style.pointerEvents = 'none');
-
-            if (chosen === correct) {
-                playSound('correct');
-                clickedBtn.classList.add('correct');
-                
-                const points = Math.round(10 + (globalTimeLeft * 0.2)); 
-                score += points;
-                scoreVal.textContent = score;
-                
-                showFloatingText(clickedBtn, `+${points}`, 'var(--success)');
-                
-                setTimeout(nextQuestion, 800);
-            } else {
-                playSound('wrong');
-                clickedBtn.classList.add('wrong');
-                
-                allBtns.forEach(btn => {
-                    if (btn.textContent === correct) btn.classList.add('correct');
+            // تحويل الشاشة للأخضر بعد الوقت العشوائي
+            setTimeout(() => {
+                db.ref('rooms/' + currentRoom).once('value').then(snap => {
+                    if (snap.val().gameState === 'red') {
+                        db.ref('rooms/' + currentRoom).update({ gameState: 'green' });
+                    }
                 });
+            }, delay);
+        });
 
-                appWrapper.classList.add('shake');
-                loseLife();
+        const gameArea = document.getElementById('gameArea');
+        gameArea.addEventListener('click', () => {
+            if (roomData.status !== 'playing' || roomData.gameState === 'idle' || roomData.winner || roomData.foulPlayer) return;
+            if (hasClickedThisRound) return;
+
+            if (roomData.gameState === 'red') {
+                // ضغط وهو أحمر (استعجل)
+                db.ref('rooms/' + currentRoom).update({ foulPlayer: myId });
+                hasClickedThisRound = true;
+            } else if (roomData.gameState === 'green') {
+                // ضغط وهو أخضر (فاز)
+                db.ref('rooms/' + currentRoom).update({ winner: myId });
+                hasClickedThisRound = true;
+            }
+        });
+
+        function updateGameUI() {
+            const text = document.getElementById('gameText');
+            const sub = document.getElementById('gameSub');
+            
+            gameArea.className = 'game-area'; // تصفير الكلاسات
+
+            if (roomData.gameState === 'idle') {
+                gameArea.classList.add('waiting');
+                text.textContent = "استعد...";
+                sub.textContent = isHost ? "اضغط على 'ابدأ المبارزة'" : "انتظر المضيف ليبدأ";
+                document.getElementById('nextRoundBtn').style.display = 'none';
+                hasClickedThisRound = false;
+
+            } else if (roomData.gameState === 'red') {
+                gameArea.classList.add('red');
+                text.textContent = "انتظر...";
+                sub.textContent = "ممنوع الضغط! ⛔";
+                document.getElementById('nextRoundBtn').style.display = 'none';
+
+            } else if (roomData.gameState === 'green') {
+                gameArea.classList.add('green');
+                text.textContent = "اضغط الآن!!!";
+                sub.textContent = "بأسرع ما يمكنك! ⚡";
+
+            } else if (roomData.winner || roomData.foulPlayer) {
+                // انتهت الجولة
+                hasClickedThisRound = true;
+                document.getElementById('nextRoundBtn').style.display = isHost ? 'block' : 'none';
+
+                if (roomData.winner) {
+                    gameArea.classList.add('winner');
+                    if (roomData.winner === myId) {
+                        text.textContent = "لقد فزت! 🏆";
+                        sub.textContent = "أعصابك فولاذية!";
+                        updateScore(myId);
+                    } else {
+                        text.textContent = "لقد خسرت! 💀";
+                        sub.textContent = `${roomData.players[roomData.winner].name} كان أسرع منك!`;
+                        updateScore(roomData.winner);
+                    }
+                } else if (roomData.foulPlayer) {
+                    gameArea.classList.add('red');
+                    if (roomData.foulPlayer === myId) {
+                        text.textContent = "لقد استعجلت! 🤡";
+                        sub.textContent = "ضغطت واللون أحمر!";
+                        const otherPid = Object.keys(roomData.players).find(id => id !== myId);
+                        updateScore(otherPid);
+                    } else {
+                        text.textContent = "لقد فزت بالجولة! 🎉";
+                        sub.textContent = `${roomData.players[roomData.foulPlayer].name} استعجل وضغط!`;
+                        updateScore(myId);
+                    }
+                }
             }
         }
 
-        function loseLife() {
-            lives--;
-            updateLivesUI();
+        let scoreUpdatedThisRound = false;
+        function updateScore(winnerId) {
+            if (scoreUpdatedThisRound) return;
+            scoreUpdatedThisRound = true;
+            
+            // زيادة النقاط
+            const currentScore = roomData.players[winnerId].score || 0;
+            db.ref(`rooms/${currentRoom}/players/${winnerId}/score`).set(currentScore + 1);
+            
+            setTimeout(() => scoreUpdatedThisRound = false, 1000);
+        }
 
-            setTimeout(() => {
-                appWrapper.classList.remove('shake');
-                if (lives <= 0) {
-                    endGame("نفدت المحاولات!");
-                } else {
-                    nextQuestion();
+        document.getElementById('nextRoundBtn').addEventListener('click', () => {
+            db.ref('rooms/' + currentRoom).update({
+                gameState: 'idle',
+                winner: null,
+                foulPlayer: null
+            });
+            document.getElementById('hostStartBtn').style.display = 'block';
+            document.getElementById('nextRoundBtn').style.display = 'none';
+        });
+
+        // ==========================================
+        // الدردشة
+        // ==========================================
+        chatToggle.addEventListener('click', () => chatBox.classList.add('open'));
+        document.getElementById('closeChat').addEventListener('click', () => chatBox.classList.remove('open'));
+
+        document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            db.ref('rooms/' + currentRoom + '/messages').push({
+                sender: myName,
+                text: text
+            });
+            input.value = '';
+        }
+
+        function renderChat() {
+            const chatContainer = document.getElementById('chatMessages');
+            if (roomData.messages) {
+                let html = '';
+                for (let key in roomData.messages) {
+                    const msg = roomData.messages[key];
+                    const isMe = msg.sender === myName;
+                    html += `
+                        <div class="msg ${isMe ? 'me' : 'other'}">
+                            <span class="msg-name">${msg.sender}</span>
+                            ${msg.text}
+                        </div>
+                    `;
                 }
-            }, 1500);
+                if(chatContainer.innerHTML !== html) {
+                    chatContainer.innerHTML = html;
+                    chatContainer.scrollTop = chatContainer.scrollHeight; 
+                }
+            }
         }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            loadQuestion();
-        }
-
-        // ================= النهاية =================
-        function endGame(msg) {
-            isPlaying = false;
-            clearInterval(timerInterval);
-            
-            hud.style.display = 'none';
-            questionScreen.style.display = 'none';
-            
-            let rank = "مبتدئ 🐣";
-            let emoji = "📚";
-            
-            if (score >= 120) { rank = "عبقري 🧠"; emoji = "🏆"; }
-            else if (score >= 70) { rank = "متفوق 🌟"; emoji = "🎓"; }
-            else if (score >= 30) { rank = "طالب مجتهد 📖"; emoji = "📝"; }
-
-            document.getElementById('finalScoreText').textContent = `نقاطك: ${score} | ${msg}`;
-            document.getElementById('rankText').textContent = `رتبتك: ${rank}`;
-            document.getElementById('resultEmoji').textContent = emoji;
-            
-            endScreen.classList.remove('hidden');
-        }
-
-        // ================= التأثيرات =================
-        function showFloatingText(element, text, color) {
-            const rect = element.getBoundingClientRect();
-            const appRect = appWrapper.getBoundingClientRect();
-            
-            const x = rect.left - appRect.left + rect.width / 2;
-            const y = rect.top - appRect.top;
-
-            const el = document.createElement('div');
-            el.className = 'floating-text';
-            el.textContent = text;
-            el.style.left = `${x}px`;
-            el.style.top = `${y}px`;
-            el.style.color = color;
-            
-            appWrapper.appendChild(el);
-            setTimeout(() => el.remove(), 800);
-        }
-
-        function resetToStart() {
-            endScreen.classList.add('hidden');
-            loadingScreen.style.display = 'none';
-            questionScreen.style.display = 'none';
-            uploadScreen.style.display = 'flex';
-            hud.style.display = 'none';
-            fileInput.value = '';
-            clearInterval(timerInterval);
-        }
-
-        restartBtn.addEventListener('click', resetToStart);
-        document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
 </html>
