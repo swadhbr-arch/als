@@ -15,10 +15,10 @@
     <style>
         :root {
             --bg-dark: #05050a;
-            --bg-panel: rgba(20, 25, 40, 0.78);
+            --bg-panel: rgba(20, 25, 40, 0.82);
             --accent: #00f3ff;
             --accent-secondary: #ff0055;
-            --accent-glow: rgba(0, 243, 255, 0.35);
+            --accent-glow: rgba(0, 243, 255, 0.32);
             --neon-green: #00ff66;
             --text-main: #f8fafc;
             --text-muted: #8892b0;
@@ -73,7 +73,7 @@
             background-image: 
                 radial-gradient(circle at 15% 50%, var(--bg-glow-1), transparent 28%),
                 radial-gradient(circle at 85% 30%, var(--bg-glow-2), transparent 28%);
-            transition: background 0.35s ease;
+            transition: background 0.25s ease;
         }
 
         .app-container {
@@ -84,9 +84,9 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            background: rgba(5, 5, 10, 0.88);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
+            background: rgba(6, 9, 16, 0.92);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             box-shadow: 0 0 50px var(--accent-glow);
             border-left: 1px solid rgba(255,255,255,0.06);
             border-right: 1px solid rgba(255,255,255,0.06);
@@ -210,7 +210,7 @@
             font-weight: 800;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.2s;
         }
         .auth-tab.active {
             background: rgba(255, 255, 255, 0.1);
@@ -238,7 +238,7 @@
             color: #fff;
             font-size: 0.95rem;
             outline: none;
-            transition: 0.3s;
+            transition: 0.2s;
         }
         .input-group input:focus {
             border-color: var(--accent);
@@ -266,7 +266,7 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.2s;
             width: 100%;
             display: flex;
             align-items: center;
@@ -274,7 +274,7 @@
             gap: 8px;
             box-shadow: 0 5px 15px var(--accent-glow);
         }
-        .btn:hover { transform: translateY(-2px); }
+        .btn:hover { transform: translateY(-1px); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .btn-outline { 
@@ -293,9 +293,9 @@
             box-shadow: 0 5px 15px rgba(29, 155, 240, 0.35);
         }
 
-        /* ===== 2. شاشة التطبيق الرئيسية والتبويبات المدهشة ===== */
+        /* ===== 2. شاشة التطبيق الرئيسية والتبويبات ===== */
         .top-bar {
-            background: rgba(15, 20, 32, 0.94);
+            background: rgba(15, 20, 32, 0.95);
             backdrop-filter: blur(12px);
             padding: 12px 16px;
             display: flex;
@@ -361,7 +361,7 @@
             display: flex;
             gap: 4px;
             padding: 8px 10px;
-            background: rgba(11, 15, 25, 0.95);
+            background: rgba(11, 15, 25, 0.96);
             border-bottom: 1px solid rgba(255,255,255,0.07);
             flex-shrink: 0;
             overflow-x: auto;
@@ -378,7 +378,7 @@
             cursor: pointer;
             border-radius: 12px;
             border: 1px solid transparent;
-            transition: 0.22s;
+            transition: 0.18s;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -396,6 +396,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
+            -webkit-overflow-scrolling: touch;
         }
         .home-content::-webkit-scrollbar { width: 4px; }
         .home-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
@@ -470,12 +471,11 @@
             border-radius: 16px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.15s;
         }
         .friend-item:hover {
             background: rgba(255,255,255,0.08);
             border-color: var(--accent);
-            transform: translateY(-1px);
         }
         .friend-left {
             display: flex;
@@ -559,7 +559,7 @@
             padding: 16px;
             cursor: pointer;
             text-align: center;
-            transition: 0.2s;
+            transition: 0.15s;
         }
         .theme-card.active {
             border-color: var(--accent);
@@ -609,7 +609,7 @@
         #chatScreen { background: transparent; }
 
         .chat-header {
-            background: rgba(15, 20, 32, 0.94);
+            background: rgba(15, 20, 32, 0.95);
             backdrop-filter: blur(12px);
             padding: 11px 14px;
             display: flex;
@@ -684,7 +684,7 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 0.8rem;
-            transition: 0.2s;
+            transition: 0.15s;
         }
         .btn-leave:hover { background: #ff0055; color: #fff; }
 
@@ -735,6 +735,7 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+            -webkit-overflow-scrolling: touch;
         }
         
         .chat-messages::-webkit-scrollbar { width: 4px; }
@@ -744,10 +745,10 @@
             display: flex;
             flex-direction: column;
             max-width: 85%;
-            animation: slideUp 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: slideUp 0.18s ease-out;
         }
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -903,7 +904,7 @@
             display: flex;
             gap: 6px;
             padding: 6px 15px 0;
-            background: rgba(15, 20, 30, 0.95);
+            background: rgba(15, 20, 30, 0.96);
             overflow-x: auto;
             flex-shrink: 0;
         }
@@ -917,7 +918,7 @@
             transition: 0.15s;
         }
         .quick-emoji-btn:hover {
-            transform: scale(1.12);
+            transform: scale(1.1);
             border-color: var(--accent);
         }
 
@@ -953,7 +954,7 @@
 
         .chat-input-area {
             padding: 10px 15px 12px;
-            background: rgba(15, 20, 30, 0.96);
+            background: rgba(15, 20, 30, 0.97);
             backdrop-filter: blur(12px);
             display: flex;
             gap: 7px;
@@ -975,7 +976,7 @@
             align-items: center;
             font-size: 0.98rem;
             flex-shrink: 0;
-            transition: 0.2s;
+            transition: 0.15s;
         }
         .btn-attach:hover {
             border-color: var(--accent);
@@ -996,7 +997,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             padding: 4px 12px;
             align-items: center;
-            transition: 0.3s;
+            transition: 0.2s;
         }
         .input-wrapper:focus-within {
             border-color: var(--accent);
@@ -1027,10 +1028,10 @@
             align-items: center;
             font-size: 1.15rem;
             flex-shrink: 0;
-            transition: 0.25s;
+            transition: 0.2s;
             box-shadow: 0 0 15px var(--accent-glow);
         }
-        .btn-send:hover { transform: scale(1.06); }
+        .btn-send:hover { transform: scale(1.05); }
         .btn-send:active { transform: scale(0.92); }
 
         /* عارض الصورة المكبرة */
@@ -1083,7 +1084,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">تجربة دردشة فورية، شارات المطور، صوتيات، وصور ⚡</div>
+                <div class="subtitle">تواصل سريع وسلس، شارات المطور، صوتيات، وصور ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1262,7 +1263,7 @@
                     <button type="button" class="icon-btn-sm" title="بحث في الرسائل" onclick="toggleSearchBar()">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button type="button" class="btn-leave" onclick="backToHome()">
+                    <button type="button" class="btn-leave" onclick="backToHome(true)">
                         <i class="fas fa-arrow-right"></i> رجوع
                     </button>
                 </div>
@@ -1270,7 +1271,7 @@
 
             <div class="search-bar-box" id="searchBarBox">
                 <input type="text" id="chatSearchInput" placeholder="ابحث داخل هذه الدردشة..." oninput="renderMessagesList()">
-                <button type="button" class="icon-btn-sm" onclick="toggleSearchBar()"><i class="fas fa-times"></i></button>
+                <button type="button" class="icon-btn-sm" onclick="toggleSearchBar(true)"><i class="fas fa-times"></i></button>
             </div>
 
             <div class="pinned-bar" id="pinnedBar">
@@ -1339,7 +1340,7 @@
     </div>
 
     <!-- نافذة معاينة الصورة بحجم كامل -->
-    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(true)">
         <img id="lightboxImg" src="" alt="صورة مكبرة">
     </div>
 
@@ -1383,7 +1384,9 @@
         let pendingAudioClip = null;
         let latestMessagesData = null;
         let userBadgeCache = {};
+        let friendsCache = {};
         let isSendingMessage = false;
+        let ignoreNextPopState = false;
 
         let mediaRecorder = null;
         let audioChunks = [];
@@ -1403,6 +1406,7 @@
         let friendsListenerCallback = null;
         let featuredListenerRef = null;
         let featuredListenerCallback = null;
+        let lastMsgListeners = {};
 
         let typingTimeout = null;
         let isTyping = false;
@@ -1422,6 +1426,33 @@
                 document.activeElement.blur();
             }
         }
+
+        function pushNavState(viewName) {
+            try {
+                history.pushState({ legendaryView: viewName, ts: Date.now() }, '');
+            } catch (e) {}
+        }
+
+        window.addEventListener('popstate', () => {
+            if (ignoreNextPopState) {
+                ignoreNextPopState = false;
+                return;
+            }
+            dismissKeyboard();
+
+            if (document.getElementById('lightboxModal').classList.contains('active')) {
+                closeLightbox(false);
+                return;
+            }
+
+            if (chatScreen.classList.contains('active')) {
+                if (document.getElementById('searchBarBox').classList.contains('active')) {
+                    toggleSearchBar(false);
+                    return;
+                }
+                backToHome(false);
+            }
+        });
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
@@ -1468,6 +1499,7 @@
             if (key === currentUser) {
                 return { verified: !!currentUserVerified, vipAdmin: !!currentUserVipAdmin };
             }
+            if (userBadgeCache[key]) return userBadgeCache[key];
             const snap = await db.ref('users/' + key).once('value');
             const val = snap.val() || {};
             const isVip = !!(val.vipAdmin || isAdminUsername(key));
@@ -1718,11 +1750,16 @@
             dismissKeyboard();
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightboxModal').classList.add('active');
+            pushNavState('lightbox');
         }
 
-        function closeLightbox() {
+        function closeLightbox(syncHistory = false) {
             document.getElementById('lightboxModal').classList.remove('active');
             document.getElementById('lightboxImg').src = '';
+            if (syncHistory && history.state && history.state.legendaryView === 'lightbox') {
+                ignoreNextPopState = true;
+                history.back();
+            }
         }
 
         // ==========================================
@@ -1875,18 +1912,29 @@
             listenToFeaturedUsers();
         }
 
+        function cleanupFriendSubListeners() {
+            Object.entries(lastMsgListeners).forEach(([chatId, entry]) => {
+                if (entry && entry.ref && entry.cb) {
+                    entry.ref.off('value', entry.cb);
+                }
+            });
+            lastMsgListeners = {};
+        }
+
         function logoutUser() {
             if (!currentUser) return;
             dismissKeyboard();
             db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
             db.ref('users/' + currentUser).off();
             cleanupChatListeners();
+            cleanupFriendSubListeners();
             if (friendsListenerRef && friendsListenerCallback) {
                 friendsListenerRef.off('value', friendsListenerCallback);
             }
             if (featuredListenerRef && featuredListenerCallback) {
                 featuredListenerRef.off('value', featuredListenerCallback);
             }
+            friendsCache = {};
             localStorage.removeItem('legendary_chat_session');
             currentUser = null;
             currentDisplayName = null;
@@ -1983,21 +2031,99 @@
             openDirectChat(friendKey, friendDisplay, chatId, !!(friendData.verified || isVip), isVip);
         }
 
+        function renderFriendsFromCache() {
+            const container = document.getElementById('friendsListContainer');
+            if (!container) return;
+
+            const list = Object.values(friendsCache);
+            if (!list.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا يوجد أصدقاء بعد.<br>أضف صديقاً باسم المستخدم الخاص به لبدء الدردشة وحفظها!</div>';
+                return;
+            }
+
+            list.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
+            container.innerHTML = '';
+
+            list.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'friend-item';
+                div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin);
+                div.innerHTML = `
+                    <div class="friend-left">
+                        <div class="friend-avatar">
+                            ${item.displayName.charAt(0).toUpperCase()}
+                            <span class="status-dot ${item.online ? 'online' : ''}"></span>
+                        </div>
+                        <div class="friend-info">
+                            <div class="fname">
+                                <span>${escapeHtml(item.displayName)}</span>
+                                ${getBadgesHtml(item.verified, item.vipAdmin)}
+                                <span style="font-size:0.75rem; color:var(--text-muted); margin-right:4px;">(@${item.username})</span>
+                            </div>
+                            <div class="flast">${escapeHtml(item.lastText || item.bio || 'ابدأ المحادثة الآن...')}</div>
+                        </div>
+                    </div>
+                    <div class="friend-right">
+                        ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
+                        <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.9rem;"></i>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function attachFriendLiveSummary(friendKey, chatId) {
+            if (lastMsgListeners[chatId]) return;
+            const ref = db.ref(`chats/${chatId}/messages`).limitToLast(15);
+            const cb = ref.on('value', (msgsSnap) => {
+                if (!friendsCache[friendKey]) return;
+                let lastText = friendsCache[friendKey].bio || 'ابدأ المحادثة الآن...';
+                let lastTime = friendsCache[friendKey].addedAt || 0;
+                let unreadCount = 0;
+
+                if (msgsSnap.exists()) {
+                    const msgs = Object.values(msgsSnap.val()).sort((a, b) => a.timestamp - b.timestamp);
+                    if (msgs.length > 0) {
+                        const last = msgs[msgs.length - 1];
+                        let summary = last.text || '';
+                        if (last.image) summary = '📷 صورة' + (last.text ? ' • ' + last.text : '');
+                        else if (last.audio) summary = `🎤 رسالة صوتية (${last.audioDuration || 0}ث)`;
+                        lastText = (last.sender === currentUser ? 'أنت: ' : '') + summary;
+                        lastTime = last.timestamp || lastTime;
+                        unreadCount = msgs.filter(m => m.sender !== currentUser && !m.read).length;
+                    }
+                }
+
+                friendsCache[friendKey].lastText = lastText;
+                friendsCache[friendKey].lastTime = lastTime;
+                friendsCache[friendKey].unreadCount = unreadCount;
+                renderFriendsFromCache();
+            });
+            lastMsgListeners[chatId] = { ref, cb };
+        }
+
         function listenToFriends() {
             if (friendsListenerRef && friendsListenerCallback) {
                 friendsListenerRef.off('value', friendsListenerCallback);
             }
+            cleanupFriendSubListeners();
+            friendsCache = {};
+
             friendsListenerRef = db.ref('friends/' + currentUser);
             friendsListenerCallback = friendsListenerRef.on('value', async (snapshot) => {
-                const container = document.getElementById('friendsListContainer');
                 const friendsObj = snapshot.val();
                 if (!friendsObj) {
-                    container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا يوجد أصدقاء بعد.<br>أضف صديقاً باسم المستخدم الخاص به لبدء الدردشة وحفظها!</div>';
+                    friendsCache = {};
+                    renderFriendsFromCache();
                     return;
                 }
 
-                const list = Object.values(friendsObj);
-                const enriched = await Promise.all(list.map(async (f) => {
+                const activeKeys = new Set(Object.keys(friendsObj));
+                Object.keys(friendsCache).forEach(k => {
+                    if (!activeKeys.has(k)) delete friendsCache[k];
+                });
+
+                await Promise.all(Object.values(friendsObj).map(async (f) => {
                     const uSnap = await db.ref('users/' + f.username).once('value');
                     const uVal = uSnap.val() || {};
                     const isVip = !!(uVal.vipAdmin || isAdminUsername(f.username));
@@ -2005,68 +2131,26 @@
                     userBadgeCache[f.username] = { verified: isVer, vipAdmin: isVip };
 
                     const chatId = f.chatId || getDirectChatId(currentUser, f.username);
-                    const msgsSnap = await db.ref(`chats/${chatId}/messages`).once('value');
+                    const prev = friendsCache[f.username] || {};
 
-                    let lastText = uVal.bio || 'ابدأ المحادثة الآن...';
-                    let lastTime = f.addedAt || 0;
-                    let unreadCount = 0;
-
-                    if (msgsSnap.exists()) {
-                        const msgs = Object.values(msgsSnap.val()).sort((a, b) => a.timestamp - b.timestamp);
-                        if (msgs.length > 0) {
-                            const last = msgs[msgs.length - 1];
-                            let summary = last.text || '';
-                            if (last.image) summary = '📷 صورة' + (last.text ? ' • ' + last.text : '');
-                            else if (last.audio) summary = `🎤 رسالة صوتية (${last.audioDuration || 0}ث)`;
-                            lastText = (last.sender === currentUser ? 'أنت: ' : '') + summary;
-                            lastTime = last.timestamp || lastTime;
-                            unreadCount = msgs.filter(m => m.sender !== currentUser && !m.read).length;
-                        }
-                    }
-
-                    return {
+                    friendsCache[f.username] = {
                         username: f.username,
                         displayName: uVal.displayName || f.displayName || f.username,
                         bio: uVal.bio || '',
                         verified: isVer,
                         vipAdmin: isVip,
                         online: !!uVal.online,
-                        lastText,
-                        lastTime,
-                        unreadCount,
+                        addedAt: f.addedAt || 0,
+                        lastText: prev.lastText || uVal.bio || 'ابدأ المحادثة الآن...',
+                        lastTime: prev.lastTime || f.addedAt || 0,
+                        unreadCount: prev.unreadCount || 0,
                         chatId
                     };
+
+                    attachFriendLiveSummary(f.username, chatId);
                 }));
 
-                enriched.sort((a, b) => b.lastTime - a.lastTime);
-
-                container.innerHTML = '';
-                enriched.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'friend-item';
-                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin);
-                    div.innerHTML = `
-                        <div class="friend-left">
-                            <div class="friend-avatar">
-                                ${item.displayName.charAt(0).toUpperCase()}
-                                <span class="status-dot ${item.online ? 'online' : ''}"></span>
-                            </div>
-                            <div class="friend-info">
-                                <div class="fname">
-                                    <span>${escapeHtml(item.displayName)}</span>
-                                    ${getBadgesHtml(item.verified, item.vipAdmin)}
-                                    <span style="font-size:0.75rem; color:var(--text-muted); margin-right:4px;">(@${item.username})</span>
-                                </div>
-                                <div class="flast">${escapeHtml(item.lastText)}</div>
-                            </div>
-                        </div>
-                        <div class="friend-right">
-                            ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
-                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.9rem;"></i>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
+                renderFriendsFromCache();
             });
         }
 
@@ -2209,6 +2293,7 @@
             document.getElementById('chatSearchInput').value = '';
             typingIndicator.classList.remove('active');
             dismissKeyboard();
+            pushNavState('chat');
         }
 
         function cleanupChatListeners() {
@@ -2229,7 +2314,7 @@
             }
         }
 
-        function backToHome() {
+        function backToHome(syncHistory = true) {
             dismissKeyboard();
             cleanupChatListeners();
             activeChatId = null;
@@ -2243,8 +2328,12 @@
             if (isRecordingVoice) stopVoiceRecording();
             chatScreen.classList.remove('active');
             homeScreen.classList.add('active');
-            listenToFriends();
-            listenToFeaturedUsers();
+            renderFriendsFromCache();
+
+            if (syncHistory && history.state && history.state.legendaryView === 'chat') {
+                ignoreNextPopState = true;
+                history.back();
+            }
         }
 
         function listenPartnerPresence(partnerKey) {
@@ -2303,16 +2392,21 @@
             await db.ref(`chats/${activeChatId}/pinned`).remove();
         }
 
-        function toggleSearchBar() {
+        function toggleSearchBar(syncHistory = false) {
             const box = document.getElementById('searchBarBox');
             const isOpen = box.classList.toggle('active');
             const searchInput = document.getElementById('chatSearchInput');
             if (isOpen) {
                 searchInput.focus();
+                pushNavState('search');
             } else {
                 searchInput.value = '';
                 dismissKeyboard();
                 renderMessagesList();
+                if (syncHistory && history.state && history.state.legendaryView === 'search') {
+                    ignoreNextPopState = true;
+                    history.back();
+                }
             }
         }
 
