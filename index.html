@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أسطورة الميمز | Meme Legend</title>
+    <title>العقل المدبر | تحويل PDF إلى اختبار</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- مكتبة قراءة ملفات PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <style>
         :root {
-            --bg-color: #0f0f13;
-            --card-bg: #1a1a20;
-            --primary: #ff0055;
+            --bg-color: #080a10;
+            --card-bg: rgba(20, 25, 40, 0.7);
+            --primary: #00f3ff;
+            --secondary: #7000ff;
             --success: #00ff66;
+            --danger: #ff0055;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             --gold: #ffcc00;
         }
 
@@ -27,25 +35,25 @@
             height: 100vh; display: flex; justify-content: center; align-items: center;
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 102, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 40%);
         }
 
-        .game-container {
+        .app-container {
             position: relative;
-            width: 100%; max-width: 480px; height: 100vh; max-height: 850px;
-            background: rgba(20, 20, 25, 0.9);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            width: 100%; max-width: 550px; height: 100vh; max-height: 850px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1.5rem;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             overflow: hidden;
             display: flex; flex-direction: column;
-            transition: transform 0.1s;
         }
 
-        .game-container.shake {
+        .app-container.shake {
             animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-            border-color: var(--primary);
+            border-color: var(--danger);
         }
         @keyframes shake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
@@ -54,136 +62,152 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
+        /* ===== الشريط العلوي ===== */
         .hud {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: #000;
-            border-bottom: 2px solid #333; z-index: 10;
+            padding: 15px 20px; background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 10;
         }
 
-        .hud-item { display: flex; align-items: center; gap: 8px; font-weight: 700; }
-        .score-val { color: var(--success); font-size: 1.2rem; }
+        .hud-item { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text-muted); }
+        .score-val { color: var(--primary); font-size: 1.2rem; }
         .lives-val { font-size: 1.2rem; letter-spacing: 2px; }
-
-        .time-bar-bg {
-            width: 100%; height: 6px; background: #333;
+        
+        /* مؤقت الـ 2 دقيقة */
+        .global-timer { 
+            color: var(--gold); font-size: 1.3rem; font-weight: 900;
+            display: flex; align-items: center; gap: 5px;
         }
-        .time-bar {
-            height: 100%; width: 100%; background: var(--gold);
-            transition: width 0.1s linear;
-        }
+        .global-timer.danger { color: var(--danger); animation: pulse 1s infinite alternate; }
+        @keyframes pulse { from { transform: scale(0.95); } to { transform: scale(1.05); } }
 
+        /* ===== منطقة اللعب ===== */
         .play-area {
             flex: 1; display: flex; flex-direction: column;
+            padding: 20px; position: relative; overflow-y: auto;
+        }
+
+        /* شاشة رفع الملف */
+        .upload-screen {
+            display: flex; flex-direction: column; height: 100%; gap: 15px;
             justify-content: center; align-items: center;
-            padding: 15px; position: relative;
         }
 
-        /* بطاقة الميم */
-        .meme-card {
-            width: 100%;
-            background: #fff;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .upload-title {
+            font-size: 1.5rem; font-weight: 900; color: #fff; text-align: center;
+            margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .upload-subtitle {
+            font-size: 0.9rem; color: var(--text-muted); text-align: center;
+            line-height: 1.6; margin-bottom: 20px;
+        }
+
+        .drop-zone {
+            width: 100%; height: 200px;
+            border: 3px dashed rgba(255,255,255,0.2);
+            border-radius: 20px;
             display: flex; flex-direction: column;
-            align-items: center;
-            transform: scale(0.9);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            margin-bottom: 20px;
+            justify-content: center; align-items: center;
+            cursor: pointer; transition: all 0.3s;
+            background: rgba(255,255,255,0.02);
+            position: relative; overflow: hidden;
         }
 
-        @keyframes popIn {
-            to { transform: scale(1); }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.1);
         }
 
-        .meme-text-top {
-            width: 100%;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 900;
-            color: #000;
-            padding: 5px;
-            text-transform: uppercase;
-            line-height: 1.3;
+        .drop-zone i {
+            font-size: 3.5rem; color: var(--primary); margin-bottom: 15px;
+            transition: transform 0.3s;
         }
+        .drop-zone:hover i { transform: translateY(-5px) scale(1.1); }
 
-        /* الصورة الحقيقية للميم */
-        .meme-image-container {
-            width: 100%;
-            height: 200px;
-            background: #222;
-            display: flex;
+        .drop-zone p { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .drop-zone span { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
+
+        input[type="file"] { display: none; }
+
+        /* شاشة التحميل */
+        .loading-screen {
+            display: none; flex-direction: column; height: 100%;
+            justify-content: center; align-items: center; gap: 20px;
+        }
+        .loader {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loading-text { font-size: 1.2rem; font-weight: 700; color: var(--primary); animation: pulse 1s infinite alternate; }
+
+        /* شاشة الأسئلة */
+        .question-screen {
+            display: none; flex-direction: column; height: 100%; gap: 20px;
             justify-content: center;
-            align-items: center;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
         }
 
-        .meme-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* لملء المساحة */
+        .question-text {
+            background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;
+            font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.8;
+            text-align: center; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        /* الإيموجي كبديل في حال فشل تحميل الصورة */
-        .meme-fallback-emoji {
-            font-size: 6rem;
-            display: none;
+        .blank-highlight {
+            color: var(--primary); font-weight: 900; border-bottom: 3px solid var(--primary);
+            padding: 0 5px; letter-spacing: 2px;
         }
 
-        .meme-text-bottom {
-            width: 100%;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #888;
-            padding: 10px 5px 5px;
-            border-top: 2px dashed #ccc;
-            margin-top: 10px;
-            min-height: 55px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .options-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            width: 100%;
-        }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
 
         .option-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: right;
+            background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff; padding: 15px; border-radius: 12px; font-size: 1.05rem;
+            font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center;
             font-family: 'Cairo', sans-serif;
         }
-
-        .option-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
+        .option-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--primary); }
+        
         .option-btn.correct {
-            background: var(--success);
-            border-color: var(--success);
-            color: #000;
-            transform: scale(1.02);
+            background: var(--success); border-color: var(--success); color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
         }
-
         .option-btn.wrong {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
+            background: var(--danger); border-color: var(--danger); color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
         }
 
+        /* شاشة النهاية */
+        .overlay {
+            position: absolute; inset: 0; background: rgba(8, 10, 16, 0.95);
+            backdrop-filter: blur(10px); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 50;
+            text-align: center; padding: 20px;
+        }
+        .overlay.hidden { display: none; }
+
+        .result-emoji { font-size: 6rem; margin-bottom: 15px; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+        
+        .rank-text { font-size: 1.5rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
+        .final-score { font-size: 1.2rem; color: #fff; margin-bottom: 30px; }
+
+        .btn {
+            padding: 15px 30px; font-size: 1.1rem; font-weight: 900;
+            color: #000; background: var(--primary); border: none; border-radius: 50px;
+            cursor: pointer; transition: all 0.2s; width: 100%;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            font-family: 'Cairo', sans-serif;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn:hover { background: #fff; box-shadow: 0 0 30px #fff; transform: scale(1.02); }
+
+        /* النصوص الطائرة */
         .floating-text {
             position: absolute; font-size: 2rem; font-weight: 900;
             pointer-events: none; z-index: 20;
@@ -194,203 +218,102 @@
             0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
             100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
         }
-
-        .overlay {
-            position: absolute; inset: 0; background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(10px); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 50;
-            text-align: center; padding: 20px; transition: opacity 0.3s;
-        }
-
-        .overlay.hidden { display: none; }
-
-        .title {
-            font-size: 2.5rem; font-weight: 900; color: #fff;
-            margin-bottom: 10px; text-shadow: 3px 3px 0 var(--primary);
-        }
-
-        .subtitle {
-            font-size: 1rem; color: #aaa; margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .btn {
-            padding: 15px 40px; font-size: 1.2rem; font-weight: 900;
-            color: #000; background: #fff; border: none; border-radius: 50px;
-            cursor: pointer; transition: all 0.2s;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .btn:hover { background: var(--gold); box-shadow: 0 0 30px var(--gold); transform: scale(1.05); }
-
-        .result-emoji { font-size: 6rem; margin-bottom: 15px; animation: bounce 1s infinite alternate; }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
-        
-        .rank-text { font-size: 1.5rem; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
-        .final-score { font-size: 1.2rem; color: #fff; margin-bottom: 30px; }
-
-        @media (max-width: 400px) {
-            .meme-image-container { height: 160px; }
-            .meme-text-top { font-size: 0.95rem; }
-            .option-btn { padding: 10px; font-size: 0.85rem; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="game-container" id="gameWrapper">
+    <div class="app-container" id="appWrapper">
         
-        <div class="hud">
+        <!-- الشريط العلوي -->
+        <div class="hud" id="hud" style="display: none;">
             <div class="hud-item">النقاط: <span class="score-val" id="scoreVal">0</span></div>
+            <div class="global-timer" id="globalTimer"><i class="fas fa-stopwatch"></i> 02:00</div>
             <div class="hud-item lives-val" id="livesVal">❤️❤️❤️</div>
         </div>
 
-        <div class="time-bar-bg">
-            <div class="time-bar" id="timeBar"></div>
-        </div>
-
+        <!-- منطقة اللعب -->
         <div class="play-area" id="playArea">
             
-            <div class="meme-card" id="memeCard" style="display: none;">
-                <div class="meme-text-top" id="memeTopText">النص العلوي</div>
-                
-                <div class="meme-image-container">
-                    <!-- الصورة الحقيقية للميم -->
-                    <img class="meme-image" id="memeImg" src="" alt="Meme" onerror="this.style.display='none'; document.getElementById('memeFallback').style.display='block';">
-                    <!-- الإيموجي كبديل -->
-                    <div class="meme-fallback-emoji" id="memeFallback">😭</div>
+            <!-- شاشة رفع الملف -->
+            <div class="upload-screen" id="uploadScreen">
+                <div class="upload-title">العقل المدبر 🧠</div>
+                <div class="upload-subtitle">
+                    ارفع ملف PDF (ملخص، محاضرة، كتاب) وسيقوم التطبيق<br>
+                    بقراءته وتوليد اختبار ذكي لك خلال 2 دقيقة!
                 </div>
-
-                <div class="meme-text-bottom" id="memeBottomText">... اختار التكملة</div>
+                
+                <div class="drop-zone" id="dropZone">
+                    <i class="fas fa-file-pdf"></i>
+                    <p>اسحب ملف الـ PDF هنا أو اضغط للاختيار</p>
+                    <span>يدعم ملفات PDF فقط</span>
+                    <input type="file" id="fileInput" accept=".pdf">
+                </div>
             </div>
 
-            <div class="options-container" id="optionsContainer" style="display: none;"></div>
-        </div>
-
-        <div class="overlay" id="startScreen">
-            <div class="title">أسطورة الميمز</div>
-            <div class="subtitle">
-                هل تعرف الميمز العربية الكلاسيكية؟<br>
-                اختر التكملة الصحيحة بسرعة!
+            <!-- شاشة التحميل (أثناء قراءة الـ PDF) -->
+            <div class="loading-screen" id="loadingScreen">
+                <div class="loader"></div>
+                <div class="loading-text" id="loadingText">جاري استخراج النص وتحليل المعلومات...</div>
             </div>
-            <button class="btn" id="startBtn">يلا نبدأ</button>
+
+            <!-- شاشة الأسئلة -->
+            <div class="question-screen" id="questionScreen">
+                <div class="question-text" id="questionText">
+                    سيظهر السؤال هنا...
+                </div>
+                <div class="options-grid" id="optionsContainer"></div>
+            </div>
+
         </div>
 
+        <!-- شاشة النهاية -->
         <div class="overlay hidden" id="endScreen">
-            <div class="result-emoji" id="resultEmoji">🤡</div>
-            <div class="title" style="font-size: 2rem; margin-bottom: 5px;">انتهت اللعبة!</div>
-            <div class="rank-text" id="rankText">رتبتك: NPC</div>
+            <div class="result-emoji" id="resultEmoji">🎓</div>
+            <div class="rank-text" id="rankText">رتبتك</div>
             <div class="final-score" id="finalScoreText">نقاطك: 0</div>
-            <button class="btn" id="restartBtn">العب مرة ثانية</button>
+            <button class="btn" id="restartBtn"><i class="fas fa-rotate-right"></i> العودة للبداية</button>
         </div>
 
     </div>
 
     <script>
-        // ================= بنك الميمز (صور حقيقية + ميمز عربية) =================
-        // ملاحظة: روابط الصور من imgflip وهي روابط مباشرة مضمونة.
-        const memesData = [
-            {
-                top: "لما تفتح الفيسبوك الساعة 3 الفجر...",
-                image: "https://i.imgflip.com/30b1gx.jpg", // Drake meme
-                fallbackEmoji: "🌙",
-                options: ["تلاقي حرب عالمية في الكومنتات", "تلاقي الأهل صاحيين", "تلاقي النت فصل", "تلاقي إعلان كورس"],
-                correct: 0
-            },
-            {
-                top: "أنا مش زعلان...",
-                image: "https://i.imgflip.com/1ur9b0.jpg", // This is fine dog
-                fallbackEmoji: "💔",
-                options: ["أنا مبسوط جداً", "أنا بس مقهور", "أنا نايم", "أنا جعان"],
-                correct: 1
-            },
-            {
-                top: "عايز أقولك حاجة...",
-                image: "https://i.imgflip.com/261o3j.jpg", // Mocking Spongebob
-                fallbackEmoji: "🤫",
-                options: ["بس مش عارف أقولها", "بس خلاص", "بس استنى", "بس هسكت"],
-                correct: 0
-            },
-            {
-                top: "المدرس: مين عمل الواجب؟",
-                image: "https://i.imgflip.com/1otk96.jpg", // Woman yelling at cat
-                fallbackEmoji: "👀",
-                options: ["أنا: *رفعت إيدي*", "أنا: *نمت*", "أنا: *بص في الأرض*", "أنا: *هربت*"],
-                correct: 2
-            },
-            {
-                top: "لما تقول لأمك أنا نازل أتمشى...",
-                image: "https://i.imgflip.com/1e7ql7.jpg", // Distracted boyfriend
-                fallbackEmoji: "🏃‍♂️",
-                options: ["تقولك خد بالك من نفسك", "ترجع تلاقي أوضتك اتظبطت", "تقولك هاتلي معاك حاجة", "تسكت وتزعل"],
-                correct: 1
-            },
-            {
-                top: "شخص يقولك أنا هخسر 10 كيلو...",
-                image: "https://i.imgflip.com/1h7in3.jpg", // Roll safe (thinking guy)
-                fallbackEmoji: "🍔",
-                options: ["وهو بياكل برجر", "وهو في الجيم", "وهو نايم", "وهو بيشرب ميه"],
-                correct: 0
-            },
-            {
-                top: "لما تيجي تذاكر...",
-                image: "https://i.imgflip.com/2kbn1e.jpg", // Waiting skeleton
-                fallbackEmoji: "📚",
-                options: ["تفتح الفيسبوك", "تنام", "تذاكر بجد", "تاكل"],
-                correct: 0
-            },
-            {
-                top: "أنا مش كسول...",
-                image: "https://i.imgflip.com/1bgw.jpg", // Pepe
-                fallbackEmoji: "🛌",
-                options: ["أنا بستريح بس", "أنا نايم", "أنا مريض", "أنا مشغول"],
-                correct: 0
-            },
-            {
-                top: "لما حد يقولك نصيحة...",
-                image: "https://i.imgflip.com/2kbn1f.jpg", // Surprised pikachu
-                fallbackEmoji: "🤡",
-                options: ["تسمعها", "تعمل عكسها", "تقوله أنا عارف", "تنام"],
-                correct: 1
-            },
-            {
-                top: "لما تقول لحد أنا هغير حياتي...",
-                image: "https://i.imgflip.com/2y4g3o.jpg", // The rock eyebrow
-                fallbackEmoji: "🚀",
-                options: ["تبدأ بكرة", "تبدأ بعدين", "تبدأ الشهر الجاي", "تصحى الساعة 2 الضهر"],
-                correct: 3
-            }
-        ];
+        // إعداد مسار عمل مكتبة PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // العناصر
-        const gameWrapper = document.getElementById('gameWrapper');
-        const playArea = document.getElementById('playArea');
-        const memeCard = document.getElementById('memeCard');
-        const memeTopText = document.getElementById('memeTopText');
-        const memeImg = document.getElementById('memeImg');
-        const memeFallback = document.getElementById('memeFallback');
-        const memeBottomText = document.getElementById('memeBottomText');
+        // ================= العناصر =================
+        const appWrapper = document.getElementById('appWrapper');
+        const hud = document.getElementById('hud');
+        const globalTimerEl = document.getElementById('globalTimer');
+        
+        const uploadScreen = document.getElementById('uploadScreen');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loadingText = document.getElementById('loadingText');
+        const questionScreen = document.getElementById('questionScreen');
+        
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        
+        const questionText = document.getElementById('questionText');
         const optionsContainer = document.getElementById('optionsContainer');
         
         const scoreVal = document.getElementById('scoreVal');
         const livesVal = document.getElementById('livesVal');
-        const timeBar = document.getElementById('timeBar');
-
-        const startScreen = document.getElementById('startScreen');
+        
         const endScreen = document.getElementById('endScreen');
-        const startBtn = document.getElementById('startBtn');
         const restartBtn = document.getElementById('restartBtn');
 
+        // ================= متغيرات اللعبة =================
         let score = 0;
         let lives = 3;
         let isPlaying = false;
-        let currentQuestion = null;
-        let availableQuestions = [];
-        let roundTimer;
-        let timeLeft = 0;
-        const MAX_TIME = 8; // 8 ثواني
+        let questions = [];
+        let currentQuestionIndex = 0;
+        
+        // مؤقت الـ 2 دقيقة (120 ثانية)
+        let globalTimeLeft = 120; 
+        let timerInterval;
 
+        // الأصوات
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
@@ -401,162 +324,269 @@
             
             if (type === 'correct') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
                 gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
                 gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            } else if (type === 'generate') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.4);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             }
 
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
             osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            osc.stop(audioCtx.currentTime + 0.4);
         }
 
+        // ================= التعامل مع رفع الملفات =================
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                handleFile(file);
+            } else {
+                alert("الرجاء إرفاق ملف PDF صالح.");
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        // ================= قراءة الـ PDF =================
+        function handleFile(file) {
+            uploadScreen.style.display = 'none';
+            loadingScreen.style.display = 'flex';
+            
+            const fileReader = new FileReader();
+            
+            fileReader.onload = function() {
+                const typedarray = new Uint8Array(this.result);
+                
+                // استخدام مكتبة PDF.js لقراءة الملف
+                pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+                    let maxPages = Math.min(pdf.numPages, 10); // قراءة أول 10 صفحات كحد أقصى لسرعة الأداء
+                    let countPromises = [];
+                    let fullText = "";
+
+                    for (let i = 1; i <= maxPages; i++) {
+                        countPromises.push(pdf.getPage(i).then(function(page) {
+                            return page.getTextContent().then(function(textContent) {
+                                return textContent.items.map(function(s) { return s.str; }).join(" ");
+                            });
+                        }));
+                    }
+
+                    Promise.all(countPromises).then(function(texts) {
+                        fullText = texts.join(" \n ");
+                        processTextAndStartGame(fullText);
+                    });
+                }).catch(error => {
+                    console.error(error);
+                    alert("حدث خطأ أثناء قراءة الملف. تأكد من أن الملف غير محمي بكلمة مرور.");
+                    resetToStart();
+                });
+            };
+            
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        // ================= الخوارزمية الذكية لصنع الأسئلة =================
+        function processTextAndStartGame(text) {
+            loadingText.textContent = "جاري صياغة الأسئلة بذكاء...";
+            
+            // مهلة بسيطة لإعطاء انطباع بصري بالمعالجة
+            setTimeout(() => {
+                // تنظيف النص وإزالة الأسطر الجديدة المتكررة
+                text = text.replace(/\s+/g, ' ').trim();
+                
+                // تقسيم النص إلى جمل
+                const sentences = text.match(/[^.!?]+[.!?]+/g) || text.split('.'); 
+                
+                // تصفية الجمل الطويلة (أكثر من 6 كلمات) لضمان جودتها
+                const validSentences = sentences.filter(s => s.trim().split(/\s+/).length >= 6);
+                
+                if (validSentences.length < 3) {
+                    alert("النص المستخرج من الـ PDF قصير جداً أو غير واضح. يرجى استخدام ملف يحتوي على نص حقيقي (وليس صوراً).");
+                    resetToStart();
+                    return;
+                }
+
+                // استخراج الكلمات الفريدة لاستخدامها كإجابات خاطئة
+                const allWords = text.match(/[\u0600-\u06FFa-zA-Z]{4,}/g) || []; 
+                const uniqueWords = [...new Set(allWords.map(w => w.replace(/[^\u0600-\u06FFa-zA-Z]/g, '')))].filter(w => w.length > 3);
+
+                let generatedQuestions = [];
+
+                validSentences.forEach(sentence => {
+                    const words = sentence.trim().split(/\s+/);
+                    
+                    // البحث عن كلمة عشوائية صالحة (أطول من 4 أحرف)
+                    const candidates = words.map((w, i) => ({w, i}))
+                        .filter(obj => obj.w.replace(/[^\u0600-\u06FFa-zA-Z]/g, '').length > 4);
+                    
+                    if (candidates.length > 0) {
+                        const targetObj = candidates[Math.floor(Math.random() * candidates.length)];
+                        const correctWord = targetObj.w.replace(/[^\u0600-\u06FFa-zA-Z]/g, ''); 
+                        
+                        let options = [correctWord];
+                        
+                        // اختيار 3 كلمات خاطئة من نفس النص
+                        let attempts = 0;
+                        while(options.length < 4 && attempts < 150) {
+                            const randomWord = uniqueWords[Math.floor(Math.random() * uniqueWords.length)];
+                            if (!options.includes(randomWord)) {
+                                options.push(randomWord);
+                            }
+                            attempts++;
+                        }
+                        
+                        // إنشاء السؤال
+                        if (options.length === 4) {
+                            const questionString = words.map((w, i) => i === targetObj.i ? '<span class="blank-highlight">______</span>' : w).join(' ');
+                            
+                            generatedQuestions.push({
+                                text: questionString,
+                                options: options.sort(() => 0.5 - Math.random()),
+                                correct: correctWord
+                            });
+                        }
+                    }
+                });
+
+                // خلط الأسئلة وأخذ أول 10 أسئلة لتكون مدة اللعبة مناسبة للمؤقت
+                questions = generatedQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+                if (questions.length > 0) {
+                    playSound('generate');
+                    startGame();
+                } else {
+                    alert("لم نتمكن من توليد أسئلة من هذا الملف. جرب ملفاً آخر.");
+                    resetToStart();
+                }
+            }, 1500); // تأخير 1.5 ثانية لمحاكاة التفكير
+        }
+
+        // ================= بدء اللعبة =================
         function startGame() {
             score = 0;
             lives = 3;
+            currentQuestionIndex = 0;
+            globalTimeLeft = 120; // 2 دقيقة
             isPlaying = true;
             
             scoreVal.textContent = score;
             updateLivesUI();
+            updateTimerUI();
             
-            startScreen.classList.add('hidden');
+            loadingScreen.style.display = 'none';
+            questionScreen.style.display = 'flex';
+            hud.style.display = 'flex';
             endScreen.classList.add('hidden');
             
-            memeCard.style.display = 'flex';
-            optionsContainer.style.display = 'flex';
+            // بدء المؤقت العام
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                globalTimeLeft--;
+                updateTimerUI();
+                
+                if (globalTimeLeft <= 0) {
+                    endGame("انتهى الوقت! (دقيقتان)");
+                }
+            }, 1000);
             
-            availableQuestions = [...memesData].sort(() => 0.5 - Math.random());
-            
-            nextQuestion();
+            loadQuestion();
         }
 
         function updateLivesUI() {
             livesVal.textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
         }
 
-        function nextQuestion() {
-            if (!isPlaying) return;
-
-            if (availableQuestions.length === 0) {
-                availableQuestions = [...memesData].sort(() => 0.5 - Math.random());
+        function updateTimerUI() {
+            const minutes = Math.floor(globalTimeLeft / 60);
+            const seconds = globalTimeLeft % 60;
+            globalTimerEl.innerHTML = `<i class="fas fa-stopwatch"></i> ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // تحويل اللون للأحمر إذا بقي أقل من 20 ثانية
+            if (globalTimeLeft <= 20) {
+                globalTimerEl.classList.add('danger');
+            } else {
+                globalTimerEl.classList.remove('danger');
             }
-
-            currentQuestion = availableQuestions.pop();
-            
-            memeTopText.textContent = currentQuestion.top;
-            
-            // تحديث الصورة (مع معالجة الخطأ)
-            memeImg.style.display = 'block';
-            memeFallback.style.display = 'none';
-            memeFallback.textContent = currentQuestion.fallbackEmoji;
-            memeImg.src = currentQuestion.image;
-            
-            memeBottomText.textContent = "اختر التكملة الصحيحة...";
-            memeBottomText.style.color = '#888';
-            
-            optionsContainer.innerHTML = '';
-            
-            const shuffledOptions = currentQuestion.options.map((opt, index) => ({
-                text: opt,
-                isCorrect: index === currentQuestion.correct
-            })).sort(() => 0.5 - Math.random());
-
-            shuffledOptions.forEach((opt) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = opt.text;
-                btn.addEventListener('click', () => handleAnswer(btn, opt.isCorrect));
-                optionsContainer.appendChild(btn);
-            });
-
-            memeCard.style.animation = 'none';
-            void memeCard.offsetWidth; 
-            memeCard.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-
-            timeLeft = MAX_TIME;
-            timeBar.style.transition = 'none';
-            timeBar.style.width = '100%';
-            timeBar.style.background = 'var(--gold)';
-            
-            void timeBar.offsetWidth;
-            
-            timeBar.style.transition = `width ${MAX_TIME}s linear`;
-            timeBar.style.width = '0%';
-
-            clearInterval(roundTimer);
-            roundTimer = setInterval(() => {
-                timeLeft -= 0.1;
-                if (timeLeft <= 2.5) timeBar.style.background = 'var(--primary)';
-                if (timeLeft <= 0) {
-                    handleTimeOut();
-                }
-            }, 100);
         }
 
-        function handleAnswer(clickedBtn, isCorrect) {
+        // ================= تحميل السؤال =================
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endGame("أنت بطل! أكملت جميع الأسئلة");
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            
+            questionText.innerHTML = q.text;
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.addEventListener('click', () => handleAnswer(btn, opt, q.correct));
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // ================= معالجة الإجابات =================
+        function handleAnswer(clickedBtn, chosen, correct) {
             if (!isPlaying) return;
-            clearInterval(roundTimer);
 
             const allBtns = optionsContainer.querySelectorAll('.option-btn');
             allBtns.forEach(btn => btn.style.pointerEvents = 'none');
 
-            if (isCorrect) {
+            if (chosen === correct) {
                 playSound('correct');
                 clickedBtn.classList.add('correct');
                 
-                const points = Math.round(10 + (timeLeft * 2));
+                // النقاط تعتمد على الوقت المتبقي (مكافأة السرعة)
+                const points = Math.round(10 + (globalTimeLeft * 0.2)); 
                 score += points;
                 scoreVal.textContent = score;
                 
-                memeBottomText.textContent = clickedBtn.textContent;
-                memeBottomText.style.color = 'var(--success)';
+                showFloatingText(clickedBtn, `+${points}`, 'var(--success)');
                 
-                showFloatingText(playArea.clientWidth/2, playArea.clientHeight/2, `+${points}`, 'var(--success)');
-                
-                setTimeout(() => nextQuestion(), 1200);
-                
+                setTimeout(nextQuestion, 800);
             } else {
                 playSound('wrong');
                 clickedBtn.classList.add('wrong');
                 
                 allBtns.forEach(btn => {
-                    if (btn.textContent === currentQuestion.options[currentQuestion.correct]) {
-                        btn.classList.add('correct');
-                    }
+                    if (btn.textContent === correct) btn.classList.add('correct');
                 });
 
-                memeBottomText.textContent = currentQuestion.options[currentQuestion.correct];
-                memeBottomText.style.color = 'var(--primary)';
-
-                gameWrapper.classList.add('shake');
+                appWrapper.classList.add('shake');
                 loseLife();
             }
-        }
-
-        function handleTimeOut() {
-            if (!isPlaying) return;
-            playSound('wrong');
-            
-            const allBtns = optionsContainer.querySelectorAll('.option-btn');
-            allBtns.forEach(btn => {
-                btn.style.pointerEvents = 'none';
-                if (btn.textContent === currentQuestion.options[currentQuestion.correct]) {
-                    btn.classList.add('correct');
-                }
-            });
-
-            memeBottomText.textContent = "انتهى الوقت! الإجابة: " + currentQuestion.options[currentQuestion.correct];
-            memeBottomText.style.color = 'var(--primary)';
-
-            gameWrapper.classList.add('shake');
-            loseLife();
         }
 
         function loseLife() {
@@ -564,56 +594,74 @@
             updateLivesUI();
 
             setTimeout(() => {
-                gameWrapper.classList.remove('shake');
+                appWrapper.classList.remove('shake');
                 if (lives <= 0) {
-                    endGame();
+                    endGame("نفدت المحاولات!");
                 } else {
                     nextQuestion();
                 }
-            }, 2000);
+            }, 1500);
         }
 
-        function endGame() {
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        // ================= النهاية =================
+        function endGame(msg) {
             isPlaying = false;
-            clearInterval(roundTimer);
+            clearInterval(timerInterval);
             
-            memeCard.style.display = 'none';
-            optionsContainer.style.display = 'none';
-
-            let rank = "مبتدئ في الميمز 🐣";
-            let resultEmoji = "🤡";
+            hud.style.display = 'none';
+            questionScreen.style.display = 'none';
             
-            if (score >= 150) {
-                rank = "أسطورة الميمز 👑";
-                resultEmoji = "🗿";
-            } else if (score >= 100) {
-                rank = "خبير ميمز 🧠";
-                resultEmoji = "😎";
-            } else if (score >= 50) {
-                rank = "ميمر مبتدئ 📱";
-                resultEmoji = "😭";
-            }
+            let rank = "مبتدئ 🐣";
+            let emoji = "📚";
+            
+            if (score >= 120) { rank = "عبقري 🧠"; emoji = "🏆"; }
+            else if (score >= 70) { rank = "متفوق 🌟"; emoji = "🎓"; }
+            else if (score >= 30) { rank = "طالب مجتهد 📖"; emoji = "📝"; }
 
-            document.getElementById('finalScoreText').textContent = `نقاطك: ${score}`;
+            document.getElementById('finalScoreText').textContent = `نقاطك: ${score} | ${msg}`;
             document.getElementById('rankText').textContent = `رتبتك: ${rank}`;
-            document.getElementById('resultEmoji').textContent = resultEmoji;
+            document.getElementById('resultEmoji').textContent = emoji;
             
             endScreen.classList.remove('hidden');
         }
 
-        function showFloatingText(x, y, text, color) {
+        // ================= التأثيرات =================
+        function showFloatingText(element, text, color) {
+            const rect = element.getBoundingClientRect();
+            const appRect = appWrapper.getBoundingClientRect();
+            
+            const x = rect.left - appRect.left + rect.width / 2;
+            const y = rect.top - appRect.top;
+
             const el = document.createElement('div');
             el.className = 'floating-text';
             el.textContent = text;
             el.style.left = `${x}px`;
             el.style.top = `${y}px`;
             el.style.color = color;
-            playArea.appendChild(el);
+            
+            appWrapper.appendChild(el);
             setTimeout(() => el.remove(), 800);
         }
 
-        startBtn.addEventListener('click', startGame);
-        restartBtn.addEventListener('click', startGame);
+        // العودة للبداية
+        restartBtn.addEventListener('click', resetToStart);
+
+        function resetToStart() {
+            endScreen.classList.add('hidden');
+            loadingScreen.style.display = 'none';
+            questionScreen.style.display = 'none';
+            uploadScreen.style.display = 'flex';
+            hud.style.display = 'none';
+            fileInput.value = '';
+            clearInterval(timerInterval);
+        }
+
         document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
