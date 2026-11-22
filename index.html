@@ -111,6 +111,23 @@
             text-shadow: 0 0 10px var(--accent-glow);
         }
 
+        /* علامة التوثيق الزرقاء */
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #1d9bf0;
+            color: #fff;
+            font-size: 9px;
+            margin-right: 5px;
+            box-shadow: 0 0 8px rgba(29, 155, 240, 0.65);
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
         /* ===== الشاشات ===== */
         .screen {
             display: none;
@@ -251,7 +268,13 @@
             color: #fff;
         }
 
-        /* ===== 2. شاشة الأصدقاء والغرف والثيمات ===== */
+        .btn-verify-blue {
+            background: linear-gradient(135deg, #1d9bf0, #0066cc);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(29, 155, 240, 0.35);
+        }
+
+        /* ===== 2. شاشة الأصدقاء والغرف والثيمات والإدارة ===== */
         .top-bar {
             background: rgba(15, 20, 30, 0.92);
             backdrop-filter: blur(10px);
@@ -285,6 +308,8 @@
             font-weight: 900;
             font-size: 0.96rem;
             color: #fff;
+            display: flex;
+            align-items: center;
         }
         .user-meta .u-bio {
             font-size: 0.74rem;
@@ -321,7 +346,7 @@
             padding: 11px 6px;
             text-align: center;
             font-weight: 800;
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
             cursor: pointer;
             border-bottom: 2px solid transparent;
@@ -424,6 +449,9 @@
             font-weight: 800;
             font-size: 0.95rem;
             color: #fff;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
         }
         .friend-info .flast {
             font-size: 0.78rem;
@@ -483,6 +511,26 @@
             font-size: 0.9rem;
         }
 
+        .admin-panel-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 18px;
+            padding: 16px;
+        }
+        .admin-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .admin-status-msg {
+            margin-top: 12px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            min-height: 20px;
+        }
+
         .empty-state {
             text-align: center;
             color: var(--text-muted);
@@ -518,7 +566,7 @@
             color: var(--accent);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
         }
         .copy-code-btn {
@@ -641,11 +689,13 @@
         .message-wrapper.other { align-self: flex-start; }
 
         .msg-name {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
             margin-bottom: 4px;
             font-weight: bold;
             margin-right: 5px;
+            display: flex;
+            align-items: center;
         }
 
         .reply-quote {
@@ -966,7 +1016,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">رسائل صوتية، صور مضغوطة، تعديل، تثبيت، وثيمات ⚡</div>
+                <div class="subtitle">حسابات موثقة، رسائل صوتية، صور مضغوطة، وثيمات ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -991,13 +1041,16 @@
             </div>
         </div>
 
-        <!-- 2. شاشة الأصدقاء والغرف والثيمات -->
+        <!-- 2. شاشة الأصدقاء والغرف والثيمات والإدارة -->
         <div class="screen" id="homeScreen">
             <div class="top-bar">
                 <div class="user-profile">
                     <div class="avatar-circle" id="myAvatar">ع</div>
                     <div class="user-meta">
-                        <div class="uname" id="myDisplayName">المستخدم</div>
+                        <div class="uname">
+                            <span id="myDisplayName">المستخدم</span>
+                            <span id="myVerifiedBadge"></span>
+                        </div>
                         <div class="u-bio" id="myBioDisplay" onclick="editMyBio()">
                             <i class="fas fa-pen" style="font-size:10px;"></i>
                             <span id="myBioText">متاح للدردشة ⚡</span>
@@ -1016,6 +1069,9 @@
                 </div>
                 <div class="home-tab" id="homeTabThemes" onclick="switchHomeTab('themes')">
                     <i class="fas fa-palette"></i> الثيمات
+                </div>
+                <div class="home-tab" id="homeTabAdmin" style="display:none;" onclick="switchHomeTab('admin')">
+                    <i class="fas fa-shield-halved"></i> التوثيق
                 </div>
             </div>
 
@@ -1067,6 +1123,28 @@
                     </div>
                 </div>
             </div>
+
+            <!-- لوحة التحكم السرية للمدير (تظهر فقط لحسابات الإدارة) -->
+            <div class="home-content" id="adminSection" style="display:none;">
+                <div class="admin-panel-box">
+                    <div style="font-weight:900; font-size:1rem; color:var(--accent); margin-bottom:10px;">
+                        <i class="fas fa-certificate"></i> لوحة إدارة توثيق الحسابات
+                    </div>
+                    <div class="input-group" style="margin-bottom:8px;">
+                        <label>اسم المستخدم المراد توثيقه أو إلغاء توثيقه:</label>
+                        <input type="text" id="verifyTargetInput" placeholder="مثال: ali_ahmed" maxlength="20">
+                    </div>
+                    <div class="admin-actions-row">
+                        <button type="button" class="btn btn-verify-blue" onclick="setVerificationStatus(true)">
+                            <i class="fas fa-check-circle"></i> توثيق الحساب
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="setVerificationStatus(false)">
+                            <i class="fas fa-xmark-circle"></i> إلغاء التوثيق
+                        </button>
+                    </div>
+                    <div class="admin-status-msg" id="adminStatusMsg"></div>
+                </div>
+            </div>
         </div>
 
         <!-- 3. شاشة الدردشة -->
@@ -1075,6 +1153,7 @@
                 <div class="chat-header-info">
                     <span class="chat-room-code" id="displayChatTitle">
                         <span id="chatTitleText">الدردشة</span>
+                        <span id="chatTitleBadge"></span>
                         <button class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
                             <i class="fas fa-copy"></i> نسخ الكود
                         </button>
@@ -1168,7 +1247,7 @@
 
     <script>
         // ==========================================
-        // 1. إعدادات Firebase
+        // 1. إعدادات Firebase وحسابات الإدارة
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
@@ -1179,6 +1258,9 @@
             messagingSenderId: "150237867312",
             appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
         };
+
+        // أضف أسماء المستخدمين المصرّح لهم بفتح لوحة التوثيق السرية هنا
+        const ADMIN_USERNAMES = ['abdulrahim'];
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -1191,17 +1273,18 @@
         let authMode = 'login';
         let currentUser = null;
         let currentDisplayName = null;
+        let currentUserVerified = false;
         let activeChatId = null;
         let activeChatType = null;
         let activeRoomCode = null;
         let activePartner = null;
         let replyingTo = null;
         let editingMsgId = null;
-        let pendingCompressedImage = null; // { dataUrl, sizeKb }
-        let pendingAudioClip = null; // { dataUrl, durationSec, sizeKb }
+        let pendingCompressedImage = null;
+        let pendingAudioClip = null;
         let latestMessagesData = null;
+        let verifiedCache = {}; // { usernameKey: boolean }
 
-        // متغيرات التسجيل الصوتي
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecordingVoice = false;
@@ -1251,6 +1334,62 @@
 
         function sanitizeKey(str) {
             return str.trim().toLowerCase().replace(/[.#$\[\]/\s]+/g, '_');
+        }
+
+        function getVerifiedBadgeHtml(isVerified) {
+            return isVerified
+                ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>'
+                : '';
+        }
+
+        async function isUserVerified(usernameKey) {
+            const key = sanitizeKey(usernameKey);
+            if (!key) return false;
+            if (key === currentUser) return !!currentUserVerified;
+            const snap = await db.ref('users/' + key + '/verified').once('value');
+            const val = !!snap.val();
+            verifiedCache[key] = val;
+            return val;
+        }
+
+        function isCurrentUserAdmin() {
+            return !!currentUser && ADMIN_USERNAMES.map(sanitizeKey).includes(sanitizeKey(currentUser));
+        }
+
+        async function setVerificationStatus(status) {
+            const input = document.getElementById('verifyTargetInput');
+            const statusMsg = document.getElementById('adminStatusMsg');
+            const targetKey = sanitizeKey(input.value);
+
+            if (!isCurrentUserAdmin()) {
+                statusMsg.style.color = '#ff4d79';
+                statusMsg.textContent = 'غير مصرح لك بهذا الإجراء.';
+                return;
+            }
+            if (!targetKey) {
+                statusMsg.style.color = '#ff4d79';
+                statusMsg.textContent = 'يرجى إدخال اسم المستخدم أولاً.';
+                return;
+            }
+
+            const ref = db.ref('users/' + targetKey);
+            const snap = await ref.once('value');
+            if (!snap.exists()) {
+                statusMsg.style.color = '#ff4d79';
+                statusMsg.textContent = `الحساب (@${targetKey}) غير موجود في قاعدة البيانات.`;
+                return;
+            }
+
+            await ref.update({ verified: !!status });
+            verifiedCache[targetKey] = !!status;
+            if (targetKey === currentUser) {
+                currentUserVerified = !!status;
+                document.getElementById('myVerifiedBadge').innerHTML = getVerifiedBadgeHtml(currentUserVerified);
+            }
+            statusMsg.style.color = 'var(--neon-green)';
+            statusMsg.textContent = status
+                ? `تم توثيق الحساب (@${targetKey}) بالعلامة الزرقاء بنجاح.`
+                : `تم إلغاء توثيق الحساب (@${targetKey}).`;
         }
 
         async function hashPassword(password) {
@@ -1334,7 +1473,6 @@
                         return alert('الرسالة الصوتية قصيرة جداً أو فارغة.');
                     }
 
-                    // حد حجم تقريبي لحماية قاعدة البيانات
                     if (blob.size > 450000) {
                         return alert('الرسالة الصوتية أطول من الحد المسموح، يرجى تسجيل مقطع أقصر.');
                     }
@@ -1532,11 +1670,12 @@
                         passwordHash: passHash,
                         bio: 'متاح للدردشة ⚡',
                         theme: savedTheme,
+                        verified: false,
                         createdAt: Date.now(),
                         online: true,
                         lastSeen: Date.now()
                     });
-                    completeLogin(usernameKey, rawUsername, 'متاح للدردشة ⚡', savedTheme);
+                    completeLogin(usernameKey, rawUsername, 'متاح للدردشة ⚡', savedTheme, false);
                 } else {
                     if (!snapshot.exists()) {
                         showAuthError('هذا الحساب غير موجود. يمكنك إنشاء حساب جديد من التبويب المجاور.');
@@ -1551,8 +1690,9 @@
                     }
                     const userTheme = userData.theme || savedTheme;
                     const userBio = userData.bio || 'متاح للدردشة ⚡';
+                    const isVer = !!userData.verified;
                     await userRef.update({ online: true, lastSeen: Date.now() });
-                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme);
+                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme, isVer);
                 }
             } catch (err) {
                 showAuthError('حدث خطأ في الاتصال بقاعدة البيانات.');
@@ -1560,9 +1700,11 @@
             btn.disabled = false;
         }
 
-        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة ⚡', themeName = 'blue') {
+        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة ⚡', themeName = 'blue', isVerified = false) {
             currentUser = usernameKey;
             currentDisplayName = displayName;
+            currentUserVerified = !!isVerified;
+            verifiedCache[usernameKey] = currentUserVerified;
             localStorage.setItem('legendary_chat_session', JSON.stringify({ username: usernameKey, displayName }));
 
             applyTheme(themeName);
@@ -1573,8 +1715,19 @@
             myPresenceRef.child('online').onDisconnect().set(false);
             myPresenceRef.child('lastSeen').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
 
+            // مراقبة تحديث التوثيق لحظياً للمستخدم الحالي
+            myPresenceRef.child('verified').on('value', (snap) => {
+                currentUserVerified = !!snap.val();
+                verifiedCache[currentUser] = currentUserVerified;
+                document.getElementById('myVerifiedBadge').innerHTML = getVerifiedBadgeHtml(currentUserVerified);
+            });
+
             document.getElementById('myDisplayName').textContent = `${displayName} (@${usernameKey})`;
+            document.getElementById('myVerifiedBadge').innerHTML = getVerifiedBadgeHtml(currentUserVerified);
             document.getElementById('myAvatar').textContent = displayName.charAt(0).toUpperCase();
+
+            document.getElementById('homeTabAdmin').style.display = isCurrentUserAdmin() ? 'block' : 'none';
+            switchHomeTab('friends');
 
             authScreen.classList.remove('active');
             homeScreen.classList.add('active');
@@ -1586,6 +1739,7 @@
         function logoutUser() {
             if (!currentUser) return;
             db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
+            db.ref('users/' + currentUser + '/verified').off();
             cleanupChatListeners();
             if (friendsListenerRef && friendsListenerCallback) {
                 friendsListenerRef.off('value', friendsListenerCallback);
@@ -1593,12 +1747,14 @@
             localStorage.removeItem('legendary_chat_session');
             currentUser = null;
             currentDisplayName = null;
+            currentUserVerified = false;
+            document.getElementById('homeTabAdmin').style.display = 'none';
             homeScreen.classList.remove('active');
             chatScreen.classList.remove('active');
             authScreen.classList.add('active');
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const savedTheme = localStorage.getItem('legendary_chat_theme') || 'blue';
             applyTheme(savedTheme);
 
@@ -1607,23 +1763,35 @@
                 try {
                     const parsed = JSON.parse(saved);
                     if (parsed && parsed.username) {
-                        completeLogin(parsed.username, parsed.displayName || parsed.username, 'متاح للدردشة ⚡', savedTheme);
+                        const snap = await db.ref('users/' + sanitizeKey(parsed.username)).once('value');
+                        const uVal = snap.val() || {};
+                        completeLogin(
+                            parsed.username,
+                            uVal.displayName || parsed.displayName || parsed.username,
+                            uVal.bio || 'متاح للدردشة ⚡',
+                            uVal.theme || savedTheme,
+                            !!uVal.verified
+                        );
                     }
                 } catch (e) {}
             }
         });
 
         // ==========================================
-        // 7. الأصدقاء والغرف والثيمات
+        // 7. الأصدقاء والغرف والثيمات والإدارة
         // ==========================================
         function switchHomeTab(tab) {
+            if (tab === 'admin' && !isCurrentUserAdmin()) return;
+
             document.getElementById('homeTabFriends').classList.toggle('active', tab === 'friends');
             document.getElementById('homeTabRooms').classList.toggle('active', tab === 'rooms');
             document.getElementById('homeTabThemes').classList.toggle('active', tab === 'themes');
+            document.getElementById('homeTabAdmin').classList.toggle('active', tab === 'admin');
 
             document.getElementById('friendsSection').style.display = tab === 'friends' ? 'block' : 'none';
             document.getElementById('roomsSection').style.display = tab === 'rooms' ? 'block' : 'none';
             document.getElementById('themesSection').style.display = tab === 'themes' ? 'block' : 'none';
+            document.getElementById('adminSection').style.display = tab === 'admin' ? 'block' : 'none';
         }
 
         function getDirectChatId(userA, userB) {
@@ -1660,7 +1828,7 @@
             });
 
             input.value = '';
-            openDirectChat(friendKey, friendDisplay, chatId);
+            openDirectChat(friendKey, friendDisplay, chatId, !!friendData.verified);
         }
 
         function listenToFriends() {
@@ -1680,6 +1848,9 @@
                 const enriched = await Promise.all(list.map(async (f) => {
                     const uSnap = await db.ref('users/' + f.username).once('value');
                     const uVal = uSnap.val() || {};
+                    const isVer = !!uVal.verified;
+                    verifiedCache[f.username] = isVer;
+
                     const chatId = f.chatId || getDirectChatId(currentUser, f.username);
                     const msgsSnap = await db.ref(`chats/${chatId}/messages`).once('value');
 
@@ -1704,6 +1875,7 @@
                         username: f.username,
                         displayName: uVal.displayName || f.displayName || f.username,
                         bio: uVal.bio || '',
+                        verified: isVer,
                         online: !!uVal.online,
                         lastText,
                         lastTime,
@@ -1718,7 +1890,7 @@
                 enriched.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'friend-item';
-                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId);
+                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified);
                     div.innerHTML = `
                         <div class="friend-left">
                             <div class="friend-avatar">
@@ -1726,7 +1898,11 @@
                                 <span class="status-dot ${item.online ? 'online' : ''}"></span>
                             </div>
                             <div class="friend-info">
-                                <div class="fname">${escapeHtml(item.displayName)} <span style="font-size:0.75rem; color:var(--text-muted);">(@${item.username})</span></div>
+                                <div class="fname">
+                                    <span>${escapeHtml(item.displayName)}</span>
+                                    ${getVerifiedBadgeHtml(item.verified)}
+                                    <span style="font-size:0.75rem; color:var(--text-muted); margin-right:4px;">(@${item.username})</span>
+                                </div>
                                 <div class="flast">${escapeHtml(item.lastText)}</div>
                             </div>
                         </div>
@@ -1740,13 +1916,14 @@
             });
         }
 
-        function openDirectChat(partnerKey, partnerDisplay, chatId) {
+        function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false) {
             activeChatType = 'direct';
             activeRoomCode = null;
             activePartner = partnerKey;
             activeChatId = chatId;
 
             document.getElementById('chatTitleText').textContent = partnerDisplay;
+            document.getElementById('chatTitleBadge').innerHTML = getVerifiedBadgeHtml(partnerVerified);
             document.getElementById('copyRoomBtn').style.display = 'none';
             enterChatScreen();
             listenPartnerPresence(partnerKey);
@@ -1776,6 +1953,7 @@
             activeChatId = 'room_' + code;
 
             document.getElementById('chatTitleText').textContent = `الغرفة: ${code}`;
+            document.getElementById('chatTitleBadge').innerHTML = '';
             document.getElementById('copyRoomBtn').style.display = 'inline-block';
             const statusEl = document.getElementById('chatPartnerStatus');
             statusEl.textContent = 'غرفة نشطة';
@@ -1794,7 +1972,7 @@
         }
 
         // ==========================================
-        // 9. الرسائل والصوت والصور والتعديل والتثبيت
+        // 9. الرسائل والصوت والصور والتعديل والتثبيت والتوثيق
         // ==========================================
         function enterChatScreen() {
             homeScreen.classList.remove('active');
@@ -1853,13 +2031,17 @@
             }
             partnerPresenceRef = db.ref('users/' + partnerKey);
             partnerPresenceCallback = partnerPresenceRef.on('value', (snap) => {
-                const val = snap.val();
+                const val = snap.val() || {};
+                const isVer = !!val.verified;
+                verifiedCache[partnerKey] = isVer;
+                document.getElementById('chatTitleBadge').innerHTML = getVerifiedBadgeHtml(isVer);
+
                 const statusEl = document.getElementById('chatPartnerStatus');
-                if (val && val.online) {
+                if (val.online) {
                     statusEl.textContent = val.bio ? `متصل • ${val.bio}` : 'متصل الآن';
                     statusEl.style.color = 'var(--neon-green)';
                 } else {
-                    statusEl.textContent = val && val.bio ? `غير متصل • ${val.bio}` : 'غير متصل';
+                    statusEl.textContent = val.bio ? `غير متصل • ${val.bio}` : 'غير متصل';
                     statusEl.style.color = 'var(--text-muted)';
                 }
             });
@@ -1973,7 +2155,7 @@
             }
 
             messagesRefCurrent = db.ref(`chats/${activeChatId}/messages`);
-            messagesCallbackCurrent = messagesRefCurrent.on('value', (snapshot) => {
+            messagesCallbackCurrent = messagesRefCurrent.on('value', async (snapshot) => {
                 const data = snapshot.val();
                 const currentCount = data ? Object.keys(data).length : 0;
 
@@ -1984,6 +2166,12 @@
                 }
                 lastMessageCount = currentCount;
                 latestMessagesData = data;
+
+                // تحديث حالة التوثيق للمرسلين في الرسائل
+                if (data) {
+                    const senders = [...new Set(Object.values(data).map(m => m.sender).filter(Boolean))];
+                    await Promise.all(senders.map(s => isUserVerified(s)));
+                }
 
                 renderMessagesList();
             });
@@ -2017,10 +2205,14 @@
                 }
 
                 const isMe = msg.sender === currentUser;
+                const senderVerified = isMe ? currentUserVerified : !!verifiedCache[msg.sender];
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
 
-                const nameHtml = isMe ? '' : `<div class="msg-name">${escapeHtml(msg.senderName || msg.sender)}</div>`;
+                const nameHtml = isMe
+                    ? ''
+                    : `<div class="msg-name"><span>${escapeHtml(msg.senderName || msg.sender)}</span>${getVerifiedBadgeHtml(senderVerified)}</div>`;
+
                 const replyHtml = msg.replyTo
                     ? `<div class="reply-quote"><strong>${escapeHtml(msg.replyTo.senderName || '')}:</strong> ${escapeHtml(msg.replyTo.text || '')}</div>`
                     : '';
