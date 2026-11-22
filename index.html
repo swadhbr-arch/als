@@ -111,7 +111,7 @@
             text-shadow: 0 0 10px var(--accent-glow);
         }
 
-        /* علامة التوثيق الزرقاء */
+        /* علامة التوثيق الزرقاء وشارة VIP الذهبية */
         .verified-badge {
             display: inline-flex;
             align-items: center;
@@ -126,6 +126,25 @@
             box-shadow: 0 0 8px rgba(29, 155, 240, 0.65);
             vertical-align: middle;
             flex-shrink: 0;
+        }
+
+        .vip-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 1px 6px;
+            height: 17px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ffd700, #ff9900);
+            color: #140d00;
+            font-size: 8.5px;
+            font-weight: 900;
+            margin-right: 4px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            vertical-align: middle;
+            flex-shrink: 0;
+            letter-spacing: 0.3px;
         }
 
         /* ===== الشاشات ===== */
@@ -306,10 +325,11 @@
         }
         .user-meta .uname {
             font-weight: 900;
-            font-size: 0.96rem;
+            font-size: 0.94rem;
             color: #fff;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
         .user-meta .u-bio {
             font-size: 0.74rem;
@@ -696,6 +716,7 @@
             margin-right: 5px;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .reply-quote {
@@ -1016,7 +1037,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">حسابات موثقة، رسائل صوتية، صور مضغوطة، وثيمات ⚡</div>
+                <div class="subtitle">شارات VIP، حسابات موثقة، رسائل صوتية، وصور مضغوطة ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1049,7 +1070,7 @@
                     <div class="user-meta">
                         <div class="uname">
                             <span id="myDisplayName">المستخدم</span>
-                            <span id="myVerifiedBadge"></span>
+                            <span id="myBadgesContainer"></span>
                         </div>
                         <div class="u-bio" id="myBioDisplay" onclick="editMyBio()">
                             <i class="fas fa-pen" style="font-size:10px;"></i>
@@ -1153,7 +1174,7 @@
                 <div class="chat-header-info">
                     <span class="chat-room-code" id="displayChatTitle">
                         <span id="chatTitleText">الدردشة</span>
-                        <span id="chatTitleBadge"></span>
+                        <span id="chatTitleBadges"></span>
                         <button class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
                             <i class="fas fa-copy"></i> نسخ الكود
                         </button>
@@ -1259,8 +1280,8 @@
             appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
         };
 
-        // أضف أسماء المستخدمين المصرّح لهم بفتح لوحة التوثيق السرية هنا
-        const ADMIN_USERNAMES = ['abdulrahim'];
+        // أضف أسماء المستخدمين المصرّح لهم بفتح لوحة التوثيق وشارة VIP الذهبية هنا
+        const ADMIN_USERNAMES = ['abdulraheem'];
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -1274,6 +1295,7 @@
         let currentUser = null;
         let currentDisplayName = null;
         let currentUserVerified = false;
+        let currentUserVipAdmin = false;
         let activeChatId = null;
         let activeChatType = null;
         let activeRoomCode = null;
@@ -1283,7 +1305,7 @@
         let pendingCompressedImage = null;
         let pendingAudioClip = null;
         let latestMessagesData = null;
-        let verifiedCache = {}; // { usernameKey: boolean }
+        let userBadgeCache = {}; // { usernameKey: { verified: bool, vipAdmin: bool } }
 
         let mediaRecorder = null;
         let audioChunks = [];
@@ -1336,24 +1358,38 @@
             return str.trim().toLowerCase().replace(/[.#$\[\]/\s]+/g, '_');
         }
 
-        function getVerifiedBadgeHtml(isVerified) {
-            return isVerified
-                ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>'
-                : '';
-        }
-
-        async function isUserVerified(usernameKey) {
-            const key = sanitizeKey(usernameKey);
-            if (!key) return false;
-            if (key === currentUser) return !!currentUserVerified;
-            const snap = await db.ref('users/' + key + '/verified').once('value');
-            const val = !!snap.val();
-            verifiedCache[key] = val;
-            return val;
+        function isAdminUsername(usernameKey) {
+            return !!usernameKey && ADMIN_USERNAMES.map(sanitizeKey).includes(sanitizeKey(usernameKey));
         }
 
         function isCurrentUserAdmin() {
-            return !!currentUser && ADMIN_USERNAMES.map(sanitizeKey).includes(sanitizeKey(currentUser));
+            return isAdminUsername(currentUser);
+        }
+
+        function getBadgesHtml(isVerified, isVipAdmin) {
+            const verHtml = isVerified
+                ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>'
+                : '';
+            const vipHtml = isVipAdmin
+                ? '<span class="vip-badge" title="مدير VIP"><i class="fas fa-crown"></i> VIP</span>'
+                : '';
+            return verHtml + vipHtml;
+        }
+
+        async function fetchUserBadges(usernameKey) {
+            const key = sanitizeKey(usernameKey);
+            if (!key) return { verified: false, vipAdmin: false };
+            if (key === currentUser) {
+                return { verified: !!currentUserVerified, vipAdmin: !!currentUserVipAdmin };
+            }
+            const snap = await db.ref('users/' + key).once('value');
+            const val = snap.val() || {};
+            const badges = {
+                verified: !!val.verified,
+                vipAdmin: !!(val.vipAdmin || isAdminUsername(key))
+            };
+            userBadgeCache[key] = badges;
+            return badges;
         }
 
         async function setVerificationStatus(status) {
@@ -1381,10 +1417,13 @@
             }
 
             await ref.update({ verified: !!status });
-            verifiedCache[targetKey] = !!status;
+            const existing = userBadgeCache[targetKey] || { verified: false, vipAdmin: isAdminUsername(targetKey) };
+            existing.verified = !!status;
+            userBadgeCache[targetKey] = existing;
+
             if (targetKey === currentUser) {
                 currentUserVerified = !!status;
-                document.getElementById('myVerifiedBadge').innerHTML = getVerifiedBadgeHtml(currentUserVerified);
+                document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
             }
             statusMsg.style.color = 'var(--neon-green)';
             statusMsg.textContent = status
@@ -1657,6 +1696,7 @@
                 const snapshot = await userRef.once('value');
                 const passHash = await hashPassword(password);
                 const savedTheme = localStorage.getItem('legendary_chat_theme') || 'blue';
+                const isAdminAccount = isAdminUsername(usernameKey);
 
                 if (authMode === 'register') {
                     if (snapshot.exists()) {
@@ -1670,12 +1710,13 @@
                         passwordHash: passHash,
                         bio: 'متاح للدردشة ⚡',
                         theme: savedTheme,
-                        verified: false,
+                        verified: isAdminAccount,
+                        vipAdmin: isAdminAccount,
                         createdAt: Date.now(),
                         online: true,
                         lastSeen: Date.now()
                     });
-                    completeLogin(usernameKey, rawUsername, 'متاح للدردشة ⚡', savedTheme, false);
+                    completeLogin(usernameKey, rawUsername, 'متاح للدردشة ⚡', savedTheme, isAdminAccount, isAdminAccount);
                 } else {
                     if (!snapshot.exists()) {
                         showAuthError('هذا الحساب غير موجود. يمكنك إنشاء حساب جديد من التبويب المجاور.');
@@ -1690,9 +1731,10 @@
                     }
                     const userTheme = userData.theme || savedTheme;
                     const userBio = userData.bio || 'متاح للدردشة ⚡';
-                    const isVer = !!userData.verified;
-                    await userRef.update({ online: true, lastSeen: Date.now() });
-                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme, isVer);
+                    const isVer = !!(userData.verified || isAdminAccount);
+                    const isVip = !!(userData.vipAdmin || isAdminAccount);
+                    await userRef.update({ online: true, lastSeen: Date.now(), vipAdmin: isVip });
+                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme, isVer, isVip);
                 }
             } catch (err) {
                 showAuthError('حدث خطأ في الاتصال بقاعدة البيانات.');
@@ -1700,11 +1742,12 @@
             btn.disabled = false;
         }
 
-        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة ⚡', themeName = 'blue', isVerified = false) {
+        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة ⚡', themeName = 'blue', isVerified = false, isVipAdmin = false) {
             currentUser = usernameKey;
             currentDisplayName = displayName;
             currentUserVerified = !!isVerified;
-            verifiedCache[usernameKey] = currentUserVerified;
+            currentUserVipAdmin = !!(isVipAdmin || isAdminUsername(usernameKey));
+            userBadgeCache[usernameKey] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
             localStorage.setItem('legendary_chat_session', JSON.stringify({ username: usernameKey, displayName }));
 
             applyTheme(themeName);
@@ -1715,15 +1758,16 @@
             myPresenceRef.child('online').onDisconnect().set(false);
             myPresenceRef.child('lastSeen').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
 
-            // مراقبة تحديث التوثيق لحظياً للمستخدم الحالي
-            myPresenceRef.child('verified').on('value', (snap) => {
-                currentUserVerified = !!snap.val();
-                verifiedCache[currentUser] = currentUserVerified;
-                document.getElementById('myVerifiedBadge').innerHTML = getVerifiedBadgeHtml(currentUserVerified);
+            myPresenceRef.on('value', (snap) => {
+                const uVal = snap.val() || {};
+                currentUserVerified = !!uVal.verified;
+                currentUserVipAdmin = !!(uVal.vipAdmin || isAdminUsername(currentUser));
+                userBadgeCache[currentUser] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
+                document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
             });
 
             document.getElementById('myDisplayName').textContent = `${displayName} (@${usernameKey})`;
-            document.getElementById('myVerifiedBadge').innerHTML = getVerifiedBadgeHtml(currentUserVerified);
+            document.getElementById('myBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
             document.getElementById('myAvatar').textContent = displayName.charAt(0).toUpperCase();
 
             document.getElementById('homeTabAdmin').style.display = isCurrentUserAdmin() ? 'block' : 'none';
@@ -1739,7 +1783,7 @@
         function logoutUser() {
             if (!currentUser) return;
             db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
-            db.ref('users/' + currentUser + '/verified').off();
+            db.ref('users/' + currentUser).off();
             cleanupChatListeners();
             if (friendsListenerRef && friendsListenerCallback) {
                 friendsListenerRef.off('value', friendsListenerCallback);
@@ -1748,6 +1792,7 @@
             currentUser = null;
             currentDisplayName = null;
             currentUserVerified = false;
+            currentUserVipAdmin = false;
             document.getElementById('homeTabAdmin').style.display = 'none';
             homeScreen.classList.remove('active');
             chatScreen.classList.remove('active');
@@ -1763,14 +1808,16 @@
                 try {
                     const parsed = JSON.parse(saved);
                     if (parsed && parsed.username) {
-                        const snap = await db.ref('users/' + sanitizeKey(parsed.username)).once('value');
+                        const key = sanitizeKey(parsed.username);
+                        const snap = await db.ref('users/' + key).once('value');
                         const uVal = snap.val() || {};
                         completeLogin(
-                            parsed.username,
-                            uVal.displayName || parsed.displayName || parsed.username,
+                            key,
+                            uVal.displayName || parsed.displayName || key,
                             uVal.bio || 'متاح للدردشة ⚡',
                             uVal.theme || savedTheme,
-                            !!uVal.verified
+                            !!uVal.verified,
+                            !!(uVal.vipAdmin || isAdminUsername(key))
                         );
                     }
                 } catch (e) {}
@@ -1828,7 +1875,7 @@
             });
 
             input.value = '';
-            openDirectChat(friendKey, friendDisplay, chatId, !!friendData.verified);
+            openDirectChat(friendKey, friendDisplay, chatId, !!friendData.verified, !!(friendData.vipAdmin || isAdminUsername(friendKey)));
         }
 
         function listenToFriends() {
@@ -1849,7 +1896,8 @@
                     const uSnap = await db.ref('users/' + f.username).once('value');
                     const uVal = uSnap.val() || {};
                     const isVer = !!uVal.verified;
-                    verifiedCache[f.username] = isVer;
+                    const isVip = !!(uVal.vipAdmin || isAdminUsername(f.username));
+                    userBadgeCache[f.username] = { verified: isVer, vipAdmin: isVip };
 
                     const chatId = f.chatId || getDirectChatId(currentUser, f.username);
                     const msgsSnap = await db.ref(`chats/${chatId}/messages`).once('value');
@@ -1876,6 +1924,7 @@
                         displayName: uVal.displayName || f.displayName || f.username,
                         bio: uVal.bio || '',
                         verified: isVer,
+                        vipAdmin: isVip,
                         online: !!uVal.online,
                         lastText,
                         lastTime,
@@ -1890,7 +1939,7 @@
                 enriched.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'friend-item';
-                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified);
+                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin);
                     div.innerHTML = `
                         <div class="friend-left">
                             <div class="friend-avatar">
@@ -1900,7 +1949,7 @@
                             <div class="friend-info">
                                 <div class="fname">
                                     <span>${escapeHtml(item.displayName)}</span>
-                                    ${getVerifiedBadgeHtml(item.verified)}
+                                    ${getBadgesHtml(item.verified, item.vipAdmin)}
                                     <span style="font-size:0.75rem; color:var(--text-muted); margin-right:4px;">(@${item.username})</span>
                                 </div>
                                 <div class="flast">${escapeHtml(item.lastText)}</div>
@@ -1916,14 +1965,14 @@
             });
         }
 
-        function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false) {
+        function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false) {
             activeChatType = 'direct';
             activeRoomCode = null;
             activePartner = partnerKey;
             activeChatId = chatId;
 
             document.getElementById('chatTitleText').textContent = partnerDisplay;
-            document.getElementById('chatTitleBadge').innerHTML = getVerifiedBadgeHtml(partnerVerified);
+            document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(partnerVerified, partnerVipAdmin || isAdminUsername(partnerKey));
             document.getElementById('copyRoomBtn').style.display = 'none';
             enterChatScreen();
             listenPartnerPresence(partnerKey);
@@ -1953,7 +2002,7 @@
             activeChatId = 'room_' + code;
 
             document.getElementById('chatTitleText').textContent = `الغرفة: ${code}`;
-            document.getElementById('chatTitleBadge').innerHTML = '';
+            document.getElementById('chatTitleBadges').innerHTML = '';
             document.getElementById('copyRoomBtn').style.display = 'inline-block';
             const statusEl = document.getElementById('chatPartnerStatus');
             statusEl.textContent = 'غرفة نشطة';
@@ -1972,7 +2021,7 @@
         }
 
         // ==========================================
-        // 9. الرسائل والصوت والصور والتعديل والتثبيت والتوثيق
+        // 9. الرسائل والصوت والصور والتعديل والتثبيت والشارات
         // ==========================================
         function enterChatScreen() {
             homeScreen.classList.remove('active');
@@ -2033,8 +2082,9 @@
             partnerPresenceCallback = partnerPresenceRef.on('value', (snap) => {
                 const val = snap.val() || {};
                 const isVer = !!val.verified;
-                verifiedCache[partnerKey] = isVer;
-                document.getElementById('chatTitleBadge').innerHTML = getVerifiedBadgeHtml(isVer);
+                const isVip = !!(val.vipAdmin || isAdminUsername(partnerKey));
+                userBadgeCache[partnerKey] = { verified: isVer, vipAdmin: isVip };
+                document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(isVer, isVip);
 
                 const statusEl = document.getElementById('chatPartnerStatus');
                 if (val.online) {
@@ -2167,10 +2217,9 @@
                 lastMessageCount = currentCount;
                 latestMessagesData = data;
 
-                // تحديث حالة التوثيق للمرسلين في الرسائل
                 if (data) {
                     const senders = [...new Set(Object.values(data).map(m => m.sender).filter(Boolean))];
-                    await Promise.all(senders.map(s => isUserVerified(s)));
+                    await Promise.all(senders.map(s => fetchUserBadges(s)));
                 }
 
                 renderMessagesList();
@@ -2205,13 +2254,16 @@
                 }
 
                 const isMe = msg.sender === currentUser;
-                const senderVerified = isMe ? currentUserVerified : !!verifiedCache[msg.sender];
+                const cachedBadges = userBadgeCache[msg.sender] || { verified: false, vipAdmin: isAdminUsername(msg.sender) };
+                const senderVerified = isMe ? currentUserVerified : !!cachedBadges.verified;
+                const senderVipAdmin = isMe ? currentUserVipAdmin : !!(cachedBadges.vipAdmin || isAdminUsername(msg.sender));
+
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
 
                 const nameHtml = isMe
                     ? ''
-                    : `<div class="msg-name"><span>${escapeHtml(msg.senderName || msg.sender)}</span>${getVerifiedBadgeHtml(senderVerified)}</div>`;
+                    : `<div class="msg-name"><span>${escapeHtml(msg.senderName || msg.sender)}</span>${getBadgesHtml(senderVerified, senderVipAdmin)}</div>`;
 
                 const replyHtml = msg.replyTo
                     ? `<div class="reply-quote"><strong>${escapeHtml(msg.replyTo.senderName || '')}:</strong> ${escapeHtml(msg.replyTo.text || '')}</div>`
