@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>تحدي إكس أو | XO Battle</title>
+    <title>دردشة الغرف | Room Chat</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,8 +14,8 @@
     
     <style>
         :root {
-            --bg: #0f172a; --panel: #1e293b; --primary: #38bdf8; --secondary: #ec4899;
-            --success: #10b981; --gold: #fbbf24; --text-muted: #94a3b8;
+            --bg: #0f172a; --panel: #1e293b; --primary: #38bdf8; --text-muted: #94a3b8;
+            --my-msg: #0ea5e9; --other-msg: #334155;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -30,136 +30,116 @@
             background: var(--bg); box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
 
-        /* ===== شريط اسم المطور ===== */
+        /* شريط اسم المطور */
         .dev-banner {
             background: linear-gradient(90deg, rgba(56,189,248,0.15), rgba(236,72,153,0.15));
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            text-align: center; padding: 6px; font-size: 0.8rem; font-weight: 700;
-            color: #fff; flex-shrink: 0;
+            text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 700;
+            color: #fff; flex-shrink: 0; z-index: 10;
         }
         .dev-banner span { color: var(--primary); font-size: 0.9rem; }
 
-        /* ===== الشاشات العامة ===== */
-        .screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding: 20px; }
+        /* ===== الشاشات ===== */
+        .screen { display: none; flex-direction: column; flex: 1; height: 100%; overflow: hidden; }
         .screen.active { display: flex; }
 
-        /* ===== شاشة الدخول ===== */
-        .title { font-size: 2rem; text-align: center; margin: 20px 0 10px; color: var(--primary); font-weight: 900; }
-        .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem; }
+        /* ===== 1. شاشة الدخول ===== */
+        #loginScreen { padding: 20px; justify-content: center; align-items: center; }
         
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; color: #fff; margin-bottom: 5px; font-weight: 700; font-size: 0.9rem;}
+        .login-card {
+            width: 100%; background: var(--panel); padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
+        }
+
+        .title { font-size: 1.8rem; color: var(--primary); font-weight: 900; margin-bottom: 5px; }
+        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 15px; text-align: right; }
+        .input-group label { display: block; color: #fff; margin-bottom: 5px; font-weight: 700; font-size: 0.85rem;}
         .input-group input {
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
-            background: var(--panel); color: #fff; font-size: 1rem; outline: none; text-align: center;
+            background: #0f172a; color: #fff; font-size: 1rem; outline: none; text-align: center;
+            transition: 0.2s;
         }
-        .input-group input:focus { border-color: var(--primary); }
+        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(56,189,248,0.2); }
+
+        .divider { display: flex; align-items: center; color: #555; margin: 20px 0; font-size: 0.85rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+        .divider span { padding: 0 10px; }
 
         .btn {
             padding: 12px; font-size: 1rem; font-weight: 900; color: #000; background: var(--primary);
             border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; width: 100%;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
+        .btn:hover { background: #fff; transform: scale(1.02); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #000;}
 
-        /* ===== شاشة الانتظار ===== */
-        .room-code { font-size: 3rem; font-weight: 900; color: var(--gold); letter-spacing: 8px; text-align: center; margin: 15px 0; }
-        .players-wait { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
-        .p-badge { background: var(--panel); padding: 8px 20px; border-radius: 15px; font-weight: bold; }
+        /* ===== 2. شاشة الدردشة ===== */
+        #chatScreen { background: #0b1120; }
 
-        /* ===== شاشة اللعب (مقسمة بدقة) ===== */
-        #gameScreen { padding: 8px; display: none; flex-direction: column; flex: 1; overflow: hidden; }
-        #gameScreen.active { display: flex; }
-
-        /* القسم العلوي: اللعبة (يأخذ 60%) */
-        .game-section {
-            flex: 6; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            width: 100%; padding-bottom: 5px;
-        }
-
-        .game-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            width: 100%; max-width: 320px; margin-bottom: 10px; padding: 8px;
-            background: var(--panel); border-radius: 12px;
-        }
-        .player-info { display: flex; flex-direction: column; align-items: center; }
-        .player-name { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
-        .player-symbol { font-size: 1.3rem; font-weight: 900; }
-        .sym-x { color: var(--primary); }
-        .sym-o { color: var(--secondary); }
-        
-        .turn-indicator { 
-            font-size: 0.8rem; font-weight: 900; color: var(--gold); 
-            background: rgba(251,191,36,0.1); padding: 4px 12px; border-radius: 15px;
-        }
-
-        /* لوحة إكس أو */
-        .board {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-            width: 100%; max-width: 320px; aspect-ratio: 1 / 1;
-            padding: 6px; background: var(--panel); border-radius: 15px;
-        }
-        .cell {
-            background: #0f172a; border-radius: 8px; display: flex; justify-content: center; align-items: center;
-            font-size: clamp(2rem, 10vw, 3rem); font-weight: 900; cursor: pointer; transition: 0.2s;
-        }
-        .cell:hover { background: #1e293b; }
-        .cell.x { color: var(--primary); }
-        .cell.o { color: var(--secondary); }
-        .cell.win { background: rgba(16, 185, 129, 0.3) !important; border: 2px solid var(--success); }
-
-        .controls { display: flex; gap: 8px; margin-top: 10px; width: 100%; max-width: 320px;}
-        .controls .btn { padding: 10px; font-size: 0.85rem; border-radius: 10px;}
-
-        /* القسم السفلي: الدردشة (يأخذ 40%) */
-        .chat-section {
-            flex: 4; 
-            display: flex; flex-direction: column;
-            background: var(--panel); border-radius: 12px;
-            overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .chat-header { 
-            padding: 8px 12px; background: rgba(0,0,0,0.2); font-weight: 900; 
-            font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+        .chat-header {
+            background: var(--panel); padding: 12px 15px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 5;
         }
         
-        .chat-messages { 
-            flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; 
-        }
-        
-        /* تنسيق الرسائل */
-        .msg { padding: 6px 10px; border-radius: 10px; max-width: 85%; font-size: 0.8rem; line-height: 1.3; word-wrap: break-word; }
-        .msg.me { background: var(--primary); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg.other { background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg-name { font-size: 0.6rem; opacity: 0.8; margin-bottom: 2px; display: block; font-weight: bold;}
-        
-        /* حقل الإدخال تم إصلاحه ليكون متناسقاً */
-        .chat-input-area { 
-            padding: 8px; display: flex; gap: 6px; background: rgba(0,0,0,0.3); 
-            align-items: center; /* يوسط العناصر رأسياً */
-        }
-        .chat-input-area input { 
-            flex: 1; min-width: 0; /* يمنع الحقل من التمدد الزائد */
-            padding: 10px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); 
-            background: #0f172a; color: #fff; outline: none; font-size: 0.85rem; 
-        }
-        .chat-input-area button { 
-            background: var(--primary); border: none; 
-            width: 36px; height: 36px; flex-shrink: 0; /* يمنع الزر من الانضغاط */
-            border-radius: 50%; cursor: pointer; font-size: 0.9rem; color: #000; 
-            display: flex; justify-content: center; align-items: center;
+        .chat-header-info { display: flex; flex-direction: column; }
+        .chat-room-code { font-weight: 900; font-size: 1rem; color: var(--primary); }
+        .chat-status { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+        .chat-status::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; }
+
+        .btn-leave {
+            background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;
         }
 
-        /* شاشة الفائز */
-        .winner-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        /* منطقة الرسائل */
+        .chat-messages {
+            flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+            background-image: radial-gradient(circle at center, rgba(30, 41, 59, 0.5) 0%, transparent 100%);
         }
-        .winner-overlay.show { opacity: 1; pointer-events: auto; }
-        .winner-text { font-size: 2rem; font-weight: 900; margin-bottom: 20px; text-align: center;}
+        
+        /* تخصيص شريط التمرير */
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        /* الرسائل */
+        .message-wrapper { display: flex; flex-direction: column; max-width: 80%; animation: popIn 0.2s ease-out; }
+        @keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .message-wrapper.me { align-self: flex-end; }
+        .message-wrapper.other { align-self: flex-start; }
+
+        .msg-name { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 3px; font-weight: bold; }
+        .msg-bubble {
+            padding: 10px 14px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message-wrapper.me .msg-bubble { background: var(--my-msg); color: #fff; border-bottom-right-radius: 2px; }
+        .message-wrapper.other .msg-bubble { background: var(--other-msg); color: #fff; border-bottom-left-radius: 2px; }
+
+        /* حقل الإدخال */
+        .chat-input-area {
+            padding: 10px 15px; background: var(--panel); display: flex; gap: 10px; align-items: center;
+            flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.05); padding-bottom: max(10px, env(safe-area-inset-bottom));
+        }
+
+        .chat-input-area input {
+            flex: 1; min-width: 0; padding: 12px 15px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+            background: #0f172a; color: #fff; outline: none; font-size: 0.95rem;
+        }
+        .chat-input-area input:focus { border-color: var(--primary); }
+
+        .btn-send {
+            width: 45px; height: 45px; border-radius: 50%; background: var(--primary); color: #000;
+            border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem; flex-shrink: 0; transition: 0.2s;
+        }
+        .btn-send:hover { transform: scale(1.1); background: #fff; }
+        .btn-send:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -172,88 +152,49 @@
         </div>
 
         <!-- 1. شاشة الدخول -->
-        <div class="screen active" id="authScreen">
-            <div class="title">تحدي إكس أو ❌⭕</div>
-            <div class="subtitle">تحدى صديقك والدردشة معه في نفس الوقت!</div>
-            
-            <div class="input-group">
-                <label>اسمك:</label>
-                <input type="text" id="playerName" placeholder="اكتب اسمك هنا...">
+        <div class="screen active" id="loginScreen">
+            <div class="login-card">
+                <div class="title">دردشة الغرف 💬</div>
+                <div class="subtitle">تواصل مع صديقك بسهولة وسرعة</div>
+                
+                <div class="input-group">
+                    <label>اسمك:</label>
+                    <input type="text" id="playerName" placeholder="اكتب اسمك هنا..." maxlength="15">
+                </div>
+                
+                <button class="btn" id="createRoomBtn"><i class="fas fa-plus"></i> إنشاء غرفة جديدة</button>
+                
+                <div class="divider"><span>أو</span></div>
+                
+                <div class="input-group">
+                    <label>كود الغرفة (للدخول لصديقك):</label>
+                    <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform: uppercase;" maxlength="6">
+                </div>
+                <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول الغرفة</button>
             </div>
-            
-            <button class="btn" id="createRoomBtn"><i class="fas fa-plus"></i> إنشاء غرفة جديدة</button>
-            
-            <div style="text-align: center; margin: 10px 0; color: #555; font-weight:bold;">- أو -</div>
-            
-            <div class="input-group">
-                <label>كود الغرفة (للدخول لصديقك):</label>
-                <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform: uppercase;">
-            </div>
-            <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول الغرفة</button>
         </div>
 
-        <!-- 2. شاشة الانتظار -->
-        <div class="screen" id="lobbyScreen">
-            <h2 style="text-align: center; color: #fff; margin-top: 10px;">غرفة الانتظار</h2>
-            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">شارك هذا الكود مع صديقك:</p>
-            <div class="room-code" id="displayRoomCode">----</div>
+        <!-- 2. شاشة الدردشة -->
+        <div class="screen" id="chatScreen">
             
-            <div class="players-wait" id="playersList"></div>
-
-            <p id="waitMsg" style="text-align: center; color: var(--primary); font-weight: bold; font-size: 0.9rem;">بانتظار انضمام صديقك...</p>
-        </div>
-
-        <!-- 3. شاشة اللعب -->
-        <div class="screen" id="gameScreen">
-            
-            <!-- اللعبة -->
-            <div class="game-section">
-                <div class="game-header">
-                    <div class="player-info">
-                        <span class="player-name" id="opNameDisplay">الخصم</span>
-                        <span class="player-symbol sym-o" id="opSymbolDisplay">O</span>
-                    </div>
-                    <div class="turn-indicator" id="turnDisplay">جاري التحميل...</div>
-                    <div class="player-info">
-                        <span class="player-name" id="myNameDisplay">أنت</span>
-                        <span class="player-symbol sym-x" id="mySymbolDisplay">X</span>
-                    </div>
+            <!-- رأس الدردشة -->
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <span class="chat-room-code" id="displayRoomCode">الغرفة: ----</span>
+                    <span class="chat-status">متصل الآن</span>
                 </div>
-
-                <div class="board" id="board">
-                    <div class="cell" data-index="0"></div>
-                    <div class="cell" data-index="1"></div>
-                    <div class="cell" data-index="2"></div>
-                    <div class="cell" data-index="3"></div>
-                    <div class="cell" data-index="4"></div>
-                    <div class="cell" data-index="5"></div>
-                    <div class="cell" data-index="6"></div>
-                    <div class="cell" data-index="7"></div>
-                    <div class="cell" data-index="8"></div>
-                </div>
-
-                <div class="controls">
-                    <button class="btn" id="nextRoundBtn" style="display: none;"><i class="fas fa-redo"></i> جولة جديدة</button>
-                    <button class="btn" id="restartBtn" style="background: transparent; border: 1px solid #555; color: #aaa;"><i class="fas fa-door-open"></i> خروج</button>
-                </div>
+                <button class="btn-leave" id="leaveRoomBtn"><i class="fas fa-sign-out-alt"></i> خروج</button>
             </div>
 
-            <!-- الدردشة -->
-            <div class="chat-section">
-                <div class="chat-header">
-                    <i class="fas fa-comments" style="color:var(--primary)"></i> الدردشة المباشرة
-                </div>
-                <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" placeholder="اكتب رسالة...">
-                    <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
-                </div>
+            <!-- الرسائل -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- ستظهر الرسائل هنا -->
             </div>
 
-            <!-- شاشة الفائز -->
-            <div class="winner-overlay" id="winnerOverlay">
-                <div class="winner-text" id="winnerText">لقد فزت! 🏆</div>
-                <button class="btn" id="closeOverlayBtn" style="width: 150px;">استمرار</button>
+            <!-- حقل الإدخال -->
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                <button class="btn-send" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
             </div>
 
         </div>
@@ -277,20 +218,16 @@
         const db = firebase.database();
 
         // ==========================================
-        // 2. المتغيرات
+        // 2. المتغيرات والعناصر
         // ==========================================
-        let myId = 'player_' + Math.floor(Math.random() * 10000);
         let myName = "";
         let currentRoom = "";
-        let isHost = false;
-        let roomData = {};
-        let mySymbol = ""; 
-        
-        // العناصر
-        const authScreen = document.getElementById('authScreen');
-        const lobbyScreen = document.getElementById('lobbyScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const winnerOverlay = document.getElementById('winnerOverlay');
+        let messagesListener = null;
+
+        const loginScreen = document.getElementById('loginScreen');
+        const chatScreen = document.getElementById('chatScreen');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
 
         // ==========================================
         // 3. إنشاء ودخول الغرف
@@ -299,213 +236,126 @@
             myName = document.getElementById('playerName').value.trim();
             if (!myName) return alert("الرجاء كتابة اسمك أولاً");
             
+            // توليد كود عشوائي من 4 حروف/أرقام
             const code = Math.random().toString(36).substring(2, 6).toUpperCase();
-            isHost = true;
-            currentRoom = code;
-            
-            db.ref('rooms/' + code).set({
-                host: myId,
-                players: { [myId]: { name: myName, symbol: 'X' } },
-                board: ["", "", "", "", "", "", "", "", ""],
-                turn: 'X',
-                winner: null
-            }).then(() => enterLobby());
+            enterChat(code);
         });
 
         document.getElementById('joinRoomBtn').addEventListener('click', () => {
             myName = document.getElementById('playerName').value.trim();
             const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            
             if (!myName) return alert("الرجاء كتابة اسمك أولاً");
             if (!code) return alert("الرجاء كتابة كود الغرفة");
 
-            isHost = false;
-            currentRoom = code;
+            enterChat(code);
+        });
+
+        function enterChat(roomCode) {
+            currentRoom = roomCode;
             
-            db.ref('rooms/' + code).once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    db.ref(`rooms/${code}/players/${myId}`).set({ name: myName, symbol: 'O' });
-                    enterLobby();
-                } else {
-                    alert("الغرفة غير موجودة، تأكد من الكود.");
-                }
-            });
-        });
-
-        function enterLobby() {
-            authScreen.classList.remove('active');
-            lobbyScreen.classList.add('active');
-            document.getElementById('displayRoomCode').textContent = currentRoom;
+            // الانتقال لشاشة الدردشة
+            loginScreen.classList.remove('active');
+            chatScreen.classList.add('active');
             
-            // الاستماع لتحديثات الغرفة
-            db.ref('rooms/' + currentRoom).on('value', (snapshot) => {
-                roomData = snapshot.val();
-                if (!roomData) return;
-
-                updatePlayersUI();
-                checkIfGameStarts();
-                if (gameScreen.classList.contains('active')) {
-                    updateBoardUI();
-                    checkGameState();
-                }
-                renderChat(); // استدعاء الدردشة هنا لتعمل للطرفين
-            });
+            // عرض كود الغرفة
+            document.getElementById('displayRoomCode').textContent = `الغرفة: ${currentRoom}`;
+            
+            // تفريغ الرسائل القديمة
+            chatMessages.innerHTML = '';
+            chatInput.value = '';
+            
+            // بدء الاستماع للرسائل
+            listenForMessages();
         }
 
-        function updatePlayersUI() {
-            const playersList = document.getElementById('playersList');
-            playersList.innerHTML = '';
-            let playerCount = 0;
+        // ==========================================
+        // 4. الدردشة الفورية (الاستماع والإرسال)
+        // ==========================================
+        function listenForMessages() {
+            // إلغاء أي استماع سابق إذا وجد
+            if (messagesListener) {
+                db.ref('chats/' + currentRoom + '/messages').off('value', messagesListener);
+            }
 
-            for (let pid in roomData.players) {
-                playerCount++;
-                const p = roomData.players[pid];
-                playersList.innerHTML += `<div class="p-badge">${p.name} (${p.symbol})</div>`;
+            const messagesRef = db.ref('chats/' + currentRoom + '/messages');
+            
+            // الاستماع المباشر لأي رسالة جديدة
+            messagesListener = messagesRef.on('value', (snapshot) => {
+                chatMessages.innerHTML = ''; // تفريغ الشاشة قبل إعادة الترتيب
                 
-                if (pid === myId) {
-                    mySymbol = p.symbol;
-                    document.getElementById('myNameDisplay').textContent = p.name;
-                    document.getElementById('mySymbolDisplay').textContent = p.symbol;
-                    document.getElementById('mySymbolDisplay').className = `player-symbol ${p.symbol === 'X' ? 'sym-x' : 'sym-o'}`;
-                } else {
-                    document.getElementById('opNameDisplay').textContent = p.name;
-                    document.getElementById('opSymbolDisplay').textContent = p.symbol;
-                    document.getElementById('opSymbolDisplay').className = `player-symbol ${p.symbol === 'X' ? 'sym-x' : 'sym-o'}`;
+                const data = snapshot.val();
+                if (!data) {
+                    chatMessages.innerHTML = '<div style="text-align:center; color:#555; margin-top:20px; font-size:0.9rem;">لا توجد رسائل بعد. ابدأ المحادثة!</div>';
+                    return;
                 }
-            }
-        }
 
-        function checkIfGameStarts() {
-            let playerCount = Object.keys(roomData.players).length;
-            if (playerCount === 2 && !gameScreen.classList.contains('active')) {
-                lobbyScreen.classList.remove('active');
-                gameScreen.classList.add('active');
-            }
-        }
+                // تحويل الكائن إلى مصفوفة وترتيبها حسب الوقت
+                const messagesArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                messagesArray.sort((a, b) => a.timestamp - b.timestamp);
 
-        // ==========================================
-        // 4. منطق لعبة إكس أو
-        // ==========================================
-        document.querySelectorAll('.cell').forEach(cell => {
-            cell.addEventListener('click', () => {
-                const index = cell.getAttribute('data-index');
-                if (roomData.winner || roomData.turn !== mySymbol || roomData.board[index] !== "") return;
+                // عرض الرسائل
+                messagesArray.forEach(msg => {
+                    const isMe = msg.sender === myName;
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
+                    
+                    // إظهار اسم المرسل فقط في رسائل الطرف الآخر
+                    const nameHtml = isMe ? '' : `<div class="msg-name">${msg.sender}</div>`;
+                    
+                    wrapper.innerHTML = `
+                        ${nameHtml}
+                        <div class="msg-bubble">${msg.text}</div>
+                    `;
+                    
+                    chatMessages.appendChild(wrapper);
+                });
 
-                db.ref(`rooms/${currentRoom}/board/${index}`).set(mySymbol);
-                db.ref(`rooms/${currentRoom}/turn`).set(mySymbol === 'X' ? 'O' : 'X');
+                // التمرير التلقائي لأسفل الشاشة (لرؤية أحدث رسالة)
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             });
-        });
+        }
 
-        function updateBoardUI() {
-            document.querySelectorAll('.cell').forEach((cell, index) => {
-                const val = roomData.board[index];
-                cell.textContent = val;
-                cell.className = 'cell'; 
-                if (val === 'X') cell.classList.add('x');
-                if (val === 'O') cell.classList.add('o');
+        // إرسال الرسالة
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text || !currentRoom) return;
+
+            // حفظ الرسالة في Firebase
+            db.ref('chats/' + currentRoom + '/messages').push({
+                sender: myName,
+                text: text,
+                timestamp: Date.now()
+            }).then(() => {
+                chatInput.value = ''; // تفريغ الحقل
+                chatInput.focus(); // إبقاء المؤشر في الحقل للكتابة المستمرة
+            }).catch(err => {
+                alert("حدث خطأ أثناء الإرسال. تأكد من اتصالك بالإنترنت.");
             });
-
-            if (!roomData.winner) {
-                const turnDisplay = document.getElementById('turnDisplay');
-                if (roomData.turn === mySymbol) {
-                    turnDisplay.textContent = "دورك الآن!";
-                    turnDisplay.style.color = "var(--success)";
-                } else {
-                    turnDisplay.textContent = "دور الخصم...";
-                    turnDisplay.style.color = "var(--text-muted)";
-                }
-            }
         }
 
-        function checkGameState() {
-            const b = roomData.board;
-            const winPatterns = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
-            let winnerSymbol = null; let winPattern = null;
-
-            for (let pattern of winPatterns) {
-                const [a, b1, c] = pattern;
-                if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
-                    winnerSymbol = b[a]; winPattern = pattern; break;
-                }
-            }
-
-            if (winnerSymbol && !roomData.winner) db.ref(`rooms/${currentRoom}/winner`).set(winnerSymbol);
-            if (!winnerSymbol && !roomData.board.includes("") && !roomData.winner) db.ref(`rooms/${currentRoom}/winner`).set("draw");
-
-            if (roomData.winner) {
-                document.getElementById('turnDisplay').textContent = "انتهت اللعبة";
-                document.getElementById('turnDisplay').style.color = "var(--gold)";
-                
-                if (winPattern) winPattern.forEach(idx => document.querySelectorAll('.cell')[idx].classList.add('win'));
-
-                if (!winnerOverlay.classList.contains('show')) {
-                    let text = roomData.winner === 'draw' ? "تعادل! 🤝" : (roomData.winner === mySymbol ? "لقد فزت! 🏆" : "خسرت! 💀");
-                    document.getElementById('winnerText').textContent = text;
-                    winnerOverlay.classList.add('show');
-                    document.getElementById('nextRoundBtn').style.display = 'flex';
-                }
-            }
-        }
-
-        document.getElementById('closeOverlayBtn').addEventListener('click', () => winnerOverlay.classList.remove('show'));
-
-        document.getElementById('nextRoundBtn').addEventListener('click', () => {
-            db.ref('rooms/' + currentRoom).update({ board: ["", "", "", "", "", "", "", "", ""], turn: 'X', winner: null });
-            winnerOverlay.classList.remove('show');
-            document.getElementById('nextRoundBtn').style.display = 'none';
-        });
-
-        document.getElementById('restartBtn').addEventListener('click', () => {
-            if(confirm("هل تريد الخروج؟")) window.location.reload();
-        });
-
-        // ==========================================
-        // 5. الدردشة (تم إصلاحها بالكامل لتظهر للطرفين)
-        // ==========================================
+        // مستمعات الأحداث للإرسال (الزر وزر الإدخال Enter)
         document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
-        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+        chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
 
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            if (!text || !currentRoom) return;
-            
-            // إرسال الرسالة لقاعدة البيانات
-            db.ref('rooms/' + currentRoom + '/messages').push({
-                sender: myName,
-                text: text,
-                time: Date.now()
-            }).then(() => {
-                input.value = ''; // تفريغ الحقل بعد الإرسال الناجح
-            }).catch(err => alert("حدث خطأ في الإرسال، تأكد من الاتصال"));
-        }
-
-        function renderChat() {
-            const chatContainer = document.getElementById('chatMessages');
-            
-            if (roomData && roomData.messages) {
-                // تحويل الرسائل لمصفوفة وترتيبها حسب الوقت
-                const msgs = Object.values(roomData.messages).sort((a, b) => a.time - b.time);
-                
-                let html = '';
-                msgs.forEach(msg => {
-                    const isMe = msg.sender === myName;
-                    html += `
-                        <div class="msg ${isMe ? 'me' : 'other'}">
-                            <span class="msg-name">${msg.sender}</span>
-                            ${msg.text}
-                        </div>
-                    `;
-                });
-                
-                // تحديث المحتوى فقط إذا كان هناك تغيير لتجنب الوميض
-                if (chatContainer.innerHTML !== html) {
-                    chatContainer.innerHTML = html;
-                    chatContainer.scrollTop = chatContainer.scrollHeight; // النزول لآخر رسالة
+        // ==========================================
+        // 5. الخروج
+        // ==========================================
+        document.getElementById('leaveRoomBtn').addEventListener('click', () => {
+            if (confirm("هل تريد الخروج من الغرفة؟")) {
+                // إيقاف الاستماع
+                if (messagesListener) {
+                    db.ref('chats/' + currentRoom + '/messages').off('value', messagesListener);
                 }
+                // العودة لشاشة الدخول
+                chatScreen.classList.remove('active');
+                loginScreen.classList.add('active');
+                currentRoom = "";
             }
-        }
+        });
     </script>
 </body>
 </html>
