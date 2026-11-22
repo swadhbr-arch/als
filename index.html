@@ -3,58 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Brainrot Tester | لعبة الميمز</title>
+    <title>أسطورة الميمز | Meme Legend</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #111;
-            --text-main: #fff;
-            --accent: #ff0055;
+            --bg-color: #0f0f13;
+            --card-bg: #1a1a20;
+            --primary: #ff0055;
             --success: #00ff66;
+            --gold: #ffcc00;
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
             user-select: none; -webkit-tap-highlight-color: transparent;
-            overflow: hidden;
         }
 
         body {
             background-color: var(--bg-color);
-            height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            /* خلفية ميمز متحركة */
-            background-image: repeating-linear-gradient(
-                45deg,
-                #111 0px,
-                #111 20px,
-                #1a1a1a 20px,
-                #1a1a1a 40px
-            );
-            animation: bgMove 10s linear infinite;
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 102, 0.1) 0%, transparent 40%);
         }
 
-        @keyframes bgMove {
-            100% { background-position: 100px 100px; }
-        }
-
-        /* ===== حاوية اللعبة ===== */
-        .game-wrapper {
+        .game-container {
             position: relative;
-            width: 100%; max-width: 500px; height: 100vh; max-height: 800px;
-            background: rgba(0, 0, 0, 0.85);
-            border: 4px solid #fff;
-            box-shadow: 10px 10px 0px #000, 15px 15px 0px var(--accent);
+            width: 100%; max-width: 480px; height: 100vh; max-height: 850px;
+            background: rgba(20, 20, 25, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             overflow: hidden;
             display: flex; flex-direction: column;
+            transition: transform 0.1s;
         }
 
-        /* تأثير الاهتزاز عند الخطأ */
-        .game-wrapper.shake {
-            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        .game-container.shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: var(--primary);
         }
         @keyframes shake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
@@ -63,234 +54,343 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        /* ===== شريط المعلومات ===== */
-        .header {
+        .hud {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px;
-            background: #000;
-            border-bottom: 3px solid #fff;
-            z-index: 10;
+            padding: 15px 20px; background: #000;
+            border-bottom: 2px solid #333; z-index: 10;
         }
 
-        .score-box {
-            font-size: 1.5rem; font-weight: 900; color: var(--success);
-            text-shadow: 2px 2px 0px #000;
-        }
+        .hud-item { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .score-val { color: var(--success); font-size: 1.2rem; }
+        .lives-val { font-size: 1.2rem; letter-spacing: 2px; }
 
-        .lives-box {
-            font-size: 1.5rem; letter-spacing: 5px;
-        }
-
-        /* ===== منطقة اللعب ===== */
-        .play-area {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* الأمر المطلوب (النص) */
-        .prompt-container {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; text-align: center; z-index: 10;
-            background: #fff; color: #000;
-            padding: 15px; border-radius: 10px;
-            border: 4px solid #000;
-            box-shadow: 6px 6px 0px var(--accent);
-            transition: all 0.2s;
-        }
-
-        .prompt-container.trick {
-            background: var(--accent); color: #fff;
-            border-color: #fff;
-            box-shadow: 6px 6px 0px #fff;
-            animation: pulseTrick 0.5s infinite alternate;
-        }
-
-        @keyframes pulseTrick {
-            from { transform: translateX(-50%) scale(1); }
-            to { transform: translateX(-50%) scale(1.05); }
-        }
-
-        .prompt-text {
-            font-size: 1.4rem; font-weight: 900; line-height: 1.4;
-        }
-
-        /* شريط الوقت */
-        .time-bar-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 8px;
-            background: #333; z-index: 11;
+        .time-bar-bg {
+            width: 100%; height: 6px; background: #333;
         }
         .time-bar {
-            height: 100%; width: 100%; background: var(--success);
+            height: 100%; width: 100%; background: var(--gold);
             transition: width 0.1s linear;
         }
 
-        /* ===== الإيموجيز (الميمز) ===== */
-        .meme-emoji {
-            position: absolute;
-            font-size: 4rem;
+        .play-area {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 15px; position: relative;
+        }
+
+        /* بطاقة الميم */
+        .meme-card {
+            width: 100%;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
+            align-items: center;
+            transform: scale(0.9);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            margin-bottom: 20px;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .meme-text-top {
+            width: 100%;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #000;
+            padding: 5px;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        /* الصورة الحقيقية للميم */
+        .meme-image-container {
+            width: 100%;
+            height: 200px;
+            background: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .meme-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* لملء المساحة */
+        }
+
+        /* الإيموجي كبديل في حال فشل تحميل الصورة */
+        .meme-fallback-emoji {
+            font-size: 6rem;
+            display: none;
+        }
+
+        .meme-text-bottom {
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #888;
+            padding: 10px 5px 5px;
+            border-top: 2px dashed #ccc;
+            margin-top: 10px;
+            min-height: 55px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.1s;
-            z-index: 5;
-            filter: drop-shadow(0px 0px 10px rgba(255,255,255,0.3));
-            animation: floatEmoji 3s infinite alternate ease-in-out;
+            transition: all 0.2s;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
         }
 
-        .meme-emoji:active {
-            transform: scale(0.8);
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* حركة عشوائية للإيموجي */
-        @keyframes floatEmoji {
-            0% { transform: translate(0, 0) rotate(-10deg); }
-            100% { transform: translate(15px, 20px) rotate(10deg); }
+        .option-btn.correct {
+            background: var(--success);
+            border-color: var(--success);
+            color: #000;
+            transform: scale(1.02);
         }
 
-        /* ===== النصوص الطائرة ===== */
+        .option-btn.wrong {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
         .floating-text {
             position: absolute; font-size: 2rem; font-weight: 900;
             pointer-events: none; z-index: 20;
             animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 2px 2px 0px #000;
+            text-shadow: 0 0 10px currentColor;
         }
         @keyframes floatUp {
             0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
             100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
         }
 
-        /* ===== الشاشات (القوائم) ===== */
         .overlay {
-            position: absolute; inset: 0;
-            background: #000;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 50; text-align: center; padding: 20px;
+            position: absolute; inset: 0; background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 50;
+            text-align: center; padding: 20px; transition: opacity 0.3s;
         }
 
         .overlay.hidden { display: none; }
 
         .title {
-            font-size: 3rem; font-weight: 900; color: #fff;
-            text-transform: uppercase;
-            text-shadow: 3px 3px 0px var(--accent), 6px 6px 0px #00f3ff;
-            margin-bottom: 20px;
-            line-height: 1.2;
+            font-size: 2.5rem; font-weight: 900; color: #fff;
+            margin-bottom: 10px; text-shadow: 3px 3px 0 var(--primary);
         }
 
         .subtitle {
-            font-size: 1.2rem; color: #ccc; margin-bottom: 30px;
-            background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 10px;
+            font-size: 1rem; color: #aaa; margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         .btn {
-            padding: 15px 40px; font-size: 1.5rem; font-weight: 900;
-            color: #000; background: #fff;
-            border: 4px solid #000; box-shadow: 6px 6px 0px var(--accent);
-            cursor: pointer; transition: all 0.1s;
+            padding: 15px 40px; font-size: 1.2rem; font-weight: 900;
+            color: #000; background: #fff; border: none; border-radius: 50px;
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
             font-family: 'Cairo', sans-serif;
         }
 
-        .btn:hover { background: var(--accent); color: #fff; }
-        .btn:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px var(--accent); }
+        .btn:hover { background: var(--gold); box-shadow: 0 0 30px var(--gold); transform: scale(1.05); }
 
-        .result-meme {
-            font-size: 6rem; margin-bottom: 20px;
+        .result-emoji { font-size: 6rem; margin-bottom: 15px; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+        
+        .rank-text { font-size: 1.5rem; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
+        .final-score { font-size: 1.2rem; color: #fff; margin-bottom: 30px; }
+
+        @media (max-width: 400px) {
+            .meme-image-container { height: 160px; }
+            .meme-text-top { font-size: 0.95rem; }
+            .option-btn { padding: 10px; font-size: 0.85rem; }
         }
-
-        .rank-title {
-            font-size: 2rem; color: var(--success); font-weight: 900;
-            margin-bottom: 10px;
-        }
-
-        /* تأثيرات الشاشة عند الخسارة */
-        .flash-red { background: var(--accent) !important; transition: background 0.1s; }
-        .flash-green { background: var(--success) !important; transition: background 0.1s; }
-
     </style>
 </head>
 <body>
 
-    <div class="game-wrapper" id="gameWrapper">
+    <div class="game-container" id="gameWrapper">
         
-        <!-- الشريط العلوي -->
-        <div class="header">
-            <div class="score-box">النقاط: <span id="scoreVal">0</span></div>
-            <div class="lives-box" id="livesVal">❤️❤️❤️</div>
+        <div class="hud">
+            <div class="hud-item">النقاط: <span class="score-val" id="scoreVal">0</span></div>
+            <div class="hud-item lives-val" id="livesVal">❤️❤️❤️</div>
         </div>
 
-        <!-- منطقة اللعب -->
+        <div class="time-bar-bg">
+            <div class="time-bar" id="timeBar"></div>
+        </div>
+
         <div class="play-area" id="playArea">
-            <!-- شريط الوقت -->
-            <div class="time-bar-container">
-                <div class="time-bar" id="timeBar"></div>
+            
+            <div class="meme-card" id="memeCard" style="display: none;">
+                <div class="meme-text-top" id="memeTopText">النص العلوي</div>
+                
+                <div class="meme-image-container">
+                    <!-- الصورة الحقيقية للميم -->
+                    <img class="meme-image" id="memeImg" src="" alt="Meme" onerror="this.style.display='none'; document.getElementById('memeFallback').style.display='block';">
+                    <!-- الإيموجي كبديل -->
+                    <div class="meme-fallback-emoji" id="memeFallback">😭</div>
+                </div>
+
+                <div class="meme-text-bottom" id="memeBottomText">... اختار التكملة</div>
             </div>
 
-            <!-- الأمر (النص) -->
-            <div class="prompt-container" id="promptBox">
-                <div class="prompt-text" id="promptText">استعد...</div>
-            </div>
-            <!-- الإيموجيز ستظهر هنا -->
+            <div class="options-container" id="optionsContainer" style="display: none;"></div>
         </div>
 
-        <!-- شاشة البداية -->
         <div class="overlay" id="startScreen">
-            <div class="title">تعفن<br>الدماغ</div>
-            <div class="subtitle">هل يمكنك اتباع الأوامر وسط هذه الفوضى؟</div>
-            <button class="btn" id="startBtn">ابدأ اللعبة</button>
+            <div class="title">أسطورة الميمز</div>
+            <div class="subtitle">
+                هل تعرف الميمز العربية الكلاسيكية؟<br>
+                اختر التكملة الصحيحة بسرعة!
+            </div>
+            <button class="btn" id="startBtn">يلا نبدأ</button>
         </div>
 
-        <!-- شاشة النهاية -->
         <div class="overlay hidden" id="endScreen">
-            <div class="result-meme" id="resultMeme">💀</div>
+            <div class="result-emoji" id="resultEmoji">🤡</div>
             <div class="title" style="font-size: 2rem; margin-bottom: 5px;">انتهت اللعبة!</div>
-            <div class="rank-title" id="rankTitle">رتبتك: NPC</div>
-            <div class="subtitle" style="margin-bottom: 20px;">نقاطك: <span id="finalScore">0</span></div>
-            <button class="btn" id="restartBtn">حاول مجدداً</button>
+            <div class="rank-text" id="rankText">رتبتك: NPC</div>
+            <div class="final-score" id="finalScoreText">نقاطك: 0</div>
+            <button class="btn" id="restartBtn">العب مرة ثانية</button>
         </div>
 
     </div>
 
     <script>
-        // ================= البيانات =================
-        const memes = [
-            { emoji: '💀', name: 'الجمجمة' },
-            { emoji: '🤡', name: 'المهرج' },
-            { emoji: '🗿', name: 'مجسم مواي' },
-            { emoji: '🐸', name: 'الضفدع' },
-            { emoji: '👽', name: 'الفضائي' },
-            { emoji: '😭', name: 'البكاء' },
-            { emoji: '🐶', name: 'الكلب' },
-            { emoji: '🍕', name: 'البيتزا' }
+        // ================= بنك الميمز (صور حقيقية + ميمز عربية) =================
+        // ملاحظة: روابط الصور من imgflip وهي روابط مباشرة مضمونة.
+        const memesData = [
+            {
+                top: "لما تفتح الفيسبوك الساعة 3 الفجر...",
+                image: "https://i.imgflip.com/30b1gx.jpg", // Drake meme
+                fallbackEmoji: "🌙",
+                options: ["تلاقي حرب عالمية في الكومنتات", "تلاقي الأهل صاحيين", "تلاقي النت فصل", "تلاقي إعلان كورس"],
+                correct: 0
+            },
+            {
+                top: "أنا مش زعلان...",
+                image: "https://i.imgflip.com/1ur9b0.jpg", // This is fine dog
+                fallbackEmoji: "💔",
+                options: ["أنا مبسوط جداً", "أنا بس مقهور", "أنا نايم", "أنا جعان"],
+                correct: 1
+            },
+            {
+                top: "عايز أقولك حاجة...",
+                image: "https://i.imgflip.com/261o3j.jpg", // Mocking Spongebob
+                fallbackEmoji: "🤫",
+                options: ["بس مش عارف أقولها", "بس خلاص", "بس استنى", "بس هسكت"],
+                correct: 0
+            },
+            {
+                top: "المدرس: مين عمل الواجب؟",
+                image: "https://i.imgflip.com/1otk96.jpg", // Woman yelling at cat
+                fallbackEmoji: "👀",
+                options: ["أنا: *رفعت إيدي*", "أنا: *نمت*", "أنا: *بص في الأرض*", "أنا: *هربت*"],
+                correct: 2
+            },
+            {
+                top: "لما تقول لأمك أنا نازل أتمشى...",
+                image: "https://i.imgflip.com/1e7ql7.jpg", // Distracted boyfriend
+                fallbackEmoji: "🏃‍♂️",
+                options: ["تقولك خد بالك من نفسك", "ترجع تلاقي أوضتك اتظبطت", "تقولك هاتلي معاك حاجة", "تسكت وتزعل"],
+                correct: 1
+            },
+            {
+                top: "شخص يقولك أنا هخسر 10 كيلو...",
+                image: "https://i.imgflip.com/1h7in3.jpg", // Roll safe (thinking guy)
+                fallbackEmoji: "🍔",
+                options: ["وهو بياكل برجر", "وهو في الجيم", "وهو نايم", "وهو بيشرب ميه"],
+                correct: 0
+            },
+            {
+                top: "لما تيجي تذاكر...",
+                image: "https://i.imgflip.com/2kbn1e.jpg", // Waiting skeleton
+                fallbackEmoji: "📚",
+                options: ["تفتح الفيسبوك", "تنام", "تذاكر بجد", "تاكل"],
+                correct: 0
+            },
+            {
+                top: "أنا مش كسول...",
+                image: "https://i.imgflip.com/1bgw.jpg", // Pepe
+                fallbackEmoji: "🛌",
+                options: ["أنا بستريح بس", "أنا نايم", "أنا مريض", "أنا مشغول"],
+                correct: 0
+            },
+            {
+                top: "لما حد يقولك نصيحة...",
+                image: "https://i.imgflip.com/2kbn1f.jpg", // Surprised pikachu
+                fallbackEmoji: "🤡",
+                options: ["تسمعها", "تعمل عكسها", "تقوله أنا عارف", "تنام"],
+                correct: 1
+            },
+            {
+                top: "لما تقول لحد أنا هغير حياتي...",
+                image: "https://i.imgflip.com/2y4g3o.jpg", // The rock eyebrow
+                fallbackEmoji: "🚀",
+                options: ["تبدأ بكرة", "تبدأ بعدين", "تبدأ الشهر الجاي", "تصحى الساعة 2 الضهر"],
+                correct: 3
+            }
         ];
 
         // العناصر
         const gameWrapper = document.getElementById('gameWrapper');
         const playArea = document.getElementById('playArea');
-        const promptBox = document.getElementById('promptBox');
-        const promptText = document.getElementById('promptText');
-        const timeBar = document.getElementById('timeBar');
+        const memeCard = document.getElementById('memeCard');
+        const memeTopText = document.getElementById('memeTopText');
+        const memeImg = document.getElementById('memeImg');
+        const memeFallback = document.getElementById('memeFallback');
+        const memeBottomText = document.getElementById('memeBottomText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        
         const scoreVal = document.getElementById('scoreVal');
         const livesVal = document.getElementById('livesVal');
-        
-        // الشاشات
+        const timeBar = document.getElementById('timeBar');
+
         const startScreen = document.getElementById('startScreen');
         const endScreen = document.getElementById('endScreen');
         const startBtn = document.getElementById('startBtn');
         const restartBtn = document.getElementById('restartBtn');
 
-        // متغيرات اللعبة
         let score = 0;
         let lives = 3;
         let isPlaying = false;
-        let currentRound = 0;
-        let correctEmoji = null;
-        let isTrickQuestion = false;
+        let currentQuestion = null;
+        let availableQuestions = [];
         let roundTimer;
         let timeLeft = 0;
-        let maxTime = 0;
-        let currentEmojis = []; // لتخزين الإيموجيز الموجودة بالشاشة
+        const MAX_TIME = 8; // 8 ثواني
 
-        // ================= الأصوات =================
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
@@ -300,20 +400,15 @@
             const gainNode = audioCtx.createGain();
             
             if (type === 'correct') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
                 gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            } else if (type === 'trick') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.2);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             }
 
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
@@ -323,11 +418,9 @@
             osc.stop(audioCtx.currentTime + 0.3);
         }
 
-        // ================= بدء اللعبة =================
         function startGame() {
             score = 0;
             lives = 3;
-            currentRound = 0;
             isPlaying = true;
             
             scoreVal.textContent = score;
@@ -336,197 +429,178 @@
             startScreen.classList.add('hidden');
             endScreen.classList.add('hidden');
             
-            startRound();
+            memeCard.style.display = 'flex';
+            optionsContainer.style.display = 'flex';
+            
+            availableQuestions = [...memesData].sort(() => 0.5 - Math.random());
+            
+            nextQuestion();
         }
 
         function updateLivesUI() {
             livesVal.textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
         }
 
-        // ================= بدء الجولة =================
-        function startRound() {
+        function nextQuestion() {
             if (!isPlaying) return;
 
-            // تنظيف الشاشة
-            playArea.querySelectorAll('.meme-emoji').forEach(el => el.remove());
-            currentEmojis = [];
-            promptBox.classList.remove('trick');
-            playArea.classList.remove('flash-red', 'flash-green');
-            
-            // زيادة الصعوبة مع كل جولة
-            currentRound++;
-            maxTime = Math.max(2.0, 4.0 - (currentRound * 0.1)); // الوقت يقل تدريجياً
-            timeLeft = maxTime;
-            
-            // تحديد ما إذا كان سؤالاً مقلوباً (Trick) بنسبة 30%
-            isTrickQuestion = Math.random() < 0.3;
-
-            // اختيار 4 إيموجيز عشوائية للشاشة
-            const shuffledMemes = [...memes].sort(() => 0.5 - Math.random());
-            const selectedMemes = shuffledMemes.slice(0, 4);
-            
-            // اختيار الإيموجي الصحيح من بينهم
-            const targetMeme = selectedMemes[Math.floor(Math.random() * selectedMemes.length)];
-            correctEmoji = targetMeme.emoji;
-
-            // تحديث النص
-            if (isTrickQuestion) {
-                promptText.textContent = `ممنوع تضغط على ${targetMeme.name} ${targetMeme.emoji}!`;
-                promptBox.classList.add('trick');
-                playSound('trick');
-            } else {
-                promptText.textContent = `اضغط على ${targetMeme.name} ${targetMeme.emoji}`;
+            if (availableQuestions.length === 0) {
+                availableQuestions = [...memesData].sort(() => 0.5 - Math.random());
             }
 
-            // توليد الإيموجيز في الشاشة
-            selectedMemes.forEach((meme, index) => {
-                const el = document.createElement('div');
-                el.className = 'meme-emoji';
-                el.textContent = meme.emoji;
-                
-                // تحديد موقع عشوائي (مع ترك مساحة للنص العلوي)
-                const padding = 40;
-                const maxX = playArea.clientWidth - padding - 60;
-                const maxY = playArea.clientHeight - padding - 120;
-                
-                el.style.left = `${Math.random() * maxX + padding}px`;
-                el.style.top = `${Math.random() * maxY + 120}px`; // 120px لترك مساحة للنص
-                
-                // سرعة عشوائية للحركة
-                el.style.animationDuration = `${Math.random() * 2 + 1.5}s`;
-                el.style.animationDelay = `${Math.random()}s`;
+            currentQuestion = availableQuestions.pop();
+            
+            memeTopText.textContent = currentQuestion.top;
+            
+            // تحديث الصورة (مع معالجة الخطأ)
+            memeImg.style.display = 'block';
+            memeFallback.style.display = 'none';
+            memeFallback.textContent = currentQuestion.fallbackEmoji;
+            memeImg.src = currentQuestion.image;
+            
+            memeBottomText.textContent = "اختر التكملة الصحيحة...";
+            memeBottomText.style.color = '#888';
+            
+            optionsContainer.innerHTML = '';
+            
+            const shuffledOptions = currentQuestion.options.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === currentQuestion.correct
+            })).sort(() => 0.5 - Math.random());
 
-                // حدث النقر
-                el.addEventListener('pointerdown', (e) => handleEmojiClick(e, meme.emoji));
-                
-                playArea.appendChild(el);
-                currentEmojis.push(el);
+            shuffledOptions.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.text;
+                btn.addEventListener('click', () => handleAnswer(btn, opt.isCorrect));
+                optionsContainer.appendChild(btn);
             });
 
-            // تشغيل المؤقت
-            clearInterval(roundTimer);
+            memeCard.style.animation = 'none';
+            void memeCard.offsetWidth; 
+            memeCard.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+
+            timeLeft = MAX_TIME;
             timeBar.style.transition = 'none';
             timeBar.style.width = '100%';
+            timeBar.style.background = 'var(--gold)';
             
-            // إجبار المتصفح على تحديث التصميم قبل بدء الحركة
-            void timeBar.offsetWidth; 
+            void timeBar.offsetWidth;
             
-            timeBar.style.transition = `width ${maxTime}s linear`;
+            timeBar.style.transition = `width ${MAX_TIME}s linear`;
             timeBar.style.width = '0%';
 
+            clearInterval(roundTimer);
             roundTimer = setInterval(() => {
                 timeLeft -= 0.1;
+                if (timeLeft <= 2.5) timeBar.style.background = 'var(--primary)';
                 if (timeLeft <= 0) {
-                    roundFailed("انتهى الوقت!");
+                    handleTimeOut();
                 }
             }, 100);
         }
 
-        // ================= معالجة النقر =================
-        function handleEmojiClick(e, clickedEmoji) {
+        function handleAnswer(clickedBtn, isCorrect) {
             if (!isPlaying) return;
-            e.preventDefault();
+            clearInterval(roundTimer);
 
-            const rect = playArea.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const allBtns = optionsContainer.querySelectorAll('.option-btn');
+            allBtns.forEach(btn => btn.style.pointerEvents = 'none');
 
-            if (isTrickQuestion) {
-                // إذا كان السؤال مقلوباً (ممنوع تضغط)
-                if (clickedEmoji === correctEmoji) {
-                    // لقد ضغط على الممنوع!
-                    roundFailed("لقد ضغطت على الممنوع! 🤡", x, y);
-                } else {
-                    // ضغط على أي إيموجي آخر (وهذا يعتبر نجاحاً لأنه تجنب الممنوع)
-                    roundSuccess(x, y);
-                }
+            if (isCorrect) {
+                playSound('correct');
+                clickedBtn.classList.add('correct');
+                
+                const points = Math.round(10 + (timeLeft * 2));
+                score += points;
+                scoreVal.textContent = score;
+                
+                memeBottomText.textContent = clickedBtn.textContent;
+                memeBottomText.style.color = 'var(--success)';
+                
+                showFloatingText(playArea.clientWidth/2, playArea.clientHeight/2, `+${points}`, 'var(--success)');
+                
+                setTimeout(() => nextQuestion(), 1200);
+                
             } else {
-                // سؤال عادي
-                if (clickedEmoji === correctEmoji) {
-                    // إجابة صحيحة
-                    roundSuccess(x, y);
-                } else {
-                    // إجابة خاطئة
-                    roundFailed("إيموجي خاطئ! 💀", x, y);
-                }
+                playSound('wrong');
+                clickedBtn.classList.add('wrong');
+                
+                allBtns.forEach(btn => {
+                    if (btn.textContent === currentQuestion.options[currentQuestion.correct]) {
+                        btn.classList.add('correct');
+                    }
+                });
+
+                memeBottomText.textContent = currentQuestion.options[currentQuestion.correct];
+                memeBottomText.style.color = 'var(--primary)';
+
+                gameWrapper.classList.add('shake');
+                loseLife();
             }
         }
 
-        // ================= النجاح والفشل =================
-        function roundSuccess(x, y) {
-            clearInterval(roundTimer);
-            playSound('correct');
-            
-            score += 10 * (isTrickQuestion ? 2 : 1); // نقاط مضاعفة للأسئلة المقلوبة
-            scoreVal.textContent = score;
-            
-            playArea.classList.add('flash-green');
-            showFloatingText(x, y, isTrickQuestion ? '+20 (ذكي!)' : '+10', '#00ff66');
-            
-            // الانتقال للجولة التالية بعد تأخير بسيط
-            setTimeout(() => {
-                playArea.classList.remove('flash-green');
-                startRound();
-            }, 500);
-        }
-
-        function roundFailed(reason, x, y) {
+        function handleTimeOut() {
             if (!isPlaying) return;
-            clearInterval(roundTimer);
             playSound('wrong');
             
+            const allBtns = optionsContainer.querySelectorAll('.option-btn');
+            allBtns.forEach(btn => {
+                btn.style.pointerEvents = 'none';
+                if (btn.textContent === currentQuestion.options[currentQuestion.correct]) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            memeBottomText.textContent = "انتهى الوقت! الإجابة: " + currentQuestion.options[currentQuestion.correct];
+            memeBottomText.style.color = 'var(--primary)';
+
+            gameWrapper.classList.add('shake');
+            loseLife();
+        }
+
+        function loseLife() {
             lives--;
             updateLivesUI();
-            
-            gameWrapper.classList.add('shake');
-            playArea.classList.add('flash-red');
-            
-            if (x && y) showFloatingText(x, y, 'خطأ! ❌', '#ff0055');
-            
-            // إيقاف اللعبة لحظياً لتجنب النقر المتكرر
-            isPlaying = false; 
 
             setTimeout(() => {
                 gameWrapper.classList.remove('shake');
-                playArea.classList.remove('flash-red');
-                
                 if (lives <= 0) {
                     endGame();
                 } else {
-                    isPlaying = true;
-                    startRound();
+                    nextQuestion();
                 }
-            }, 800);
+            }, 2000);
         }
 
-        // ================= إنهاء اللعبة =================
         function endGame() {
             isPlaying = false;
             clearInterval(roundTimer);
             
-            // تحديد الرتبة بناءً على النقاط
-            let rank = "NPC";
+            memeCard.style.display = 'none';
+            optionsContainer.style.display = 'none';
+
+            let rank = "مبتدئ في الميمز 🐣";
             let resultEmoji = "🤡";
             
-            if (score > 150) {
-                rank = "Sigma Male 🗿";
+            if (score >= 150) {
+                rank = "أسطورة الميمز 👑";
                 resultEmoji = "🗿";
-            } else if (score > 80) {
-                rank = "متعفن الدماغ 🧠";
-                resultEmoji = "💀";
-            } else if (score > 30) {
-                rank = "طفل تيك توك 📱";
+            } else if (score >= 100) {
+                rank = "خبير ميمز 🧠";
+                resultEmoji = "😎";
+            } else if (score >= 50) {
+                rank = "ميمر مبتدئ 📱";
                 resultEmoji = "😭";
             }
 
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('rankTitle').textContent = `رتبتك: ${rank}`;
-            document.getElementById('resultMeme').textContent = resultEmoji;
+            document.getElementById('finalScoreText').textContent = `نقاطك: ${score}`;
+            document.getElementById('rankText').textContent = `رتبتك: ${rank}`;
+            document.getElementById('resultEmoji').textContent = resultEmoji;
             
             endScreen.classList.remove('hidden');
         }
 
-        // ================= التأثيرات =================
         function showFloatingText(x, y, text, color) {
             const el = document.createElement('div');
             el.className = 'floating-text';
@@ -538,13 +612,9 @@
             setTimeout(() => el.remove(), 800);
         }
 
-        // ================= المستمعات =================
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
-        
-        // منع التكبير باللمس المزدوج في الجوال
         document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
-
     </script>
 </body>
 </html>
