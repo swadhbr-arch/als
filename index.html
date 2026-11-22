@@ -18,7 +18,7 @@
             --success: #10b981; --gold: #fbbf24; --text-muted: #94a3b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         html, body {
             height: 100%; width: 100%; overflow: hidden; background-color: var(--bg); color: #fff;
@@ -34,149 +34,132 @@
         .dev-banner {
             background: linear-gradient(90deg, rgba(56,189,248,0.15), rgba(236,72,153,0.15));
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            text-align: center; padding: 8px; font-size: 0.85rem; font-weight: 700;
-            color: #fff; letter-spacing: 0.5px; flex-shrink: 0;
+            text-align: center; padding: 6px; font-size: 0.8rem; font-weight: 700;
+            color: #fff; flex-shrink: 0;
         }
-        .dev-banner span { 
-            color: var(--primary); 
-            text-shadow: 0 0 10px rgba(56,189,248,0.6); 
-            font-size: 0.95rem;
-        }
+        .dev-banner span { color: var(--primary); font-size: 0.9rem; }
 
         /* ===== الشاشات العامة ===== */
         .screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding: 20px; }
         .screen.active { display: flex; }
 
         /* ===== شاشة الدخول ===== */
-        .title { font-size: 2.2rem; text-align: center; margin: 30px 0 10px; color: var(--primary); font-weight: 900; text-shadow: 0 0 15px rgba(56,189,248,0.4);}
-        .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.95rem; }
+        .title { font-size: 2rem; text-align: center; margin: 20px 0 10px; color: var(--primary); font-weight: 900; }
+        .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem; }
         
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; color: #fff; margin-bottom: 8px; font-weight: 700; font-size: 0.9rem;}
+        .input-group label { display: block; color: #fff; margin-bottom: 5px; font-weight: 700; font-size: 0.9rem;}
         .input-group input {
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
             background: var(--panel); color: #fff; font-size: 1rem; outline: none; text-align: center;
-            transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(56,189,248,0.2); }
+        .input-group input:focus { border-color: var(--primary); }
 
         .btn {
-            padding: 15px; font-size: 1.1rem; font-weight: 900; color: #000; background: var(--primary);
-            border: none; border-radius: 12px; cursor: pointer; transition: 0.2s; width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 12px; font-size: 1rem; font-weight: 900; color: #000; background: var(--primary);
+            border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn:hover { background: #fff; transform: scale(1.02); }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
-        .btn-outline:hover { background: var(--primary); color: #000;}
 
         /* ===== شاشة الانتظار ===== */
-        .room-code { font-size: 3.5rem; font-weight: 900; color: var(--gold); letter-spacing: 10px; text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(251,191,36,0.4); }
-        .players-wait { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;}
-        .p-badge { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 10px 25px; border-radius: 20px; font-weight: bold; font-size: 1.1rem;}
+        .room-code { font-size: 3rem; font-weight: 900; color: var(--gold); letter-spacing: 8px; text-align: center; margin: 15px 0; }
+        .players-wait { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
+        .p-badge { background: var(--panel); padding: 8px 20px; border-radius: 15px; font-weight: bold; }
 
         /* ===== شاشة اللعب (مقسمة بدقة) ===== */
-        #gameScreen { padding: 10px; display: none; flex-direction: column; flex: 1; overflow: hidden; }
+        #gameScreen { padding: 8px; display: none; flex-direction: column; flex: 1; overflow: hidden; }
         #gameScreen.active { display: flex; }
 
-        /* القسم العلوي: اللعبة */
+        /* القسم العلوي: اللعبة (يأخذ 60%) */
         .game-section {
-            flex: 1.2; /* يعطي مساحة أكبر للعبة */
+            flex: 6; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            width: 100%; padding-bottom: 10px;
+            width: 100%; padding-bottom: 5px;
         }
 
         .game-header { 
             display: flex; justify-content: space-between; align-items: center; 
-            width: 100%; max-width: 350px; margin-bottom: 15px; padding: 10px;
-            background: var(--panel); border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100%; max-width: 320px; margin-bottom: 10px; padding: 8px;
+            background: var(--panel); border-radius: 12px;
         }
         .player-info { display: flex; flex-direction: column; align-items: center; }
-        .player-name { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
-        .player-symbol { font-size: 1.5rem; font-weight: 900; }
-        .sym-x { color: var(--primary); text-shadow: 0 0 10px rgba(56,189,248,0.5);}
-        .sym-o { color: var(--secondary); text-shadow: 0 0 10px rgba(236,72,153,0.5);}
+        .player-name { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+        .player-symbol { font-size: 1.3rem; font-weight: 900; }
+        .sym-x { color: var(--primary); }
+        .sym-o { color: var(--secondary); }
         
         .turn-indicator { 
-            font-size: 0.9rem; font-weight: 900; color: var(--gold); 
-            background: rgba(251,191,36,0.1); padding: 5px 15px; border-radius: 20px;
-            border: 1px solid rgba(251,191,36,0.2);
+            font-size: 0.8rem; font-weight: 900; color: var(--gold); 
+            background: rgba(251,191,36,0.1); padding: 4px 12px; border-radius: 15px;
         }
 
-        /* لوحة إكس أو - تم ضبطها لتكون مربعة ومتناسقة */
+        /* لوحة إكس أو */
         .board {
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px;
-            width: 100%; 
-            max-width: 350px; /* يمنعها من التمدد الزائد على الشاشات الكبيرة */
-            aspect-ratio: 1 / 1; /* يضمن بقاءها مربعة 100% */
-            padding: 10px; 
-            background: var(--panel); 
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+            width: 100%; max-width: 320px; aspect-ratio: 1 / 1;
+            padding: 6px; background: var(--panel); border-radius: 15px;
         }
-
         .cell {
-            background: #0f172a; border-radius: 12px; 
-            display: flex; justify-content: center; align-items: center;
-            font-size: clamp(2.5rem, 10vw, 3.5rem); /* حجم خط يتكيف مع حجم الشاشة */
-            font-weight: 900; cursor: pointer; transition: 0.2s; 
-            border: 2px solid transparent;
+            background: #0f172a; border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            font-size: clamp(2rem, 10vw, 3rem); font-weight: 900; cursor: pointer; transition: 0.2s;
         }
-        .cell:hover { background: #1e293b; border-color: var(--primary); }
-        .cell.x { color: var(--primary); text-shadow: 0 0 15px rgba(56,189,248,0.6); }
-        .cell.o { color: var(--secondary); text-shadow: 0 0 15px rgba(236,72,153,0.6); }
-        
-        .cell.win { background: rgba(16, 185, 129, 0.2) !important; border-color: var(--success); animation: pulseWin 0.5s infinite alternate; }
-        @keyframes pulseWin { from { transform: scale(1); } to { transform: scale(1.05); } }
+        .cell:hover { background: #1e293b; }
+        .cell.x { color: var(--primary); }
+        .cell.o { color: var(--secondary); }
+        .cell.win { background: rgba(16, 185, 129, 0.3) !important; border: 2px solid var(--success); }
 
-        .controls { display: flex; gap: 10px; margin-top: 15px; width: 100%; max-width: 350px;}
-        .controls .btn { padding: 12px; font-size: 0.9rem; border-radius: 12px;}
+        .controls { display: flex; gap: 8px; margin-top: 10px; width: 100%; max-width: 320px;}
+        .controls .btn { padding: 10px; font-size: 0.85rem; border-radius: 10px;}
 
-        /* القسم السفلي: الدردشة */
+        /* القسم السفلي: الدردشة (يأخذ 40%) */
         .chat-section {
-            flex: 0.8; /* يعطي مساحة مناسبة للدردشة */
+            flex: 4; 
             display: flex; flex-direction: column;
-            background: var(--panel); border-radius: 15px;
+            background: var(--panel); border-radius: 12px;
             overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
         }
 
         .chat-header { 
-            padding: 10px 15px; background: rgba(0,0,0,0.2); font-weight: 900; 
-            font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; background: rgba(0,0,0,0.2); font-weight: 900; 
+            font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         
         .chat-messages { 
-            flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; 
+            flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; 
         }
-        .chat-messages::-webkit-scrollbar { width: 4px; }
-        .chat-messages::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
-
-        .msg { padding: 8px 12px; border-radius: 12px; max-width: 85%; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word; }
+        
+        /* تنسيق الرسائل */
+        .msg { padding: 6px 10px; border-radius: 10px; max-width: 85%; font-size: 0.8rem; line-height: 1.3; word-wrap: break-word; }
         .msg.me { background: var(--primary); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; }
         .msg.other { background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg-name { font-size: 0.65rem; opacity: 0.8; margin-bottom: 2px; display: block; font-weight: bold;}
+        .msg-name { font-size: 0.6rem; opacity: 0.8; margin-bottom: 2px; display: block; font-weight: bold;}
         
-        .chat-input-area { padding: 8px; display: flex; gap: 8px; background: rgba(0,0,0,0.2); }
+        /* حقل الإدخال تم إصلاحه ليكون متناسقاً */
+        .chat-input-area { 
+            padding: 8px; display: flex; gap: 6px; background: rgba(0,0,0,0.3); 
+            align-items: center; /* يوسط العناصر رأسياً */
+        }
         .chat-input-area input { 
-            flex: 1; padding: 10px 15px; border-radius: 20px; border: none; 
-            background: #0f172a; color: #fff; outline: none; font-size: 0.9rem; 
+            flex: 1; min-width: 0; /* يمنع الحقل من التمدد الزائد */
+            padding: 10px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); 
+            background: #0f172a; color: #fff; outline: none; font-size: 0.85rem; 
         }
         .chat-input-area button { 
-            background: var(--primary); border: none; width: 40px; height: 40px; 
-            border-radius: 50%; cursor: pointer; font-size: 1rem; color: #000; 
+            background: var(--primary); border: none; 
+            width: 36px; height: 36px; flex-shrink: 0; /* يمنع الزر من الانضغاط */
+            border-radius: 50%; cursor: pointer; font-size: 0.9rem; color: #000; 
             display: flex; justify-content: center; align-items: center;
         }
 
         /* شاشة الفائز */
         .winner-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(5px);
+            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         .winner-overlay.show { opacity: 1; pointer-events: auto; }
-        .winner-text { font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; text-align: center;}
+        .winner-text { font-size: 2rem; font-weight: 900; margin-bottom: 20px; text-align: center;}
     </style>
 </head>
 <body>
@@ -200,7 +183,7 @@
             
             <button class="btn" id="createRoomBtn"><i class="fas fa-plus"></i> إنشاء غرفة جديدة</button>
             
-            <div style="text-align: center; margin: 15px 0; color: #555; font-weight:bold;">- أو -</div>
+            <div style="text-align: center; margin: 10px 0; color: #555; font-weight:bold;">- أو -</div>
             
             <div class="input-group">
                 <label>كود الغرفة (للدخول لصديقك):</label>
@@ -211,13 +194,13 @@
 
         <!-- 2. شاشة الانتظار -->
         <div class="screen" id="lobbyScreen">
-            <h2 style="text-align: center; color: #fff; margin-top: 20px;">غرفة الانتظار</h2>
-            <p style="text-align: center; color: var(--text-muted);">شارك هذا الكود مع صديقك:</p>
+            <h2 style="text-align: center; color: #fff; margin-top: 10px;">غرفة الانتظار</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">شارك هذا الكود مع صديقك:</p>
             <div class="room-code" id="displayRoomCode">----</div>
             
             <div class="players-wait" id="playersList"></div>
 
-            <p id="waitMsg" style="text-align: center; color: var(--primary); font-weight: bold; margin-top: 20px;">بانتظار انضمام صديقك...</p>
+            <p id="waitMsg" style="text-align: center; color: var(--primary); font-weight: bold; font-size: 0.9rem;">بانتظار انضمام صديقك...</p>
         </div>
 
         <!-- 3. شاشة اللعب -->
@@ -258,7 +241,7 @@
             <!-- الدردشة -->
             <div class="chat-section">
                 <div class="chat-header">
-                    <i class="fas fa-comments" style="color:var(--primary)"></i> الدردشة
+                    <i class="fas fa-comments" style="color:var(--primary)"></i> الدردشة المباشرة
                 </div>
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input-area">
@@ -270,7 +253,7 @@
             <!-- شاشة الفائز -->
             <div class="winner-overlay" id="winnerOverlay">
                 <div class="winner-text" id="winnerText">لقد فزت! 🏆</div>
-                <button class="btn" id="closeOverlayBtn" style="width: 200px;">استمرار</button>
+                <button class="btn" id="closeOverlayBtn" style="width: 150px;">استمرار</button>
             </div>
 
         </div>
@@ -278,7 +261,7 @@
 
     <script>
         // ==========================================
-        // 1. إعدادات Firebase
+        // 1. إعدادات Firebase الخاصة بك
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
@@ -302,8 +285,7 @@
         let isHost = false;
         let roomData = {};
         let mySymbol = ""; 
-        let lastMessageCount = 0;
-
+        
         // العناصر
         const authScreen = document.getElementById('authScreen');
         const lobbyScreen = document.getElementById('lobbyScreen');
@@ -323,7 +305,6 @@
             
             db.ref('rooms/' + code).set({
                 host: myId,
-                status: 'waiting',
                 players: { [myId]: { name: myName, symbol: 'X' } },
                 board: ["", "", "", "", "", "", "", "", ""],
                 turn: 'X',
@@ -354,71 +335,68 @@
             authScreen.classList.remove('active');
             lobbyScreen.classList.add('active');
             document.getElementById('displayRoomCode').textContent = currentRoom;
-            listenToRoom();
-        }
-
-        // ==========================================
-        // 4. الاستماع لتحديثات الغرفة
-        // ==========================================
-        function listenToRoom() {
+            
+            // الاستماع لتحديثات الغرفة
             db.ref('rooms/' + currentRoom).on('value', (snapshot) => {
                 roomData = snapshot.val();
                 if (!roomData) return;
 
-                const playersList = document.getElementById('playersList');
-                playersList.innerHTML = '';
-                let playerCount = 0;
-
-                for (let pid in roomData.players) {
-                    playerCount++;
-                    const p = roomData.players[pid];
-                    playersList.innerHTML += `<div class="p-badge">${p.name} (${p.symbol})</div>`;
-                    
-                    if (pid === myId) {
-                        mySymbol = p.symbol;
-                        document.getElementById('myNameDisplay').textContent = p.name;
-                        document.getElementById('mySymbolDisplay').textContent = p.symbol;
-                        document.getElementById('mySymbolDisplay').className = `player-symbol ${p.symbol === 'X' ? 'sym-x' : 'sym-o'}`;
-                    } else {
-                        document.getElementById('opNameDisplay').textContent = p.name;
-                        document.getElementById('opSymbolDisplay').textContent = p.symbol;
-                        document.getElementById('opSymbolDisplay').className = `player-symbol ${p.symbol === 'X' ? 'sym-x' : 'sym-o'}`;
-                    }
-                }
-
-                // الانتقال للعبة
-                if (playerCount === 2 && !gameScreen.classList.contains('active')) {
-                    lobbyScreen.classList.remove('active');
-                    gameScreen.classList.add('active');
-                }
-
+                updatePlayersUI();
+                checkIfGameStarts();
                 if (gameScreen.classList.contains('active')) {
                     updateBoardUI();
                     checkGameState();
                 }
-                
-                renderChat();
+                renderChat(); // استدعاء الدردشة هنا لتعمل للطرفين
             });
         }
 
+        function updatePlayersUI() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            let playerCount = 0;
+
+            for (let pid in roomData.players) {
+                playerCount++;
+                const p = roomData.players[pid];
+                playersList.innerHTML += `<div class="p-badge">${p.name} (${p.symbol})</div>`;
+                
+                if (pid === myId) {
+                    mySymbol = p.symbol;
+                    document.getElementById('myNameDisplay').textContent = p.name;
+                    document.getElementById('mySymbolDisplay').textContent = p.symbol;
+                    document.getElementById('mySymbolDisplay').className = `player-symbol ${p.symbol === 'X' ? 'sym-x' : 'sym-o'}`;
+                } else {
+                    document.getElementById('opNameDisplay').textContent = p.name;
+                    document.getElementById('opSymbolDisplay').textContent = p.symbol;
+                    document.getElementById('opSymbolDisplay').className = `player-symbol ${p.symbol === 'X' ? 'sym-x' : 'sym-o'}`;
+                }
+            }
+        }
+
+        function checkIfGameStarts() {
+            let playerCount = Object.keys(roomData.players).length;
+            if (playerCount === 2 && !gameScreen.classList.contains('active')) {
+                lobbyScreen.classList.remove('active');
+                gameScreen.classList.add('active');
+            }
+        }
+
         // ==========================================
-        // 5. منطق لعبة إكس أو
+        // 4. منطق لعبة إكس أو
         // ==========================================
         document.querySelectorAll('.cell').forEach(cell => {
             cell.addEventListener('click', () => {
                 const index = cell.getAttribute('data-index');
                 if (roomData.winner || roomData.turn !== mySymbol || roomData.board[index] !== "") return;
 
-                const updates = {};
-                updates[`rooms/${currentRoom}/board/${index}`] = mySymbol;
-                updates[`rooms/${currentRoom}/turn`] = mySymbol === 'X' ? 'O' : 'X';
-                db.ref().update(updates);
+                db.ref(`rooms/${currentRoom}/board/${index}`).set(mySymbol);
+                db.ref(`rooms/${currentRoom}/turn`).set(mySymbol === 'X' ? 'O' : 'X');
             });
         });
 
         function updateBoardUI() {
-            const cells = document.querySelectorAll('.cell');
-            cells.forEach((cell, index) => {
+            document.querySelectorAll('.cell').forEach((cell, index) => {
                 const val = roomData.board[index];
                 cell.textContent = val;
                 cell.className = 'cell'; 
@@ -427,9 +405,8 @@
             });
 
             if (!roomData.winner) {
-                const isMyTurn = (roomData.turn === mySymbol);
                 const turnDisplay = document.getElementById('turnDisplay');
-                if (isMyTurn) {
+                if (roomData.turn === mySymbol) {
                     turnDisplay.textContent = "دورك الآن!";
                     turnDisplay.style.color = "var(--success)";
                 } else {
@@ -441,48 +418,27 @@
 
         function checkGameState() {
             const b = roomData.board;
-            const winPatterns = [
-                [0,1,2], [3,4,5], [6,7,8],
-                [0,3,6], [1,4,7], [2,5,8],
-                [0,4,8], [2,4,6]
-            ];
-
-            let winnerSymbol = null;
-            let winPattern = null;
+            const winPatterns = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            let winnerSymbol = null; let winPattern = null;
 
             for (let pattern of winPatterns) {
                 const [a, b1, c] = pattern;
                 if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
-                    winnerSymbol = b[a];
-                    winPattern = pattern;
-                    break;
+                    winnerSymbol = b[a]; winPattern = pattern; break;
                 }
             }
 
-            if (winnerSymbol && !roomData.winner) {
-                db.ref(`rooms/${currentRoom}/winner`).set(winnerSymbol);
-            }
-
-            if (!winnerSymbol && !roomData.board.includes("") && !roomData.winner) {
-                db.ref(`rooms/${currentRoom}/winner`).set("draw");
-            }
+            if (winnerSymbol && !roomData.winner) db.ref(`rooms/${currentRoom}/winner`).set(winnerSymbol);
+            if (!winnerSymbol && !roomData.board.includes("") && !roomData.winner) db.ref(`rooms/${currentRoom}/winner`).set("draw");
 
             if (roomData.winner) {
                 document.getElementById('turnDisplay').textContent = "انتهت اللعبة";
                 document.getElementById('turnDisplay').style.color = "var(--gold)";
                 
-                if (winPattern) {
-                    winPattern.forEach(idx => {
-                        document.querySelectorAll('.cell')[idx].classList.add('win');
-                    });
-                }
+                if (winPattern) winPattern.forEach(idx => document.querySelectorAll('.cell')[idx].classList.add('win'));
 
                 if (!winnerOverlay.classList.contains('show')) {
-                    let text = "";
-                    if (roomData.winner === 'draw') text = "تعادل! 🤝";
-                    else if (roomData.winner === mySymbol) text = "لقد فزت! 🏆";
-                    else text = "للأسف، خسرت! 💀";
-                    
+                    let text = roomData.winner === 'draw' ? "تعادل! 🤝" : (roomData.winner === mySymbol ? "لقد فزت! 🏆" : "خسرت! 💀");
                     document.getElementById('winnerText').textContent = text;
                     winnerOverlay.classList.add('show');
                     document.getElementById('nextRoundBtn').style.display = 'flex';
@@ -490,28 +446,20 @@
             }
         }
 
-        document.getElementById('closeOverlayBtn').addEventListener('click', () => {
-            winnerOverlay.classList.remove('show');
-        });
+        document.getElementById('closeOverlayBtn').addEventListener('click', () => winnerOverlay.classList.remove('show'));
 
         document.getElementById('nextRoundBtn').addEventListener('click', () => {
-            db.ref('rooms/' + currentRoom).update({
-                board: ["", "", "", "", "", "", "", "", ""],
-                turn: 'X',
-                winner: null
-            });
+            db.ref('rooms/' + currentRoom).update({ board: ["", "", "", "", "", "", "", "", ""], turn: 'X', winner: null });
             winnerOverlay.classList.remove('show');
             document.getElementById('nextRoundBtn').style.display = 'none';
         });
 
         document.getElementById('restartBtn').addEventListener('click', () => {
-            if(confirm("هل تريد الخروج من الغرفة؟")) {
-                window.location.reload();
-            }
+            if(confirm("هل تريد الخروج؟")) window.location.reload();
         });
 
         // ==========================================
-        // 6. الدردشة
+        // 5. الدردشة (تم إصلاحها بالكامل لتظهر للطرفين)
         // ==========================================
         document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
@@ -521,38 +469,40 @@
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
-            if (!text) return;
+            if (!text || !currentRoom) return;
             
+            // إرسال الرسالة لقاعدة البيانات
             db.ref('rooms/' + currentRoom + '/messages').push({
                 sender: myName,
                 text: text,
                 time: Date.now()
-            });
-            input.value = '';
+            }).then(() => {
+                input.value = ''; // تفريغ الحقل بعد الإرسال الناجح
+            }).catch(err => alert("حدث خطأ في الإرسال، تأكد من الاتصال"));
         }
 
         function renderChat() {
             const chatContainer = document.getElementById('chatMessages');
             
-            if (roomData.messages) {
+            if (roomData && roomData.messages) {
+                // تحويل الرسائل لمصفوفة وترتيبها حسب الوقت
                 const msgs = Object.values(roomData.messages).sort((a, b) => a.time - b.time);
                 
-                if (msgs.length !== lastMessageCount) {
-                    lastMessageCount = msgs.length;
-                    let html = '';
-                    
-                    msgs.forEach(msg => {
-                        const isMe = msg.sender === myName;
-                        html += `
-                            <div class="msg ${isMe ? 'me' : 'other'}">
-                                <span class="msg-name">${msg.sender}</span>
-                                ${msg.text}
-                            </div>
-                        `;
-                    });
-                    
+                let html = '';
+                msgs.forEach(msg => {
+                    const isMe = msg.sender === myName;
+                    html += `
+                        <div class="msg ${isMe ? 'me' : 'other'}">
+                            <span class="msg-name">${msg.sender}</span>
+                            ${msg.text}
+                        </div>
+                    `;
+                });
+                
+                // تحديث المحتوى فقط إذا كان هناك تغيير لتجنب الوميض
+                if (chatContainer.innerHTML !== html) {
                     chatContainer.innerHTML = html;
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    chatContainer.scrollTop = chatContainer.scrollHeight; // النزول لآخر رسالة
                 }
             }
         }
