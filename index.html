@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#0b141a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,8 +36,8 @@
             --my-msg: #005c4b;
             --other-msg: #202c33;
             --border-subtle: rgba(255, 255, 255, 0.07);
-            --msg-font-size: 0.92rem;
-            --chat-wallpaper: none;
+            --msg-font-size: 0.9rem;
+            --keyboard-offset: 0px;
         }
 
         body[data-theme="purple"] {
@@ -74,8 +74,8 @@
         }
 
         body[data-font-scale="sm"] { --msg-font-size: 0.84rem; }
-        body[data-font-scale="md"] { --msg-font-size: 0.92rem; }
-        body[data-font-scale="lg"] { --msg-font-size: 1.03rem; }
+        body[data-font-scale="md"] { --msg-font-size: 0.9rem; }
+        body[data-font-scale="lg"] { --msg-font-size: 0.98rem; }
 
         * {
             margin: 0;
@@ -103,6 +103,7 @@
             overflow: hidden;
             background-color: var(--bg-app);
             color: var(--text-main);
+            font-size: 15px;
         }
 
         .app-container {
@@ -142,9 +143,9 @@
             cursor: pointer;
         }
         .inapp-toast.show { transform: translate(-50%, 0); }
-        .toast-title { font-size: 0.84rem; font-weight: 800; color: var(--accent); }
+        .toast-title { font-size: 0.82rem; font-weight: 800; color: var(--accent); }
         .toast-body {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
@@ -152,17 +153,18 @@
             max-width: 340px;
         }
 
+        /* شارات التوثيق والتميز المنسقة */
         .verified-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             background: #1d9bf0;
             color: #fff;
-            font-size: 9px;
-            margin-right: 5px;
+            font-size: 8px;
+            margin-right: 4px;
             vertical-align: middle;
             flex-shrink: 0;
         }
@@ -172,16 +174,17 @@
             align-items: center;
             justify-content: center;
             gap: 3px;
-            padding: 1px 7px;
-            height: 18px;
+            padding: 1px 6px;
+            height: 17px;
             border-radius: 999px;
             background: linear-gradient(135deg, #fde047, #f59e0b);
             color: #181000;
-            font-size: 8.5px;
-            font-weight: 900;
+            font-size: 8px;
+            font-weight: 800;
             margin-right: 4px;
             vertical-align: middle;
             flex-shrink: 0;
+            line-height: 1;
         }
 
         .group-pill {
@@ -189,13 +192,16 @@
             align-items: center;
             gap: 3px;
             padding: 1px 7px;
+            height: 18px;
             border-radius: 999px;
             background: rgba(0, 168, 132, 0.16);
             border: 1px solid rgba(0, 168, 132, 0.35);
             color: var(--accent);
             font-size: 0.68rem;
             font-weight: 800;
-            margin-right: 5px;
+            margin-right: 4px;
+            flex-shrink: 0;
+            line-height: 1;
         }
 
         .screen {
@@ -226,20 +232,20 @@
         }
 
         .brand-logo-circle {
-            width: 56px;
-            height: 56px;
+            width: 54px;
+            height: 54px;
             border-radius: 16px;
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: #fff;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 10px;
         }
 
-        .title { font-size: 1.55rem; font-weight: 900; margin-bottom: 3px; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); font-size: 0.84rem; margin-bottom: 16px; }
+        .title { font-size: 1.35rem; font-weight: 900; margin-bottom: 3px; color: var(--text-main); }
+        .subtitle { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 16px; }
 
         .auth-tabs {
             display: grid;
@@ -252,13 +258,13 @@
             border: 1px solid var(--border-subtle);
         }
         .auth-tab {
-            padding: 9px;
+            padding: 8px;
             border-radius: 9px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             font-weight: 800;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             cursor: pointer;
         }
         .auth-tab.active {
@@ -275,8 +281,8 @@
         }
         .avatar-picker-circle {
             position: relative;
-            width: 78px;
-            height: 78px;
+            width: 76px;
+            height: 76px;
             border-radius: 50%;
             background: var(--bg-card);
             border: 2px dashed var(--accent);
@@ -284,8 +290,8 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: 1.5rem;
-            font-weight: 900;
+            font-size: 1.4rem;
+            font-weight: 800;
             cursor: pointer;
             overflow: hidden;
         }
@@ -298,19 +304,19 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             background: var(--accent);
             color: #fff;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 2px solid var(--bg-header);
         }
         .avatar-picker-hint {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
             margin-top: 5px;
         }
@@ -321,7 +327,7 @@
             color: var(--text-muted);
             margin-bottom: 5px;
             font-weight: 700;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
         }
         .input-group input, .input-group textarea {
             width: 100%;
@@ -330,7 +336,7 @@
             border: 1px solid var(--border-subtle);
             background: var(--bg-input);
             color: var(--text-main);
-            font-size: 0.94rem;
+            font-size: 0.9rem;
             outline: none;
         }
         .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); }
@@ -341,15 +347,15 @@
             border: 1px solid rgba(255, 59, 107, 0.35);
             padding: 9px 12px;
             border-radius: 10px;
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             font-weight: 700;
             margin-bottom: 12px;
             display: none;
         }
 
         .btn {
-            padding: 11px 14px;
-            font-size: 0.92rem;
+            padding: 10px 14px;
+            font-size: 0.88rem;
             font-weight: 800;
             color: #fff;
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
@@ -377,7 +383,7 @@
 
         .main-header {
             background: var(--bg-header);
-            padding: 11px 14px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -389,13 +395,13 @@
         .header-start { display: flex; align-items: center; gap: 10px; min-width: 0; }
 
         .icon-btn {
-            width: 36px;
-            height: 36px;
+            width: 35px;
+            height: 35px;
             border-radius: 10px;
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            font-size: 0.94rem;
+            font-size: 0.9rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -404,7 +410,7 @@
         }
         .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        .main-brand-title { font-size: 1.1rem; font-weight: 900; color: var(--text-main); white-space: nowrap; }
+        .main-brand-title { font-size: 1.02rem; font-weight: 900; color: var(--text-main); white-space: nowrap; }
         .main-brand-title span { color: var(--accent); }
         .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
@@ -434,8 +440,8 @@
 
         .story-ring {
             position: relative;
-            width: 52px;
-            height: 52px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             padding: 2.5px;
             border: 2.5px solid var(--neon-green);
@@ -454,8 +460,8 @@
             border-radius: 50%;
             background: var(--bg-card);
             color: var(--accent);
-            font-weight: 900;
-            font-size: 1rem;
+            font-weight: 800;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -470,12 +476,12 @@
             position: absolute;
             bottom: -2px;
             left: -2px;
-            width: 19px;
-            height: 19px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: var(--neon-green);
             color: #06140c;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -541,7 +547,7 @@
             background: rgba(255, 255, 255, 0.12);
             padding: 1px 8px;
             border-radius: 999px;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             color: #fde047;
             font-weight: 800;
             margin-right: 6px;
@@ -588,7 +594,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.08rem;
             font-weight: 800;
             line-height: 1.75;
             color: var(--text-main);
@@ -604,7 +610,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
             padding: 10px 14px;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 700;
             color: #fff;
             text-align: center;
@@ -636,7 +642,7 @@
             border-radius: 999px;
             padding: 6px 8px;
             color: var(--text-main);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
@@ -689,7 +695,7 @@
             justify-content: space-between;
             padding: 9px 4px;
             border-bottom: 1px solid var(--border-subtle);
-            font-size: 0.84rem;
+            font-size: 0.82rem;
         }
         .wa-viewer-item:last-child { border-bottom: none; }
 
@@ -709,7 +715,7 @@
             background: var(--bg-card);
             color: var(--text-muted);
             font-weight: 800;
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -735,7 +741,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             color: var(--text-muted);
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             font-weight: 800;
             cursor: pointer;
             white-space: nowrap;
@@ -764,7 +770,7 @@
             background: var(--bg-input);
             color: var(--text-main);
             outline: none;
-            font-size: 0.9rem;
+            font-size: 0.86rem;
         }
         .home-search-bar input:focus { border-color: var(--accent); }
 
@@ -781,12 +787,12 @@
         .quick-add-inline { display: flex; gap: 8px; margin-bottom: 10px; }
         .quick-add-inline input {
             flex: 1;
-            padding: 10px 12px;
+            padding: 9px 12px;
             border-radius: 11px;
             border: 1px solid var(--border-subtle);
             background: var(--bg-input);
             color: var(--text-main);
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             outline: none;
         }
         .quick-add-inline input:focus { border-color: var(--accent); }
@@ -797,7 +803,7 @@
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: #fff;
             font-weight: 800;
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -820,8 +826,8 @@
             border: none;
             border-radius: 9px;
             padding: 6px 11px;
-            font-size: 0.76rem;
-            font-weight: 900;
+            font-size: 0.74rem;
+            font-weight: 800;
             cursor: pointer;
         }
         .btn-reject-inv {
@@ -830,7 +836,7 @@
             border: 1px solid rgba(255, 59, 107, 0.4);
             border-radius: 9px;
             padding: 6px 10px;
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             font-weight: 800;
             cursor: pointer;
         }
@@ -860,8 +866,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            font-size: 1rem;
+            font-weight: 800;
+            font-size: 0.96rem;
             color: var(--accent);
             flex-shrink: 0;
         }
@@ -886,23 +892,38 @@
             background: #64748b;
         }
         .status-dot.online { background: var(--neon-green); }
+
         .row-info { min-width: 0; flex: 1; }
         .row-info .rname {
             font-weight: 800;
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 4px;
+            min-width: 0;
+        }
+        .row-info .rname .name-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .row-info .rlast {
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             color: var(--text-muted);
             margin-top: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .handle-inline {
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+
         .row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .quick-user-btns { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
         .mini-action-btn {
@@ -911,7 +932,7 @@
             border: 1px solid var(--border-subtle);
             background: var(--bg-app);
             color: var(--text-main);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
@@ -931,8 +952,8 @@
         .unread-badge {
             background: var(--accent);
             color: #fff;
-            font-size: 0.72rem;
-            font-weight: 900;
+            font-size: 0.7rem;
+            font-weight: 800;
             min-width: 20px;
             height: 20px;
             border-radius: 999px;
@@ -952,12 +973,12 @@
             z-index: 12;
         }
         .fab-btn {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 15px;
             border: none;
-            font-size: 1.05rem;
-            font-weight: 900;
+            font-size: 1rem;
+            font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -966,20 +987,20 @@
         }
         .fab-group { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #fff; }
         .fab-room {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             align-self: center;
             background: var(--bg-card);
             color: var(--accent);
             border: 1px solid var(--border-subtle);
-            font-size: 0.92rem;
+            font-size: 0.88rem;
         }
 
         .empty-state {
             text-align: center;
             color: var(--text-muted);
             padding: 30px 15px;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             line-height: 1.7;
         }
 
@@ -1011,22 +1032,22 @@
         .side-drawer.open { right: 0; }
 
         .drawer-header {
-            padding: 16px;
+            padding: 15px;
             background: var(--bg-card);
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 11px;
             cursor: pointer;
         }
         .drawer-avatar {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: #fff;
-            font-weight: 900;
-            font-size: 1.15rem;
+            font-weight: 800;
+            font-size: 1.05rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1040,26 +1061,37 @@
         }
         .drawer-user-info { min-width: 0; flex: 1; }
         .drawer-user-name {
-            font-weight: 900;
-            font-size: 0.94rem;
+            font-weight: 800;
+            font-size: 0.88rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 4px;
+            min-width: 0;
+        }
+        .drawer-user-name .dname-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .drawer-user-handle {
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             color: var(--accent);
             font-weight: 700;
             margin-top: 1px;
+            direction: ltr;
+            text-align: right;
         }
         .drawer-user-bio {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
             margin-top: 2px;
             display: flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .drawer-menu {
@@ -1076,9 +1108,9 @@
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            padding: 11px 13px;
+            padding: 10px 12px;
             border-radius: 12px;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             font-weight: 800;
             cursor: pointer;
             display: flex;
@@ -1103,7 +1135,7 @@
             border: 1px solid rgba(255, 59, 107, 0.4);
             color: #ff6b8b;
             font-weight: 800;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1132,7 +1164,7 @@
             align-items: center;
             justify-content: space-between;
         }
-        .subpanel-title { font-weight: 900; font-size: 0.98rem; color: var(--accent); }
+        .subpanel-title { font-weight: 900; font-size: 0.92rem; color: var(--accent); }
         .subpanel-body { flex: 1; overflow-y: auto; padding: 15px; }
 
         .info-card {
@@ -1143,8 +1175,8 @@
             margin-bottom: 12px;
             line-height: 1.7;
         }
-        .info-card h4 { color: var(--accent); font-size: 0.96rem; font-weight: 900; margin-bottom: 7px; }
-        .info-card p { color: var(--text-main); font-size: 0.86rem; }
+        .info-card h4 { color: var(--accent); font-size: 0.92rem; font-weight: 800; margin-bottom: 7px; }
+        .info-card p { color: var(--text-main); font-size: 0.82rem; }
 
         .dev-social-row {
             display: flex;
@@ -1161,13 +1193,13 @@
             align-items: center;
             gap: 10px;
             font-weight: 800;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
         }
         .dev-social-handle {
             direction: ltr;
             color: var(--accent);
-            font-weight: 900;
-            font-size: 0.86rem;
+            font-weight: 800;
+            font-size: 0.82rem;
         }
 
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1180,11 +1212,11 @@
             text-align: center;
         }
         .theme-card.active { border-color: var(--accent); background: var(--bg-card-hover); }
-        .theme-swatch { width: 38px; height: 38px; border-radius: 12px; margin: 0 auto 7px; }
-        .theme-name { font-weight: 800; font-size: 0.88rem; }
+        .theme-swatch { width: 36px; height: 36px; border-radius: 12px; margin: 0 auto 7px; }
+        .theme-name { font-weight: 800; font-size: 0.82rem; }
 
         .admin-actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-        .admin-status-msg { margin-top: 10px; font-size: 0.82rem; font-weight: 700; color: var(--neon-green); min-height: 18px; }
+        .admin-status-msg { margin-top: 10px; font-size: 0.78rem; font-weight: 700; color: var(--neon-green); min-height: 18px; }
 
         .confirm-modal {
             display: none;
@@ -1206,15 +1238,18 @@
             padding: 20px 16px;
             text-align: center;
         }
-        .confirm-box h4 { font-size: 1.02rem; font-weight: 900; color: var(--text-main); margin-bottom: 6px; }
-        .confirm-box p { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px; }
+        .confirm-box h4 { font-size: 0.96rem; font-weight: 900; color: var(--text-main); margin-bottom: 6px; }
+        .confirm-box p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; }
         .confirm-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        #chatScreen { background: var(--bg-app); }
+        #chatScreen {
+            background: var(--bg-app);
+            padding-bottom: var(--keyboard-offset);
+        }
 
         .chat-header {
             background: var(--bg-header);
-            padding: 10px 12px;
+            padding: 9px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1227,6 +1262,7 @@
             align-items: center;
             gap: 9px;
             min-width: 0;
+            flex: 1;
             cursor: pointer;
         }
         .chat-header-avatar {
@@ -1236,8 +1272,8 @@
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             color: var(--accent);
-            font-weight: 900;
-            font-size: 0.95rem;
+            font-weight: 800;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1249,15 +1285,20 @@
             height: 100%;
             object-fit: cover;
         }
-        .chat-header-info { display: flex; flex-direction: column; min-width: 0; }
+        .chat-header-info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
         .chat-room-code {
-            font-weight: 900;
-            font-size: 0.96rem;
+            font-weight: 800;
+            font-size: 0.88rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 4px;
-            flex-wrap: wrap;
+            min-width: 0;
+        }
+        .chat-room-code #chatTitleText {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .copy-code-btn {
             background: var(--bg-card);
@@ -1265,28 +1306,29 @@
             color: var(--accent);
             border-radius: 7px;
             padding: 1px 7px;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 800;
             cursor: pointer;
+            flex-shrink: 0;
         }
         .chat-status {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--neon-green);
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .chat-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .chat-header-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
         .btn-leave {
             background: rgba(255, 59, 107, 0.14);
             color: #ff6b8b;
             border: 1px solid rgba(255, 59, 107, 0.35);
-            padding: 6px 10px;
+            padding: 6px 9px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 800;
-            font-size: 0.78rem;
+            font-size: 0.74rem;
         }
         .btn-leave:hover { background: var(--accent-secondary); color: #fff; }
 
@@ -1308,7 +1350,7 @@
             background: var(--bg-input);
             color: var(--text-main);
             outline: none;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
         }
 
         .pinned-bar {
@@ -1318,7 +1360,7 @@
             background: var(--bg-card);
             border-right: 3px solid var(--accent);
             padding: 7px 12px;
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-main);
             flex-shrink: 0;
             gap: 8px;
@@ -1333,7 +1375,7 @@
             background: rgba(255, 59, 107, 0.15);
             border-top: 1px solid rgba(255, 59, 107, 0.4);
             padding: 10px 14px;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 800;
             color: #ff6b8b;
             flex-shrink: 0;
@@ -1343,13 +1385,13 @@
 
         .chat-messages {
             flex: 1;
-            padding: 14px 12px;
+            padding: 12px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 9px;
             -webkit-overflow-scrolling: touch;
-            contain: content;
+            overflow-anchor: auto;
             will-change: scroll-position;
         }
         .chat-messages::-webkit-scrollbar { width: 4px; }
@@ -1358,9 +1400,8 @@
         .message-wrapper {
             display: flex;
             flex-direction: column;
-            max-width: 84%;
-            content-visibility: auto;
-            contain-intrinsic-size: auto 68px;
+            max-width: 82%;
+            overflow-anchor: none;
         }
         .message-wrapper.me { align-self: flex-end; }
         .message-wrapper.other { align-self: flex-start; }
@@ -1373,7 +1414,7 @@
             margin-right: 4px;
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 3px;
         }
 
         .reply-quote {
@@ -1382,12 +1423,12 @@
             padding: 5px 8px;
             border-radius: 8px;
             margin-bottom: 5px;
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             color: rgba(255, 255, 255, 0.9);
         }
 
         .msg-bubble {
-            padding: 9px 13px;
+            padding: 8px 12px;
             border-radius: 14px;
             font-size: var(--msg-font-size);
             line-height: 1.48;
@@ -1408,23 +1449,23 @@
         .msg-image {
             display: block;
             max-width: 100%;
-            width: 235px;
-            max-height: 250px;
+            width: 225px;
+            max-height: 240px;
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 5px;
             cursor: zoom-in;
         }
 
-        .msg-audio { width: 220px; max-width: 100%; height: 36px; margin-bottom: 4px; border-radius: 10px; }
+        .msg-audio { width: 215px; max-width: 100%; height: 34px; margin-bottom: 4px; border-radius: 10px; }
 
         .msg-meta-row {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 6px;
-            margin-top: 4px;
-            font-size: 0.65rem;
+            gap: 5px;
+            margin-top: 3px;
+            font-size: 0.64rem;
             opacity: 0.85;
         }
 
@@ -1432,9 +1473,9 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             margin-top: 3px;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
         }
         .msg-action-btn {
@@ -1442,7 +1483,7 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             padding: 2px 3px;
         }
         .msg-action-btn:hover { color: var(--accent); }
@@ -1454,7 +1495,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 999px;
             padding: 1px 7px;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             cursor: pointer;
             color: var(--text-main);
         }
@@ -1466,8 +1507,8 @@
             justify-content: space-between;
             background: var(--bg-card);
             border-right: 3px solid var(--accent);
-            padding: 7px 12px;
-            font-size: 0.78rem;
+            padding: 6px 12px;
+            font-size: 0.76rem;
             color: var(--text-main);
             flex-shrink: 0;
             gap: 10px;
@@ -1477,15 +1518,15 @@
             background: none;
             border: none;
             color: #ff6b8b;
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             cursor: pointer;
         }
-        .image-preview-thumb { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; border: 1px solid var(--accent); }
+        .image-preview-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--accent); }
 
         .quick-emojis {
             display: flex;
             gap: 6px;
-            padding: 6px 12px 0;
+            padding: 5px 12px 0;
             background: var(--bg-header);
             overflow-x: auto;
             flex-shrink: 0;
@@ -1494,8 +1535,8 @@
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: 9px;
-            padding: 3px 8px;
-            font-size: 0.92rem;
+            padding: 2px 8px;
+            font-size: 0.86rem;
             cursor: pointer;
         }
 
@@ -1503,11 +1544,12 @@
             display: none;
             align-self: flex-start;
             background: var(--other-msg);
-            padding: 8px 12px;
+            padding: 7px 12px;
             border-radius: 14px;
             border: 1px solid var(--border-subtle);
             margin: 0 12px 6px;
             width: fit-content;
+            flex-shrink: 0;
         }
         .typing-indicator.active { display: flex; gap: 4px; align-items: center; }
         .dot {
@@ -1526,20 +1568,20 @@
 
         .chat-input-area {
             position: relative;
-            z-index: 20;
-            padding: 8px 12px 10px;
+            z-index: 25;
+            padding: 7px 10px 9px;
             background: var(--bg-header);
             border-top: 1px solid var(--border-subtle);
             display: flex;
             gap: 6px;
             align-items: center;
             flex-shrink: 0;
-            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            padding-bottom: max(9px, env(safe-area-inset-bottom));
         }
 
         .btn-attach {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
@@ -1548,7 +1590,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.94rem;
+            font-size: 0.88rem;
             flex-shrink: 0;
         }
         .btn-attach.recording {
@@ -1562,7 +1604,7 @@
             min-width: 0;
             display: flex;
             background: var(--bg-input);
-            border-radius: 22px;
+            border-radius: 21px;
             border: 1px solid var(--border-subtle);
             padding: 2px 12px;
             align-items: center;
@@ -1574,18 +1616,18 @@
             width: 100%;
             flex: 1;
             min-width: 0;
-            padding: 8px 4px;
+            padding: 7px 4px;
             border: none;
             background: transparent;
             color: var(--text-main);
             outline: none;
-            font-size: 0.94rem;
+            font-size: 0.9rem;
             pointer-events: auto !important;
         }
 
         .btn-send {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: #fff;
@@ -1594,7 +1636,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.05rem;
+            font-size: 0.98rem;
             flex-shrink: 0;
         }
 
@@ -1617,7 +1659,7 @@
             align-items: center;
             color: var(--text-muted);
             margin: 12px 0;
-            font-size: 0.78rem;
+            font-size: 0.74rem;
             font-weight: 700;
         }
         .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
@@ -1634,7 +1676,7 @@
         <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.85rem;"></i>
     </div>
 
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
         <!-- 1. شاشة تسجيل الدخول / إنشاء الحساب -->
         <div class="screen" id="authScreen">
             <div class="auth-card">
@@ -1797,7 +1839,7 @@
         <div class="wa-viewers-sheet" id="waViewersSheet" onclick="closeViewersSheet()">
             <div class="wa-viewers-panel" onclick="event.stopPropagation()">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-weight:900; color:var(--accent); font-size:0.95rem;" id="waViewersPanelTitle">
+                    <span style="font-weight:900; color:var(--accent); font-size:0.9rem;" id="waViewersPanelTitle">
                         <i class="fas fa-eye"></i> سجل المشاهدات
                     </span>
                     <button type="button" class="icon-btn" onclick="closeViewersSheet()"><i class="fas fa-times"></i></button>
@@ -1813,7 +1855,7 @@
                 <div class="drawer-avatar" id="drawerAvatar">ع</div>
                 <div class="drawer-user-info">
                     <div class="drawer-user-name">
-                        <span id="drawerDisplayName">المستخدم</span>
+                        <span class="dname-text" id="drawerDisplayName">المستخدم</span>
                         <span id="drawerBadgesContainer"></span>
                     </div>
                     <div class="drawer-user-handle" id="drawerUsernameHandle">@user</div>
@@ -1993,26 +2035,26 @@
             </div>
 
             <div class="quick-emojis" id="quickEmojis">
-                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
-                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('😂')">😂</button>
-                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
-                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('👍')">👍</button>
-                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('⚡')">⚡</button>
-                <button type="button" class="quick-emoji-btn" onclick="insertEmoji('🫡')">🫡</button>
+                <button type="button" class="quick-emoji-btn" onpointerdown="event.preventDefault(); insertEmoji('🔥')">🔥</button>
+                <button type="button" class="quick-emoji-btn" onpointerdown="event.preventDefault(); insertEmoji('😂')">😂</button>
+                <button type="button" class="quick-emoji-btn" onpointerdown="event.preventDefault(); insertEmoji('❤️')">❤️</button>
+                <button type="button" class="quick-emoji-btn" onpointerdown="event.preventDefault(); insertEmoji('👍')">👍</button>
+                <button type="button" class="quick-emoji-btn" onpointerdown="event.preventDefault(); insertEmoji('⚡')">⚡</button>
+                <button type="button" class="quick-emoji-btn" onpointerdown="event.preventDefault(); insertEmoji('🫡')">🫡</button>
             </div>
 
             <div class="chat-input-area" id="chatInputArea">
                 <input type="file" id="imageFileInput" accept="image/*" style="display:none;" onchange="handleImageFileSelected(event)">
-                <button type="button" class="btn-attach" title="اختيار صورة مضغوطة" onclick="document.getElementById('imageFileInput').click()">
+                <button type="button" class="btn-attach" title="اختيار صورة مضغوطة" onpointerdown="event.preventDefault()" onclick="document.getElementById('imageFileInput').click()">
                     <i class="fas fa-image"></i>
                 </button>
-                <button type="button" class="btn-attach" id="voiceRecordBtn" title="تسجيل رسالة صوتية" onclick="toggleVoiceRecording()">
+                <button type="button" class="btn-attach" id="voiceRecordBtn" title="تسجيل رسالة صوتية" onpointerdown="event.preventDefault()" onclick="toggleVoiceRecording()">
                     <i class="fas fa-microphone"></i>
                 </button>
                 <div class="input-wrapper" id="chatInputWrapper" onclick="focusChatInput()">
                     <input type="text" id="chatInput" placeholder="اكتب رسالة..." autocomplete="off">
                 </div>
-                <button type="button" class="btn-send" id="sendChatBtn" title="إرسال"><i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn-send" id="sendChatBtn" title="إرسال" onpointerdown="event.preventDefault(); sendMessage();"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -2082,6 +2124,8 @@
         let toastTimer = null;
         let isSendingMessage = false;
         let ignoreNextPopState = false;
+        let initialChatScrollPending = true;
+        let userScrolledAwayFromBottom = false;
 
         let mediaRecorder = null;
         let audioChunks = [];
@@ -2128,6 +2172,26 @@
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const typingIndicator = document.getElementById('typingIndicator');
+
+        function syncViewportHeight() {
+            const vv = window.visualViewport;
+            if (!vv) return;
+            const diff = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+            document.documentElement.style.setProperty('--keyboard-offset', diff > 40 ? `${diff}px` : '0px');
+            if (chatScreen.classList.contains('active') && !userScrolledAwayFromBottom) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', syncViewportHeight);
+            window.visualViewport.addEventListener('scroll', syncViewportHeight);
+        }
+
+        chatMessages.addEventListener('scroll', () => {
+            const distanceFromBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight;
+            userScrolledAwayFromBottom = distanceFromBottom > 120;
+        }, { passive: true });
 
         function readLocalCache(key, fallback = null) {
             try {
@@ -2190,11 +2254,9 @@
         function focusChatInput() {
             if (!chatScreen.classList.contains('active')) return;
             if (isChatBlocked()) return;
-            requestAnimationFrame(() => {
-                if (document.activeElement !== chatInput) {
-                    chatInput.focus();
-                }
-            });
+            if (document.activeElement !== chatInput) {
+                chatInput.focus({ preventScroll: true });
+            }
         }
 
         function dismissKeyboard() {
@@ -2317,7 +2379,7 @@
 
         function getBadgesHtml(isVerified, isVipAdmin) {
             const verHtml = isVerified ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>' : '';
-            const vipHtml = isVipAdmin ? '<span class="vip-badge" title="توثيق المطور / الإداري المميز"><i class="fas fa-crown"></i> مطور • VIP</span>' : '';
+            const vipHtml = isVipAdmin ? '<span class="vip-badge" title="توثيق المطور / الإداري المميز"><i class="fas fa-crown"></i> VIP</span>' : '';
             return verHtml + vipHtml;
         }
 
@@ -2782,10 +2844,10 @@
                 bottomEl.innerHTML = `
                     <div class="wa-reactions-strip">${reactionsHtml}</div>
                     <div class="wa-owner-viewers-bar" onclick="openViewersSheet('${escapeJs(st.id)}')">
-                        <span style="font-weight:800; font-size:0.84rem; color:var(--text-main);">
+                        <span style="font-weight:800; font-size:0.82rem; color:var(--text-main);">
                             <i class="fas fa-eye" style="color:var(--neon-green); margin-left:6px;"></i> المشاهدات (${viewersCount})
                         </span>
-                        <span style="font-size:0.78rem; color:var(--accent); font-weight:800;">عرض السجل <i class="fas fa-chevron-up"></i></span>
+                        <span style="font-size:0.76rem; color:var(--accent); font-weight:800;">عرض السجل <i class="fas fa-chevron-up"></i></span>
                     </div>
                 `;
             } else {
@@ -2823,9 +2885,9 @@
                 <div class="wa-viewer-item">
                     <div>
                         <div style="font-weight:800; color:var(--text-main);">${escapeHtml(v.displayName || v.username)}</div>
-                        <div style="font-size:0.72rem; color:var(--text-muted);">@${escapeHtml(v.username)}</div>
+                        <div class="handle-inline">@${escapeHtml(v.username)}</div>
                     </div>
-                    <span style="font-size:0.75rem; color:var(--accent); font-weight:700;">${formatRelativeTime(v.viewedAt)}</span>
+                    <span style="font-size:0.74rem; color:var(--accent); font-weight:700;">${formatRelativeTime(v.viewedAt)}</span>
                 </div>
             `).join('');
         }
@@ -3375,8 +3437,11 @@
                         <div class="avatar-picker-circle" style="margin:0 auto 10px; border-style:solid; cursor:default;">
                             ${renderAvatarInner(info.avatar, pName)}
                         </div>
-                        <h4>${escapeHtml(pName)} ${getBadgesHtml(info.verified, info.vipAdmin)}</h4>
-                        <p style="color:var(--accent); font-weight:800;">@${escapeHtml(pKey)}</p>
+                        <h4 style="display:flex; align-items:center; justify-content:center; gap:4px;">
+                            <span>${escapeHtml(pName)}</span>
+                            ${getBadgesHtml(info.verified, info.vipAdmin)}
+                        </h4>
+                        <p class="handle-inline" style="text-align:center;">@${escapeHtml(pKey)}</p>
                     </div>
 
                     <div class="info-card">
@@ -3455,7 +3520,7 @@
                             <div class="row-left">
                                 <div class="row-avatar group-av"><i class="fas fa-users"></i></div>
                                 <div class="row-info">
-                                    <div class="rname">${escapeHtml(g.displayName)}</div>
+                                    <div class="rname"><span class="name-label">${escapeHtml(g.displayName)}</span></div>
                                     <div class="rlast">${g.memberCount || 1} أعضاء</div>
                                 </div>
                             </div>
@@ -3563,13 +3628,13 @@
                     <div class="info-card" style="text-align:center;">
                         <div class="brand-logo-circle"><i class="fas fa-code"></i></div>
                         <h4>المطور: عبدالرحيم الجياشي</h4>
-                        <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:12px;">
+                        <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:12px;">
                             مصمم ومطور تطبيق نبض التواصل • تواصل معي عبر الحسابات الرسمية التالية:
                         </p>
 
                         <div class="dev-social-row">
                             <div class="dev-social-left">
-                                <i class="fas fa-comments" style="color:var(--accent); font-size:1.1rem;"></i>
+                                <i class="fas fa-comments" style="color:var(--accent); font-size:1.05rem;"></i>
                                 <span>نبض التواصل</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px;">
@@ -3582,7 +3647,7 @@
 
                         <div class="dev-social-row">
                             <div class="dev-social-left">
-                                <i class="fab fa-tiktok" style="color:#ff0050; font-size:1.1rem;"></i>
+                                <i class="fab fa-tiktok" style="color:#ff0050; font-size:1.05rem;"></i>
                                 <span>تيك توك</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px;">
@@ -3595,7 +3660,7 @@
 
                         <div class="dev-social-row">
                             <div class="dev-social-left">
-                                <i class="fab fa-telegram" style="color:#24A1DE; font-size:1.1rem;"></i>
+                                <i class="fab fa-telegram" style="color:#24A1DE; font-size:1.05rem;"></i>
                                 <span>تليجرام</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px;">
@@ -3608,7 +3673,7 @@
 
                         <div class="dev-social-row">
                             <div class="dev-social-left">
-                                <i class="fab fa-instagram" style="color:#E1306C; font-size:1.1rem;"></i>
+                                <i class="fab fa-instagram" style="color:#E1306C; font-size:1.05rem;"></i>
                                 <span>إنستغرام</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px;">
@@ -3643,8 +3708,8 @@
                     <div class="row-left">
                         <div class="row-avatar">${renderAvatarInner(info.avatar, info.displayName)}</div>
                         <div class="row-info">
-                            <div class="rname">${escapeHtml(info.displayName)}</div>
-                            <div class="rlast">@${escapeHtml(k)}</div>
+                            <div class="rname"><span class="name-label">${escapeHtml(info.displayName)}</span></div>
+                            <div class="rlast handle-inline">@${escapeHtml(k)}</div>
                         </div>
                     </div>
                     <button type="button" class="mini-action-btn" onclick="unblockPartner('${escapeJs(k)}')">
@@ -4092,12 +4157,12 @@
             container.innerHTML = invites.map(inv => `
                 <div class="invite-card">
                     <div style="min-width:0; flex:1;">
-                        <div style="font-size:0.84rem; font-weight:900; color:var(--text-main);">
+                        <div style="font-size:0.82rem; font-weight:800; color:var(--text-main);">
                             <i class="fas fa-envelope-open-text" style="color:var(--accent); margin-left:5px;"></i>
                             دعوة لمجموعة: ${escapeHtml(inv.groupName || 'مجموعة')}
                         </div>
-                        <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
-                            دعاك: ${escapeHtml(inv.invitedByName || inv.invitedBy)} (@${escapeHtml(inv.invitedBy)})
+                        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">
+                            دعاك: ${escapeHtml(inv.invitedByName || inv.invitedBy)} <span class="handle-inline">(@${escapeHtml(inv.invitedBy)})</span>
                         </div>
                     </div>
                     <div class="invite-btns">
@@ -4218,8 +4283,8 @@
                         <div class="row-left">
                             <div class="row-avatar">${renderAvatarInner(info.avatar, info.displayName)}</div>
                             <div class="row-info">
-                                <div class="rname">${escapeHtml(info.displayName)} ${isOwnerBadge}</div>
-                                <div class="rlast">@${escapeHtml(mKey)}</div>
+                                <div class="rname"><span class="name-label">${escapeHtml(info.displayName)}</span>${isOwnerBadge}</div>
+                                <div class="rlast handle-inline">@${escapeHtml(mKey)}</div>
                             </div>
                         </div>
                         ${kickBtn}
@@ -4375,10 +4440,10 @@
                         </div>
                         <div class="row-info">
                             <div class="rname">
-                                <span>${escapeHtml(u.displayName)}</span>
+                                <span class="name-label">${escapeHtml(u.displayName)}</span>
                                 ${getBadgesHtml(u.verified, u.vipAdmin)}
                             </div>
-                            <div class="rlast">@${escapeHtml(u.username)} • ${u.online ? 'متصل الآن' : 'غير متصل'}</div>
+                            <div class="rlast"><span class="handle-inline">@${escapeHtml(u.username)}</span> • ${u.online ? 'متصل الآن' : 'غير متصل'}</div>
                         </div>
                     </div>
                     <div class="quick-user-btns" onclick="event.stopPropagation()">
@@ -4512,15 +4577,15 @@
                             </div>
                             <div class="row-info">
                                 <div class="rname">
-                                    <span>${escapeHtml(item.displayName)}</span>
-                                    <span class="group-pill"><i class="fas fa-users"></i> مجموعة • ${item.memberCount || 1}</span>
+                                    <span class="name-label">${escapeHtml(item.displayName)}</span>
+                                    <span class="group-pill"><i class="fas fa-users"></i> ${item.memberCount || 1}</span>
                                 </div>
                                 <div class="rlast">${escapeHtml(item.lastText || 'مجموعة جديدة • ابدأ المحادثة')}</div>
                             </div>
                         </div>
                         <div class="row-right">
                             ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
-                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.82rem;"></i>
+                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.8rem;"></i>
                         </div>
                     `;
                 } else {
@@ -4534,16 +4599,16 @@
                             </div>
                             <div class="row-info">
                                 <div class="rname">
-                                    <span>${escapeHtml(item.displayName)}</span>
+                                    <span class="name-label">${escapeHtml(item.displayName)}</span>
                                     ${getBadgesHtml(item.verified, item.vipAdmin)}
-                                    ${isBlocked ? '<span style="font-size:0.68rem; color:#ff6b8b; margin-right:5px;">(محظور)</span>' : ''}
+                                    ${isBlocked ? '<span style="font-size:0.68rem; color:#ff6b8b; flex-shrink:0;">(محظور)</span>' : ''}
                                 </div>
                                 <div class="rlast">${escapeHtml(item.lastText || item.bio || 'ابدأ المحادثة الآن...')}</div>
                             </div>
                         </div>
                         <div class="row-right">
                             ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
-                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.82rem;"></i>
+                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.8rem;"></i>
                         </div>
                     `;
                 }
@@ -4745,10 +4810,10 @@
                         </div>
                         <div class="row-info">
                             <div class="rname">
-                                <span>${escapeHtml(item.displayName)}</span>
+                                <span class="name-label">${escapeHtml(item.displayName)}</span>
                                 ${getBadgesHtml(item.verified, item.vipAdmin)}
                             </div>
-                            <div class="rlast">${escapeHtml(item.bio)}</div>
+                            <div class="rlast"><span class="handle-inline">@${escapeHtml(item.username)}</span> • ${escapeHtml(item.bio)}</div>
                         </div>
                     </div>
                     <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
@@ -4796,7 +4861,7 @@
 
             document.getElementById('chatHeaderAvatar').innerHTML = '<i class="fas fa-users"></i>';
             document.getElementById('chatTitleText').textContent = groupName;
-            document.getElementById('chatTitleBadges').innerHTML = '<span class="group-pill"><i class="fas fa-users"></i> مجموعة</span>';
+            document.getElementById('chatTitleBadges').innerHTML = `<span class="group-pill"><i class="fas fa-users"></i> ${memberCount}</span>`;
             document.getElementById('copyRoomBtn').style.display = 'none';
             document.getElementById('chatSettingsBtn').style.display = 'inline-flex';
             const statusEl = document.getElementById('chatPartnerStatus');
@@ -4861,6 +4926,8 @@
             renderedMsgSignatureById = {};
             chatInput.value = '';
             lastMessageCount = 0;
+            initialChatScrollPending = true;
+            userScrolledAwayFromBottom = false;
             cancelReply();
             cancelEdit();
             clearPendingImage();
@@ -4876,6 +4943,7 @@
                 renderMessagesList();
             }
 
+            syncViewportHeight();
             pushNavState('chat');
             focusChatInput();
         }
@@ -4886,6 +4954,7 @@
             if (typingRefCurrent && typingCallbackCurrent) typingRefCurrent.off('value', typingCallbackCurrent);
             if (partnerPresenceRef && partnerPresenceCallback) partnerPresenceRef.off('value', partnerPresenceCallback);
             if (groupMetaRef && groupMetaCallback) groupMetaRef.off('value', groupMetaCallback);
+            document.documentElement.style.setProperty('--keyboard-offset', '0px');
             if (activeChatId && currentUser) {
                 db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
             }
@@ -4932,13 +5001,13 @@
 
                 const statusEl = document.getElementById('chatPartnerStatus');
                 if (blockedByMeCache[partnerKey] || blockedMeCache[partnerKey]) {
-                    statusEl.textContent = 'محظور';
+                    statusEl.textContent = `محظور • @${partnerKey}`;
                     statusEl.style.color = '#ff6b8b';
                 } else if (val.online) {
-                    statusEl.textContent = val.bio ? `متصل • ${val.bio}` : 'متصل الآن';
+                    statusEl.textContent = val.bio ? `متصل • ${val.bio}` : `متصل • @${partnerKey}`;
                     statusEl.style.color = 'var(--neon-green)';
                 } else {
-                    statusEl.textContent = val.bio ? `غير متصل • ${val.bio}` : 'غير متصل';
+                    statusEl.textContent = val.bio ? `غير متصل • ${val.bio}` : `@${partnerKey}`;
                     statusEl.style.color = 'var(--text-muted)';
                 }
             });
@@ -4960,6 +5029,7 @@
                 }
                 const count = val.members ? Object.keys(val.members).length : 1;
                 if (val.name) document.getElementById('chatTitleText').textContent = val.name;
+                document.getElementById('chatTitleBadges').innerHTML = `<span class="group-pill"><i class="fas fa-users"></i> ${count}</span>`;
                 const statusEl = document.getElementById('chatPartnerStatus');
                 statusEl.textContent = `${count} أعضاء • اضغط للإدارة`;
                 statusEl.style.color = 'var(--accent)';
@@ -5168,13 +5238,21 @@
             return wrapper;
         }
 
-        function renderMessagesList() {
+        function scrollChatToBottomImmediate() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        function renderMessagesList(forceScrollBottom = false) {
             const data = latestMessagesData;
             const query = (document.getElementById('chatSearchInput')?.value || '').trim().toLowerCase();
 
             if (!data) {
                 renderedMsgSignatureById = {};
-                chatMessages.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:24px; font-size:0.88rem;"><i class="fas fa-comments"></i> لا توجد رسائل بعد. ابدأ المحادثة.</div>';
+                chatMessages.innerHTML = '<div class="empty-state" data-empty-chat="1" style="margin-top:24px;"><i class="fas fa-comments"></i> لا توجد رسائل بعد. ابدأ المحادثة.</div>';
+                initialChatScrollPending = false;
                 return;
             }
 
@@ -5186,7 +5264,7 @@
                 renderedMsgSignatureById = {};
                 chatMessages.innerHTML = '';
                 if (!messagesArray.length) {
-                    chatMessages.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:24px; font-size:0.86rem;">لا توجد نتائج مطابقة للبحث.</div>';
+                    chatMessages.innerHTML = '<div class="empty-state" style="margin-top:24px;">لا توجد نتائج مطابقة للبحث.</div>';
                     return;
                 }
                 const frag = document.createDocumentFragment();
@@ -5207,7 +5285,7 @@
                 }
             });
 
-            let hasNewOrChanged = false;
+            let hasAppendedNewMsg = false;
             messagesArray.forEach((msg) => {
                 if (msg.sender !== currentUser && !msg.read && activeChatId) {
                     db.ref(`chats/${activeChatId}/messages/${msg.id}/read`).set(true).catch(() => {});
@@ -5228,19 +5306,24 @@
                 if (!existingEl) {
                     chatMessages.appendChild(buildMessageElement(msg));
                     renderedMsgSignatureById[msg.id] = sig;
-                    hasNewOrChanged = true;
+                    hasAppendedNewMsg = true;
                 } else if (renderedMsgSignatureById[msg.id] !== sig) {
+                    const prevScrollTop = chatMessages.scrollTop;
                     const freshEl = buildMessageElement(msg);
                     existingEl.replaceWith(freshEl);
                     renderedMsgSignatureById[msg.id] = sig;
-                    hasNewOrChanged = true;
+                    if (!initialChatScrollPending && !forceScrollBottom) {
+                        chatMessages.scrollTop = prevScrollTop;
+                    }
                 }
             });
 
-            if (hasNewOrChanged) {
-                requestAnimationFrame(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                });
+            if (initialChatScrollPending || forceScrollBottom) {
+                initialChatScrollPending = false;
+                userScrolledAwayFromBottom = false;
+                scrollChatToBottomImmediate();
+            } else if (hasAppendedNewMsg && !userScrolledAwayFromBottom) {
+                scrollChatToBottomImmediate();
             }
         }
 
@@ -5279,6 +5362,7 @@
                     const targetEditId = editingMsgId;
                     chatInput.value = '';
                     cancelEdit();
+                    focusChatInput();
                     await db.ref(`chats/${activeChatId}/messages/${targetEditId}`).update({
                         text,
                         edited: true,
@@ -5311,11 +5395,12 @@
                     cancelReply();
                     clearPendingImage();
                     clearPendingAudio();
+                    focusChatInput();
 
                     const pushedRef = db.ref(`chats/${activeChatId}/messages`).push();
                     const tempId = pushedRef.key;
                     latestMessagesData = { ...(latestMessagesData || {}), [tempId]: { id: tempId, ...payload } };
-                    renderMessagesList();
+                    renderMessagesList(true);
 
                     await pushedRef.set(payload);
                 }
@@ -5323,16 +5408,11 @@
                 isTyping = false;
                 clearTimeout(typingTimeout);
                 db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false).catch(() => {});
-                focusChatInput();
             } finally {
                 isSendingMessage = false;
             }
         }
 
-        document.getElementById('sendChatBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            sendMessage();
-        });
         chatInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -5351,7 +5431,11 @@
                 for (let user in typingData) {
                     if (user !== currentUser && typingData[user] === true) otherTyping = true;
                 }
+                const wasVisible = typingIndicator.classList.contains('active');
                 typingIndicator.classList.toggle('active', otherTyping);
+                if (otherTyping && !wasVisible && !userScrolledAwayFromBottom) {
+                    scrollChatToBottomImmediate();
+                }
             });
         }
 
