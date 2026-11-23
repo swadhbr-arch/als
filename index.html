@@ -68,7 +68,7 @@
             touch-action: manipulation !important;
         }
 
-        button, .chat-row-card, .drawer-item, .auth-tab, .theme-card, .story-item {
+        button, .chat-row-card, .drawer-item, .auth-tab, .theme-card, .story-item, .filter-pill {
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
@@ -348,6 +348,7 @@
         }
         .btn-outline:hover { background: var(--accent-secondary); color: #fff; }
         .btn-verify-blue { background: linear-gradient(135deg, #1d9bf0, #0284c7); color: #fff; }
+        .btn-danger { background: linear-gradient(135deg, #ff3b6b, #be123c); color: #fff; }
 
         .main-header {
             background: var(--bg-header);
@@ -382,7 +383,7 @@
         .main-brand-title span { color: var(--accent); }
         .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
-        /* شريط الحالات بأسلوب واتساب */
+        /* شريط الحالات */
         .stories-strip {
             display: flex;
             align-items: flex-start;
@@ -417,9 +418,7 @@
             align-items: center;
             justify-content: center;
         }
-        .story-ring.seen {
-            border-color: #64748b;
-        }
+        .story-ring.seen { border-color: #64748b; }
         .story-ring.add-ring {
             border-style: dashed;
             border-color: var(--text-muted);
@@ -468,7 +467,7 @@
             text-overflow: ellipsis;
         }
 
-        /* عارض الحالات الكامل بأسلوب واتساب */
+        /* عارض الحالات الكامل */
         .wa-story-modal {
             display: none;
             position: fixed;
@@ -484,7 +483,7 @@
         .wa-top-chrome {
             position: relative;
             z-index: 10;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0));
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
             padding: 10px 12px 14px;
             flex-shrink: 0;
         }
@@ -501,15 +500,26 @@
             background: rgba(255, 255, 255, 0.28);
             overflow: hidden;
         }
-        .wa-seg.active, .wa-seg.done {
-            background: #ffffff;
-        }
+        .wa-seg.active, .wa-seg.done { background: #ffffff; }
 
         .wa-header-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+        }
+
+        .wa-expiry-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 1px 8px;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            color: #fde047;
+            font-weight: 800;
+            margin-right: 6px;
         }
 
         .wa-stage {
@@ -533,22 +543,14 @@
             overflow: hidden;
         }
 
-        .wa-media-box video {
-            width: 100%;
-            max-height: 100%;
-            height: auto;
-            object-fit: contain;
-            background: #000;
-            border-radius: 14px;
-        }
-
-        .wa-media-box img {
+        .wa-media-box video, .wa-media-box img {
             width: 100%;
             max-height: 100%;
             height: auto;
             object-fit: contain;
             border-radius: 14px;
         }
+        .wa-media-box video { background: #000; }
 
         .wa-text-only-card {
             width: 100%;
@@ -695,6 +697,30 @@
             border-color: var(--accent);
         }
 
+        .filter-pills-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+        .filter-pills-row::-webkit-scrollbar { display: none; }
+        .filter-pill {
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .filter-pill.active {
+            background: rgba(0, 168, 132, 0.16);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
         .home-search-bar {
             display: none;
             padding: 8px 14px;
@@ -726,7 +752,7 @@
         .chats-list-area::-webkit-scrollbar { width: 4px; }
         .chats-list-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        .quick-add-inline { display: flex; gap: 8px; margin-bottom: 12px; }
+        .quick-add-inline { display: flex; gap: 8px; margin-bottom: 10px; }
         .quick-add-inline input {
             flex: 1;
             padding: 10px 12px;
@@ -748,6 +774,40 @@
             font-size: 0.84rem;
             cursor: pointer;
             white-space: nowrap;
+        }
+
+        /* بطاقة دعوات المجموعات المعلقة */
+        .invite-card {
+            background: linear-gradient(135deg, rgba(0, 168, 132, 0.14), rgba(17, 27, 33, 0.95));
+            border: 1px solid var(--accent);
+            border-radius: 14px;
+            padding: 11px 13px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .invite-btns { display: flex; gap: 6px; flex-shrink: 0; }
+        .btn-accept-inv {
+            background: var(--neon-green);
+            color: #051b0e;
+            border: none;
+            border-radius: 9px;
+            padding: 6px 11px;
+            font-size: 0.76rem;
+            font-weight: 900;
+            cursor: pointer;
+        }
+        .btn-reject-inv {
+            background: rgba(255, 59, 107, 0.16);
+            color: #ff6b8b;
+            border: 1px solid rgba(255, 59, 107, 0.4);
+            border-radius: 9px;
+            padding: 6px 10px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            cursor: pointer;
         }
 
         .chat-row-card {
@@ -841,6 +901,7 @@
             background: rgba(37, 211, 102, 0.09);
         }
         .mini-action-btn.group-add { border-color: rgba(0, 168, 132, 0.35); color: var(--accent); }
+        .mini-action-btn.danger { border-color: rgba(255, 59, 107, 0.35); color: #ff6b8b; }
 
         .unread-badge {
             background: var(--accent);
@@ -1058,6 +1119,30 @@
         .info-card h4 { color: var(--accent); font-size: 0.96rem; font-weight: 900; margin-bottom: 7px; }
         .info-card p { color: var(--text-main); font-size: 0.86rem; }
 
+        .dev-social-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-app);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        .dev-social-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 0.88rem;
+        }
+        .dev-social-handle {
+            direction: ltr;
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 0.86rem;
+        }
+
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .theme-card {
             background: var(--bg-card);
@@ -1087,7 +1172,7 @@
         .confirm-modal.active { display: flex; }
         .confirm-box {
             width: 100%;
-            max-width: 330px;
+            max-width: 340px;
             background: var(--bg-header);
             border: 1px solid var(--border-subtle);
             border-radius: 18px;
@@ -1115,6 +1200,7 @@
             align-items: center;
             gap: 9px;
             min-width: 0;
+            cursor: pointer;
         }
         .chat-header-avatar {
             width: 38px;
@@ -1212,6 +1298,21 @@
         }
         .pinned-bar.active { display: flex; }
         .pinned-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .blocked-notice-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 59, 107, 0.15);
+            border-top: 1px solid rgba(255, 59, 107, 0.4);
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #ff6b8b;
+            flex-shrink: 0;
+            gap: 10px;
+        }
+        .blocked-notice-bar.active { display: flex; }
 
         .chat-messages {
             flex: 1;
@@ -1525,7 +1626,7 @@
 
                     <div class="input-group">
                         <label>الاسم المستعار (يظهر للآخرين):</label>
-                        <input type="text" id="authNickname" placeholder="مثال: أبو ميزر الجياشي" maxlength="28">
+                        <input type="text" id="authNickname" placeholder="مثال: عبدالرحيم الجياشي" maxlength="28">
                     </div>
                 </div>
 
@@ -1568,7 +1669,7 @@
                 </div>
             </div>
 
-            <!-- شريط الحالات بأسلوب واتساب -->
+            <!-- شريط الحالات -->
             <div class="stories-strip" id="storiesStrip"></div>
 
             <div class="home-nav-tabs">
@@ -1592,6 +1693,15 @@
                         <button type="button" onclick="addFriend()"><i class="fas fa-user-plus"></i> إضافة</button>
                     </div>
 
+                    <div class="filter-pills-row">
+                        <button type="button" class="filter-pill active" id="filterAll" onclick="setFeedFilter('all')">الكل</button>
+                        <button type="button" class="filter-pill" id="filterUnread" onclick="setFeedFilter('unread')">غير المقروءة</button>
+                        <button type="button" class="filter-pill" id="filterGroups" onclick="setFeedFilter('groups')">المجموعات</button>
+                    </div>
+
+                    <!-- دعوات المجموعات المعلقة -->
+                    <div id="groupInvitesContainer"></div>
+
                     <div id="unifiedFeedContainer">
                         <div class="empty-state">جاري تحميل المحادثات والمجموعات...</div>
                     </div>
@@ -1614,7 +1724,7 @@
             </div>
         </div>
 
-        <!-- عارض الحالات الكامل بأسلوب واتساب -->
+        <!-- عارض الحالات الكامل -->
         <div class="wa-story-modal" id="waStoryModal">
             <div class="wa-top-chrome">
                 <div class="wa-progress-segments" id="waProgressSegments"></div>
@@ -1626,7 +1736,10 @@
                                 <span id="waStoryName">المستخدم</span>
                                 <span id="waStoryBadges"></span>
                             </span>
-                            <span class="chat-status" id="waStoryTime">الآن</span>
+                            <span class="chat-status">
+                                <span id="waStoryTime">الآن</span>
+                                <span class="wa-expiry-pill" id="waStoryExpiry"><i class="fas fa-hourglass-half"></i> ينتهي خلال 24س</span>
+                            </span>
                         </div>
                     </div>
                     <div class="chat-header-actions">
@@ -1697,6 +1810,11 @@
                     <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
                 </button>
 
+                <button type="button" class="drawer-item" onclick="openSubpanel('blockedUsers')">
+                    <span class="drawer-item-left"><i class="fas fa-ban main-icon" style="color:#ff6b8b;"></i> قائمة المحظورين</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
                 <button type="button" class="drawer-item" onclick="openSubpanel('featured')">
                     <span class="drawer-item-left"><i class="fas fa-crown main-icon"></i> الحسابات المميزة</span>
                     <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
@@ -1746,14 +1864,14 @@
             <div class="subpanel-body" id="subpanelBody"></div>
         </div>
 
-        <!-- نافذة تأكيد الخروج -->
-        <div class="confirm-modal" id="confirmLogoutModal">
+        <!-- نافذة تأكيد الإجراءات -->
+        <div class="confirm-modal" id="confirmActionModal">
             <div class="confirm-box">
-                <h4>تأكيد الخروج</h4>
-                <p>هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟</p>
+                <h4 id="confirmModalTitle">تأكيد الإجراء</h4>
+                <p id="confirmModalDesc">هل أنت متأكد؟</p>
                 <div class="confirm-btns">
-                    <button type="button" class="btn btn-outline" onclick="closeLogoutConfirm()">إلغاء</button>
-                    <button type="button" class="btn" style="background:linear-gradient(135deg,#ff3b6b,#be123c); color:#fff;" onclick="executeLogout()">تأكيد الخروج</button>
+                    <button type="button" class="btn btn-outline" onclick="closeConfirmModal()">إلغاء</button>
+                    <button type="button" class="btn btn-danger" id="confirmModalYesBtn">تأكيد</button>
                 </div>
             </div>
         </div>
@@ -1761,13 +1879,13 @@
         <!-- 4. شاشة الدردشة -->
         <div class="screen" id="chatScreen">
             <div class="chat-header">
-                <div class="chat-header-start">
+                <div class="chat-header-start" onclick="openActiveChatSettings()">
                     <div class="chat-header-avatar" id="chatHeaderAvatar">ع</div>
                     <div class="chat-header-info">
                         <span class="chat-room-code" id="displayChatTitle">
                             <span id="chatTitleText">الدردشة</span>
                             <span id="chatTitleBadges"></span>
-                            <button type="button" class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
+                            <button type="button" class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="event.stopPropagation(); copyActiveRoomCode();">
                                 <i class="fas fa-copy"></i> نسخ الكود
                             </button>
                         </span>
@@ -1775,8 +1893,8 @@
                     </div>
                 </div>
                 <div class="chat-header-actions">
-                    <button type="button" class="icon-btn" id="addGroupMemberBtn" style="display:none;" title="إضافة عضو للمجموعة" onclick="addMemberToActiveGroup()">
-                        <i class="fas fa-user-plus"></i>
+                    <button type="button" class="icon-btn" id="chatSettingsBtn" title="خيارات المحادثة والمجموعة" onclick="openActiveChatSettings()">
+                        <i class="fas fa-sliders"></i>
                     </button>
                     <button type="button" class="icon-btn" title="بحث في الرسائل" onclick="toggleSearchBar()">
                         <i class="fas fa-search"></i>
@@ -1806,6 +1924,11 @@
 
             <div class="typing-indicator" id="typingIndicator">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+
+            <div class="blocked-notice-bar" id="blockedNoticeBar">
+                <span id="blockedNoticeText"><i class="fas fa-ban"></i> تم حظر هذه المحادثة.</span>
+                <button type="button" class="mini-action-btn" id="quickUnblockBtn" style="display:none;" onclick="unblockPartner(activePartner)">فك الحظر</button>
             </div>
 
             <div class="edit-banner" id="editBanner">
@@ -1872,6 +1995,7 @@
         };
 
         const ADMIN_USERNAMES = ['abdulrahim'];
+        const STORY_DURATION_MS = 24 * 60 * 60 * 1000;
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -1880,6 +2004,7 @@
 
         let authMode = 'login';
         let activeHomeTab = 'chats';
+        let activeFeedFilter = 'all';
         let currentUser = null;
         let currentDisplayName = null;
         let currentUserAvatar = '';
@@ -1890,12 +2015,14 @@
         let pendingStoryImage = null;
         let pendingStoryVideo = null;
         let activeViewingStoryId = null;
+        let storyExpiryInterval = null;
 
         let activeChatId = null;
         let activeChatType = null;
         let activeRoomCode = null;
         let activePartner = null;
         let activeGroupId = null;
+        let activeGroupData = null;
         let activeSubpanelType = null;
         let replyingTo = null;
         let editingMsgId = null;
@@ -1905,6 +2032,9 @@
         let userBadgeCache = {};
         let friendsCache = {};
         let groupsCache = {};
+        let groupInvitesCache = {};
+        let blockedByMeCache = {};
+        let blockedMeCache = {};
         let allUsersCache = [];
         let featuredUsersCache = [];
         let storiesCache = [];
@@ -1934,6 +2064,12 @@
         let friendsListenerCallback = null;
         let groupsListenerRef = null;
         let groupsListenerCallback = null;
+        let invitesListenerRef = null;
+        let invitesListenerCallback = null;
+        let blockedByMeRef = null;
+        let blockedByMeCallback = null;
+        let blockedMeRef = null;
+        let blockedMeCallback = null;
         let usersListenerRef = null;
         let usersListenerCallback = null;
         let storiesListenerRef = null;
@@ -1955,6 +2091,7 @@
 
         function focusChatInput() {
             if (!chatScreen.classList.contains('active')) return;
+            if (isChatBlocked()) return;
             requestAnimationFrame(() => {
                 if (document.activeElement !== chatInput) {
                     chatInput.focus();
@@ -1982,8 +2119,8 @@
             }
             dismissKeyboard();
 
-            if (document.getElementById('confirmLogoutModal').classList.contains('active')) {
-                closeLogoutConfirm();
+            if (document.getElementById('confirmActionModal').classList.contains('active')) {
+                closeConfirmModal();
                 return;
             }
             if (document.getElementById('waViewersSheet').classList.contains('active')) {
@@ -2028,6 +2165,22 @@
         function handleToastClick() {
             document.getElementById('inappToast').classList.remove('show');
             if (typeof toastActionPayload === 'function') toastActionPayload();
+        }
+
+        function openConfirmModal(title, desc, yesText, onConfirmFn) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalDesc').textContent = desc;
+            const yesBtn = document.getElementById('confirmModalYesBtn');
+            yesBtn.textContent = yesText || 'تأكيد';
+            yesBtn.onclick = async () => {
+                closeConfirmModal();
+                if (typeof onConfirmFn === 'function') await onConfirmFn();
+            };
+            document.getElementById('confirmActionModal').classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmActionModal').classList.remove('active');
         }
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -2079,6 +2232,18 @@
             const diffHr = Math.floor(diffMin / 60);
             if (diffHr < 24) return `منذ ${diffHr}س`;
             return new Date(ts).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatStoryRemainingTime(createdAt) {
+            const expiresAt = (createdAt || Date.now()) + STORY_DURATION_MS;
+            const remMs = expiresAt - Date.now();
+            if (remMs <= 0) return 'منتهية';
+            const totalMins = Math.floor(remMs / 60000);
+            const hrs = Math.floor(totalMins / 60);
+            const mins = totalMins % 60;
+            if (hrs > 0) return `ينتهي خلال ${hrs}س ${mins}د`;
+            if (mins > 0) return `ينتهي خلال ${mins} دقيقة`;
+            return 'ينتهي خلال أقل من دقيقة';
         }
 
         async function fetchUserBadges(usernameKey) {
@@ -2224,25 +2389,30 @@
 
             if (statusEl) {
                 statusEl.style.color = 'var(--neon-green)';
-                statusEl.textContent = 'تم حفظ الاسم المستعار وصورة الملف الشخصي بنجاح.';
+                statusEl.textContent = 'تم حفظ التعديلات بنجاح.';
             }
             showInAppToast('تم تحديث الملف الشخصي', `الاسم المستعار: ${newNickname}`);
-            setTimeout(() => closeSubpanel(true), 650);
+            setTimeout(() => closeSubpanel(true), 600);
         }
 
-        // نظام الحالات بأسلوب واتساب
+        // نظام الحالات مع مؤقت الانتهاء
         function listenToStories() {
             if (storiesListenerRef && storiesListenerCallback) storiesListenerRef.off('value', storiesListenerCallback);
-            storiesListenerRef = db.ref('stories').limitToLast(50);
+            storiesListenerRef = db.ref('stories').limitToLast(60);
             storiesListenerCallback = storiesListenerRef.on('value', (snap) => {
                 const raw = snap.val() || {};
-                const cutoff = Date.now() - (24 * 60 * 60 * 1000);
+                const cutoff = Date.now() - STORY_DURATION_MS;
                 const list = [];
 
                 Object.entries(raw).forEach(([id, st]) => {
                     if (!st || !st.owner) return;
-                    if (st.timestamp && st.timestamp < cutoff) return;
-                    list.push({ id, ...st });
+                    if (st.timestamp && st.timestamp < cutoff) {
+                        db.ref('stories/' + id).remove().catch(() => {});
+                        return;
+                    }
+                    if (!blockedByMeCache[st.owner] && !blockedMeCache[st.owner]) {
+                        list.push({ id, ...st });
+                    }
                 });
 
                 list.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
@@ -2337,7 +2507,7 @@
             if (file.size > 1500000) {
                 if (statusEl) {
                     statusEl.style.color = '#ff6b8b';
-                    statusEl.textContent = 'حجم الفيديو أكبر من الحد المسموح (1.5 MB). اختر مقطعاً قصيراً جداً.';
+                    statusEl.textContent = 'حجم الفيديو أكبر من الحد المسموح (1.5 MB). اختر مقطعاً قصيراً.';
                 }
                 return;
             }
@@ -2379,6 +2549,7 @@
 
             if (btn) btn.disabled = true;
             try {
+                const now = Date.now();
                 const payload = {
                     owner: currentUser,
                     ownerName: currentDisplayName || currentUser,
@@ -2386,18 +2557,19 @@
                     text: caption,
                     image: pendingStoryImage || '',
                     video: pendingStoryVideo ? pendingStoryVideo.dataUrl : '',
-                    timestamp: Date.now()
+                    timestamp: now,
+                    expiresAt: now + STORY_DURATION_MS
                 };
 
                 await db.ref('stories').push(payload);
                 pendingStoryImage = null;
                 pendingStoryVideo = null;
-                showInAppToast('تم نشر الحالة', 'أصبحت حالتك متاحة الآن بشكل كامل.');
+                showInAppToast('تم نشر الحالة', 'ستبقى حالتك نشطة لمدة 24 ساعة.');
                 closeSubpanel(true);
             } catch (err) {
                 if (statusEl) {
                     statusEl.style.color = '#ff6b8b';
-                    statusEl.textContent = 'تعذر رفع الفيديو أو الحالة بالكامل؛ جرّب مقطعاً أقصر.';
+                    statusEl.textContent = 'تعذر رفع الحالة؛ جرّب مقطعاً أقصر.';
                 }
             } finally {
                 if (btn) btn.disabled = false;
@@ -2442,7 +2614,15 @@
             document.getElementById('waStoryName').textContent = displayName;
             document.getElementById('waStoryBadges').innerHTML = getBadgesHtml(badges.verified, badges.vipAdmin);
             document.getElementById('waStoryTime').textContent = formatRelativeTime(st.timestamp);
+            document.getElementById('waStoryExpiry').innerHTML = `<i class="fas fa-hourglass-half"></i> ${formatStoryRemainingTime(st.timestamp)}`;
             document.getElementById('waDeleteStoryBtn').style.display = st.owner === currentUser ? 'inline-flex' : 'none';
+
+            clearInterval(storyExpiryInterval);
+            storyExpiryInterval = setInterval(() => {
+                const activeSt = storiesCache.find(s => s.id === activeViewingStoryId);
+                if (!activeSt) return;
+                document.getElementById('waStoryExpiry').innerHTML = `<i class="fas fa-hourglass-half"></i> ${formatStoryRemainingTime(activeSt.timestamp)}`;
+            }, 30000);
 
             renderWaStoryView(st);
             document.getElementById('waStoryModal').classList.add('active');
@@ -2556,6 +2736,7 @@
         }
 
         function closeStoryViewer(syncHistory = false) {
+            clearInterval(storyExpiryInterval);
             const vid = document.getElementById('waActiveVideoPlayer');
             if (vid) {
                 try { vid.pause(); } catch (e) {}
@@ -2576,6 +2757,7 @@
             const id = st.id;
             closeStoryViewer(false);
             await db.ref('stories/' + id).remove();
+            showInAppToast('تم حذف الحالة', 'تمت إزالة حالتك بنجاح.');
         }
 
         async function replyToStoryOwner(ownerKey, ownerDisplay, isVer, isVip, avUrl) {
@@ -2659,6 +2841,7 @@
         }
 
         async function toggleVoiceRecording() {
+            if (isChatBlocked()) return;
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') return;
             if (isRecordingVoice && mediaRecorder) {
                 stopVoiceRecording();
@@ -2760,6 +2943,7 @@
         }
 
         async function handleImageFileSelected(event) {
+            if (isChatBlocked()) return;
             const file = event.target.files && event.target.files[0];
             event.target.value = '';
             if (!file || !file.type.startsWith('image/')) return;
@@ -2822,6 +3006,130 @@
             }
         }
 
+        // نظام الحظر وإزالة الأصدقاء وحذف المحادثات
+        function listenToBlockLists() {
+            if (blockedByMeRef && blockedByMeCallback) blockedByMeRef.off('value', blockedByMeCallback);
+            if (blockedMeRef && blockedMeCallback) blockedMeRef.off('value', blockedMeCallback);
+
+            blockedByMeRef = db.ref('blocks/' + currentUser);
+            blockedByMeCallback = blockedByMeRef.on('value', (snap) => {
+                blockedByMeCache = snap.val() || {};
+                updateActiveChatBlockUI();
+                renderActiveHomeTab();
+                if (activeSubpanelType === 'blockedUsers') renderBlockedUsersInSubpanel();
+            });
+
+            blockedMeRef = db.ref('blockedBy/' + currentUser);
+            blockedMeCallback = blockedMeRef.on('value', (snap) => {
+                blockedMeCache = snap.val() || {};
+                updateActiveChatBlockUI();
+                renderActiveHomeTab();
+            });
+        }
+
+        function isChatBlocked() {
+            if (activeChatType !== 'direct' || !activePartner) return false;
+            return !!(blockedByMeCache[activePartner] || blockedMeCache[activePartner]);
+        }
+
+        function updateActiveChatBlockUI() {
+            const bar = document.getElementById('blockedNoticeBar');
+            const textEl = document.getElementById('blockedNoticeText');
+            const unblockBtn = document.getElementById('quickUnblockBtn');
+            const inputArea = document.getElementById('chatInputArea');
+            const emojisBar = document.getElementById('quickEmojis');
+
+            if (!bar || !inputArea) return;
+
+            if (activeChatType === 'direct' && activePartner && (blockedByMeCache[activePartner] || blockedMeCache[activePartner])) {
+                bar.classList.add('active');
+                inputArea.style.display = 'none';
+                emojisBar.style.display = 'none';
+                if (blockedByMeCache[activePartner]) {
+                    textEl.innerHTML = '<i class="fas fa-ban"></i> لقد قمت بحظر هذا المستخدم.';
+                    unblockBtn.style.display = 'inline-flex';
+                } else {
+                    textEl.innerHTML = '<i class="fas fa-ban"></i> لا يمكنك إرسال رسائل لهذا المستخدم.';
+                    unblockBtn.style.display = 'none';
+                }
+            } else {
+                bar.classList.remove('active');
+                inputArea.style.display = 'flex';
+                emojisBar.style.display = 'flex';
+            }
+        }
+
+        async function blockPartner(targetKey) {
+            const key = sanitizeKey(targetKey);
+            if (!key || key === currentUser) return;
+            await db.ref(`blocks/${currentUser}/${key}`).set({ blockedAt: Date.now() });
+            await db.ref(`blockedBy/${key}/${currentUser}`).set(true);
+            showInAppToast('تم الحظر', `تم حظر المستخدم @${key}.`);
+        }
+
+        async function unblockPartner(targetKey) {
+            const key = sanitizeKey(targetKey);
+            if (!key) return;
+            await db.ref(`blocks/${currentUser}/${key}`).remove();
+            await db.ref(`blockedBy/${key}/${currentUser}`).remove();
+            showInAppToast('تم فك الحظر', `تم فك الحظر عن @${key}.`);
+        }
+
+        async function removeFriendByKey(targetKey) {
+            const key = sanitizeKey(targetKey);
+            if (!key) return;
+            await db.ref(`friends/${currentUser}/${key}`).remove();
+            delete friendsCache[key];
+            showInAppToast('تمت الإزالة', `تمت إزالة @${key} من قائمة الأصدقاء.`);
+            if (activePartner === key) {
+                closeSubpanel(false);
+                backToHome(true);
+            } else {
+                renderActiveHomeTab();
+            }
+        }
+
+        async function deleteActiveChatHistory() {
+            if (!activeChatId) return;
+            await db.ref(`chats/${activeChatId}/messages`).remove();
+            await db.ref(`chats/${activeChatId}/pinned`).remove();
+            latestMessagesData = null;
+            renderMessagesList();
+            showInAppToast('تم حذف المحادثة', 'تم مسح جميع الرسائل في هذه المحادثة.');
+        }
+
+        function exportActiveChatTxt() {
+            if (!latestMessagesData) {
+                showInAppToast('لا توجد رسائل', 'المحادثة فارغة حالياً.');
+                return;
+            }
+            const msgs = Object.values(latestMessagesData).sort((a, b) => a.timestamp - b.timestamp);
+            const title = document.getElementById('chatTitleText').textContent || 'محادثة';
+            let content = `سجل محادثة: ${title}\nالتطبيق: نبض التواصل\n====================================\n\n`;
+            msgs.forEach(m => {
+                const time = new Date(m.timestamp).toLocaleString('ar-EG');
+                const body = m.text || (m.image ? '[صورة]' : (m.audio ? '[رسالة صوتية]' : ''));
+                content += `[${time}] ${m.senderName || m.sender}: ${body}\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nabd_${sanitizeKey(title)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showInAppToast('تم التصدير', 'تم حفظ نسخة نصية من المحادثة.');
+        }
+
+        function openActiveChatSettings() {
+            if (!activeChatId) return;
+            if (activeChatType === 'direct' && activePartner) {
+                openSubpanel('directSettings', { partnerKey: activePartner });
+            } else if (activeChatType === 'group' && activeGroupId) {
+                openSubpanel('groupSettings', { groupId: activeGroupId });
+            }
+        }
+
         function openSubpanel(type, extraData = null) {
             activeSubpanelType = type;
             const modal = document.getElementById('subpanelModal');
@@ -2832,7 +3140,7 @@
             if (type === 'createStory') {
                 pendingStoryImage = null;
                 pendingStoryVideo = null;
-                titleEl.textContent = 'نشر حالة جديدة';
+                titleEl.textContent = 'نشر حالة جديدة (تنتهي بعد 24 ساعة)';
                 bodyEl.innerHTML = `
                     <div class="info-card">
                         <h4>شارك نصاً أو صورة أو فيديو قصير</h4>
@@ -2903,22 +3211,83 @@
                         <div class="admin-status-msg" id="profileStatusMsg"></div>
                     </div>
                 `;
+            } else if (type === 'directSettings' && extraData && extraData.partnerKey) {
+                const pKey = extraData.partnerKey;
+                const info = userBadgeCache[pKey] || friendsCache[pKey] || {};
+                const pName = info.displayName || pKey;
+                const isBlocked = !!blockedByMeCache[pKey];
+                const isFriend = !!friendsCache[pKey];
+
+                titleEl.textContent = 'خيارات المحادثة والصديق';
+                bodyEl.innerHTML = `
+                    <div class="info-card" style="text-align:center;">
+                        <div class="avatar-picker-circle" style="margin:0 auto 10px; border-style:solid; cursor:default;">
+                            ${renderAvatarInner(info.avatar, pName)}
+                        </div>
+                        <h4>${escapeHtml(pName)} ${getBadgesHtml(info.verified, info.vipAdmin)}</h4>
+                        <p style="color:var(--accent); font-weight:800;">@${escapeHtml(pKey)}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>إدارة المحادثة</h4>
+                        <button type="button" class="btn" style="margin-bottom:8px;" onclick="exportActiveChatTxt()">
+                            <i class="fas fa-file-export"></i> تصدير المحادثة كملف نصي
+                        </button>
+                        <button type="button" class="btn btn-outline" style="margin-bottom:8px;" onclick="openConfirmModal('حذف المحادثة', 'سيتم مسح جميع الرسائل في هذه المحادثة نهائياً. هل أنت متأكد؟', 'حذف الرسائل', async () => { await deleteActiveChatHistory(); closeSubpanel(true); })">
+                            <i class="fas fa-broom"></i> مسح سجل المحادثة بالكامل
+                        </button>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>الخصوصية والأصدقاء</h4>
+                        ${isFriend ? `
+                            <button type="button" class="btn btn-outline" style="margin-bottom:8px;" onclick="openConfirmModal('إزالة صديق', 'هل تريد إزالة ${escapeJs(pName)} من قائمة أصدقائك؟', 'إزالة الصديق', async () => { await removeFriendByKey('${escapeJs(pKey)}'); })">
+                                <i class="fas fa-user-minus"></i> إزالة من الأصدقاء
+                            </button>
+                        ` : `
+                            <button type="button" class="btn" style="margin-bottom:8px;" onclick="quickAddFriendByKey('${escapeJs(pKey)}', '${escapeJs(pName)}', false); closeSubpanel(true);">
+                                <i class="fas fa-user-plus"></i> إضافة إلى الأصدقاء
+                            </button>
+                        `}
+
+                        ${isBlocked ? `
+                            <button type="button" class="btn" onclick="unblockPartner('${escapeJs(pKey)}'); closeSubpanel(true);">
+                                <i class="fas fa-unlock"></i> فك الحظر عن ${escapeHtml(pName)}
+                            </button>
+                        ` : `
+                            <button type="button" class="btn btn-danger" onclick="openConfirmModal('حظر المستخدم', 'لن يتمكن ${escapeJs(pName)} من مراسلتك أو رؤية حالاتك. هل تريد المتابعة؟', 'تأكيد الحظر', async () => { await blockPartner('${escapeJs(pKey)}'); closeSubpanel(true); })">
+                                <i class="fas fa-ban"></i> حظر ${escapeHtml(pName)}
+                            </button>
+                        `}
+                    </div>
+                `;
+            } else if (type === 'groupSettings' && extraData && extraData.groupId) {
+                titleEl.textContent = 'إدارة المجموعة';
+                bodyEl.innerHTML = '<div id="groupSettingsContent"><div class="empty-state">جاري تحميل بيانات المجموعة...</div></div>';
+                renderGroupSettingsPanel(extraData.groupId);
+            } else if (type === 'blockedUsers') {
+                titleEl.textContent = 'قائمة المحظورين';
+                bodyEl.innerHTML = '<div id="blockedUsersListPanel"></div>';
+                renderBlockedUsersInSubpanel();
             } else if (type === 'createGroup') {
                 const prefillMember = extraData && extraData.prefillMember ? extraData.prefillMember : '';
                 titleEl.textContent = 'إنشاء مجموعة جديدة';
                 bodyEl.innerHTML = `
                     <div class="info-card">
                         <h4>بيانات المجموعة</h4>
+                        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+                            سيتم إرسال دعوة انضمام للأعضاء المختارين، ولن يدخلوا المجموعة إلا بعد موافقتهم.
+                        </p>
                         <div class="input-group">
                             <label>اسم المجموعة:</label>
                             <input type="text" id="newGroupNameInput" placeholder="مثال: شلة الأبطال" maxlength="32">
                         </div>
                         <div class="input-group">
-                            <label>أسماء مستخدمي الأعضاء (مفصولة بفاصلة أو مسافة):</label>
+                            <label>أسماء مستخدمي الأعضاء المدعوين (مفصولة بفاصلة أو مسافة):</label>
                             <textarea id="newGroupMembersInput" rows="3" placeholder="مثال: ali_ahmed, sara99">${escapeHtml(prefillMember)}</textarea>
                         </div>
                         <button type="button" class="btn" id="createGroupBtn" onclick="createNewGroup()">
-                            <i class="fas fa-users"></i> إنشاء المجموعة والبدء
+                            <i class="fas fa-users"></i> إنشاء المجموعة وإرسال الدعوات
                         </button>
                         <div class="admin-status-msg" id="groupStatusMsg"></div>
                     </div>
@@ -2926,12 +3295,12 @@
             } else if (type === 'selectGroupForUser' && extraData && extraData.username) {
                 const targetUser = extraData.username;
                 const targetDisplay = extraData.displayName || targetUser;
-                titleEl.textContent = `إضافة ${targetDisplay} إلى مجموعة`;
+                titleEl.textContent = `دعوة ${targetDisplay} إلى مجموعة`;
                 const groupList = Object.values(groupsCache);
                 let cardsHtml = '';
                 groupList.forEach(g => {
                     cardsHtml += `
-                        <div class="chat-row-card" onclick="addUserToSpecificGroup('${escapeJs(targetUser)}', '${escapeJs(targetDisplay)}', '${escapeJs(g.groupId)}', '${escapeJs(g.displayName)}')">
+                        <div class="chat-row-card" onclick="inviteUserToSpecificGroup('${escapeJs(targetUser)}', '${escapeJs(targetDisplay)}', '${escapeJs(g.groupId)}', '${escapeJs(g.displayName)}')">
                             <div class="row-left">
                                 <div class="row-avatar group-av"><i class="fas fa-users"></i></div>
                                 <div class="row-info">
@@ -2939,16 +3308,16 @@
                                     <div class="rlast">${g.memberCount || 1} أعضاء</div>
                                 </div>
                             </div>
-                            <span class="mini-action-btn group-add"><i class="fas fa-plus"></i> إضافة</span>
+                            <span class="mini-action-btn group-add"><i class="fas fa-paper-plane"></i> إرسال دعوة</span>
                         </div>
                     `;
                 });
                 bodyEl.innerHTML = `
                     <div class="info-card">
-                        <h4>اختر مجموعة:</h4>
+                        <h4>اختر مجموعة لإرسال الدعوة:</h4>
                         ${cardsHtml || '<div class="empty-state">لا توجد مجموعات حالياً.</div>'}
                         <button type="button" class="btn btn-outline" style="margin-top:8px;" onclick="openSubpanel('createGroup', { prefillMember: '${escapeJs(targetUser)}' })">
-                            <i class="fas fa-users"></i> إنشاء مجموعة جديدة تضم ${escapeHtml(targetDisplay)}
+                            <i class="fas fa-users"></i> إنشاء مجموعة جديدة ودعوة ${escapeHtml(targetDisplay)}
                         </button>
                     </div>
                 `;
@@ -3020,21 +3389,105 @@
                 bodyEl.innerHTML = `
                     <div class="info-card">
                         <h4>نبض التواصل</h4>
-                        <p>تطبيق تواصل سريع يدعم الاسم المستعار وصورة الملف الشخصي والحالات بأسلوب واتساب (نصوص، صور، فيديو، تفاعلات، وسجل مشاهدات) والدردشات والمجموعات.</p>
+                        <p>تطبيق تواصل فوري متكامل يدعم المحادثات المباشرة، المجموعات بنظام الدعوة والموافقة، الحالات المؤقتة (24 ساعة)، الرسائل الصوتية، الصور المضغوطة، والحظر وإدارة الأصدقاء.</p>
                     </div>
                 `;
             } else if (type === 'aboutDev') {
                 titleEl.textContent = 'معلومات عن المطور';
                 bodyEl.innerHTML = `
-                    <div class="info-card">
-                        <h4>المطور: عبدالرحيم الجياشي الشمري</h4>
-                        <p>تم تطوير التطبيق ليكون عملياً ومريحاً في الاستخدام اليومي مع شارات توثيق خاصة لحساب المطور والإدارة والحسابات الموثقة.</p>
+                    <div class="info-card" style="text-align:center;">
+                        <div class="brand-logo-circle"><i class="fas fa-code"></i></div>
+                        <h4>المطور: عبدالرحيم الجياشي</h4>
+                        <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:12px;">
+                            مصمم ومطور تطبيق نبض التواصل • تواصل معي عبر الحسابات الرسمية التالية:
+                        </p>
+
+                        <div class="dev-social-row">
+                            <div class="dev-social-left">
+                                <i class="fas fa-comments" style="color:var(--accent); font-size:1.1rem;"></i>
+                                <span>نبض التواصل</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="dev-social-handle">@abdulrahim</span>
+                                <button type="button" class="mini-action-btn" onclick="copyTextToClipboard('abdulrahim'); showInAppToast('تم النسخ', 'تم نسخ معرف المطور @abdulrahim');">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dev-social-row">
+                            <div class="dev-social-left">
+                                <i class="fab fa-tiktok" style="color:#ff0050; font-size:1.1rem;"></i>
+                                <span>تيك توك</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="dev-social-handle">@r_epd</span>
+                                <button type="button" class="mini-action-btn" onclick="copyTextToClipboard('@r_epd'); showInAppToast('تم النسخ', 'تم نسخ حساب تيك توك @r_epd');">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dev-social-row">
+                            <div class="dev-social-left">
+                                <i class="fab fa-telegram" style="color:#24A1DE; font-size:1.1rem;"></i>
+                                <span>تليجرام</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="dev-social-handle">@x_abp</span>
+                                <button type="button" class="mini-action-btn" onclick="copyTextToClipboard('@x_abp'); showInAppToast('تم النسخ', 'تم نسخ حساب تليجرام @x_abp');">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dev-social-row">
+                            <div class="dev-social-left">
+                                <i class="fab fa-instagram" style="color:#E1306C; font-size:1.1rem;"></i>
+                                <span>إنستغرام</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="dev-social-handle">@alsamkark</span>
+                                <button type="button" class="mini-action-btn" onclick="copyTextToClipboard('@alsamkark'); showInAppToast('تم النسخ', 'تم نسخ حساب إنستغرام @alsamkark');">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
 
             modal.classList.add('active');
             pushNavState('subpanel');
+        }
+
+        function renderBlockedUsersInSubpanel() {
+            const container = document.getElementById('blockedUsersListPanel');
+            if (!container) return;
+            const keys = Object.keys(blockedByMeCache);
+            if (!keys.length) {
+                container.innerHTML = '<div class="empty-state">لا يوجد مستخدمون محظورون حالياً.</div>';
+                return;
+            }
+            container.innerHTML = '';
+            keys.forEach(k => {
+                const info = userBadgeCache[k] || { displayName: k, avatar: '' };
+                const div = document.createElement('div');
+                div.className = 'chat-row-card';
+                div.innerHTML = `
+                    <div class="row-left">
+                        <div class="row-avatar">${renderAvatarInner(info.avatar, info.displayName)}</div>
+                        <div class="row-info">
+                            <div class="rname">${escapeHtml(info.displayName)}</div>
+                            <div class="rlast">@${escapeHtml(k)}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="mini-action-btn" onclick="unblockPartner('${escapeJs(k)}')">
+                        <i class="fas fa-unlock"></i> فك الحظر
+                    </button>
+                `;
+                container.appendChild(div);
+            });
         }
 
         function closeSubpanel(syncHistory = false) {
@@ -3046,8 +3499,9 @@
             }
         }
 
-        function askLogoutConfirm() { document.getElementById('confirmLogoutModal').classList.add('active'); }
-        function closeLogoutConfirm() { document.getElementById('confirmLogoutModal').classList.remove('active'); }
+        function askLogoutConfirm() {
+            openConfirmModal('تأكيد الخروج', 'هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟', 'تأكيد الخروج', executeLogout);
+        }
 
         function switchAuthMode(mode) {
             authMode = mode;
@@ -3177,8 +3631,10 @@
             chatScreen.classList.remove('active');
             switchHomeTab('chats');
 
+            listenToBlockLists();
             listenToFriends();
             listenToGroups();
+            listenToGroupInvites();
             listenToAllUsers();
             listenToStories();
         }
@@ -3191,7 +3647,7 @@
         }
 
         function executeLogout() {
-            closeLogoutConfirm();
+            closeConfirmModal();
             closeSideDrawer(false);
             closeSubpanel(false);
             closeStoryViewer(false);
@@ -3204,11 +3660,17 @@
 
             if (friendsListenerRef && friendsListenerCallback) friendsListenerRef.off('value', friendsListenerCallback);
             if (groupsListenerRef && groupsListenerCallback) groupsListenerRef.off('value', groupsListenerCallback);
+            if (invitesListenerRef && invitesListenerCallback) invitesListenerRef.off('value', invitesListenerCallback);
+            if (blockedByMeRef && blockedByMeCallback) blockedByMeRef.off('value', blockedByMeCallback);
+            if (blockedMeRef && blockedMeCallback) blockedMeRef.off('value', blockedMeCallback);
             if (usersListenerRef && usersListenerCallback) usersListenerRef.off('value', usersListenerCallback);
             if (storiesListenerRef && storiesListenerCallback) storiesListenerRef.off('value', storiesListenerCallback);
 
             friendsCache = {};
             groupsCache = {};
+            groupInvitesCache = {};
+            blockedByMeCache = {};
+            blockedMeCache = {};
             allUsersCache = [];
             featuredUsersCache = [];
             storiesCache = [];
@@ -3262,9 +3724,20 @@
             renderActiveHomeTab();
         }
 
+        function setFeedFilter(filterName) {
+            activeFeedFilter = filterName;
+            document.getElementById('filterAll').classList.toggle('active', filterName === 'all');
+            document.getElementById('filterUnread').classList.toggle('active', filterName === 'unread');
+            document.getElementById('filterGroups').classList.toggle('active', filterName === 'groups');
+            renderUnifiedFeed();
+        }
+
         function renderActiveHomeTab() {
             if (activeHomeTab === 'users') renderAllUsersList();
-            else renderUnifiedFeed();
+            else {
+                renderGroupInvites();
+                renderUnifiedFeed();
+            }
         }
 
         function toggleHomeSearch(show = null) {
@@ -3287,9 +3760,16 @@
         async function quickAddFriendByKey(friendKey, friendDisplay = '', openAfter = false) {
             const key = sanitizeKey(friendKey);
             if (!key || key === currentUser) return;
+            if (blockedByMeCache[key] || blockedMeCache[key]) {
+                showInAppToast('تعذر الإضافة', 'لا يمكن إضافة مستخدم محظور.');
+                return;
+            }
 
             const friendSnap = await db.ref('users/' + key).once('value');
-            if (!friendSnap.exists()) return;
+            if (!friendSnap.exists()) {
+                showInAppToast('غير موجود', `اسم المستخدم @${key} غير مسجل.`);
+                return;
+            }
 
             const friendData = friendSnap.val();
             const display = friendData.displayName || friendDisplay || key;
@@ -3332,33 +3812,250 @@
 
             if (groupsList.length === 1) {
                 const g = groupsList[0];
-                await addUserToSpecificGroup(key, targetDisplay, g.groupId, g.displayName);
+                await inviteUserToSpecificGroup(key, targetDisplay, g.groupId, g.displayName);
             } else {
                 openSubpanel('selectGroupForUser', { username: key, displayName: targetDisplay });
             }
         }
 
-        async function addUserToSpecificGroup(memberKey, memberDisplay, groupId, groupName) {
+        // نظام دعوات المجموعات (الموافقة مطلوبة قبل الدخول)
+        async function inviteUserToSpecificGroup(memberKey, memberDisplay, groupId, groupName) {
             const key = sanitizeKey(memberKey);
-            if (!key || !groupId) return;
+            if (!key || !groupId || key === currentUser) return;
+
+            const uSnap = await db.ref('users/' + key).once('value');
+            if (!uSnap.exists()) {
+                showInAppToast('غير موجود', `المستخدم @${key} غير موجود.`);
+                return;
+            }
 
             const gSnap = await db.ref('groups/' + groupId).once('value');
             const gVal = gSnap.val() || {};
+            if (gVal.members && gVal.members[key]) {
+                showInAppToast('عضو بالفعل', `${memberDisplay || key} موجود مسبقاً في المجموعة.`);
+                if (activeSubpanelType === 'selectGroupForUser') closeSubpanel(true);
+                return;
+            }
+
             const chatId = gVal.chatId || ('group_' + groupId);
             const gName = gVal.name || groupName || 'مجموعة';
 
-            await db.ref(`groups/${groupId}/members/${key}`).set(true);
-            await db.ref(`userGroups/${key}/${groupId}`).set({
+            await db.ref(`groupInvites/${key}/${groupId}`).set({
                 groupId,
                 chatId,
-                name: gName,
-                addedAt: Date.now()
+                groupName: gName,
+                invitedBy: currentUser,
+                invitedByName: currentDisplayName || currentUser,
+                invitedAt: Date.now()
             });
 
             if (activeSubpanelType === 'selectGroupForUser') {
                 closeSubpanel(true);
             }
-            showInAppToast('تمت الإضافة للمجموعة', `تمت إضافة ${memberDisplay || key} إلى مجموعة "${gName}".`);
+            showInAppToast('تم إرسال الدعوة', `تم إرسال دعوة انضمام إلى ${memberDisplay || key} لمجموعة "${gName}".`);
+        }
+
+        function listenToGroupInvites() {
+            if (invitesListenerRef && invitesListenerCallback) invitesListenerRef.off('value', invitesListenerCallback);
+            groupInvitesCache = {};
+
+            invitesListenerRef = db.ref('groupInvites/' + currentUser);
+            invitesListenerCallback = invitesListenerRef.on('value', (snap) => {
+                groupInvitesCache = snap.val() || {};
+                renderGroupInvites();
+            });
+        }
+
+        function renderGroupInvites() {
+            const container = document.getElementById('groupInvitesContainer');
+            if (!container) return;
+
+            const invites = Object.values(groupInvitesCache).filter(inv => inv && inv.groupId && !blockedByMeCache[inv.invitedBy]);
+            if (!invites.length) {
+                container.innerHTML = '';
+                return;
+            }
+
+            invites.sort((a, b) => (b.invitedAt || 0) - (a.invitedAt || 0));
+            container.innerHTML = invites.map(inv => `
+                <div class="invite-card">
+                    <div style="min-width:0; flex:1;">
+                        <div style="font-size:0.84rem; font-weight:900; color:var(--text-main);">
+                            <i class="fas fa-envelope-open-text" style="color:var(--accent); margin-left:5px;"></i>
+                            دعوة لمجموعة: ${escapeHtml(inv.groupName || 'مجموعة')}
+                        </div>
+                        <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
+                            دعاك: ${escapeHtml(inv.invitedByName || inv.invitedBy)} (@${escapeHtml(inv.invitedBy)})
+                        </div>
+                    </div>
+                    <div class="invite-btns">
+                        <button type="button" class="btn-accept-inv" onclick="acceptGroupInvite('${escapeJs(inv.groupId)}')">
+                            <i class="fas fa-check"></i> موافقة
+                        </button>
+                        <button type="button" class="btn-reject-inv" onclick="rejectGroupInvite('${escapeJs(inv.groupId)}')">
+                            رفض
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function acceptGroupInvite(groupId) {
+            const inv = groupInvitesCache[groupId];
+            if (!inv || !currentUser) return;
+
+            const gSnap = await db.ref('groups/' + groupId).once('value');
+            if (!gSnap.exists()) {
+                await db.ref(`groupInvites/${currentUser}/${groupId}`).remove();
+                showInAppToast('تعذر الانضمام', 'هذه المجموعة لم تعد موجودة.');
+                return;
+            }
+
+            const gVal = gSnap.val();
+            const chatId = gVal.chatId || inv.chatId || ('group_' + groupId);
+            const gName = gVal.name || inv.groupName || 'مجموعة';
+
+            await db.ref(`groups/${groupId}/members/${currentUser}`).set(true);
+            await db.ref(`userGroups/${currentUser}/${groupId}`).set({
+                groupId,
+                chatId,
+                name: gName,
+                addedAt: Date.now()
+            });
+            await db.ref(`groupInvites/${currentUser}/${groupId}`).remove();
+
+            showInAppToast('تم الانضمام للمجموعة', `أصبحت الآن عضواً في "${gName}".`);
+        }
+
+        async function rejectGroupInvite(groupId) {
+            if (!currentUser || !groupId) return;
+            await db.ref(`groupInvites/${currentUser}/${groupId}`).remove();
+            showInAppToast('تم رفض الدعوة', 'تم رفض دعوة الانضمام للمجموعة.');
+        }
+
+        async function leaveGroupById(groupId) {
+            if (!currentUser || !groupId) return;
+            await db.ref(`groups/${groupId}/members/${currentUser}`).remove();
+            await db.ref(`userGroups/${currentUser}/${groupId}`).remove();
+            delete groupsCache[groupId];
+            showInAppToast('غادرت المجموعة', 'تمت مغادرة المجموعة بنجاح.');
+            if (activeGroupId === groupId) {
+                closeSubpanel(false);
+                backToHome(true);
+            } else {
+                renderActiveHomeTab();
+            }
+        }
+
+        async function deleteGroupCompletely(groupId) {
+            if (!currentUser || !groupId) return;
+            const gSnap = await db.ref('groups/' + groupId).once('value');
+            const gVal = gSnap.val() || {};
+            if (gVal.creator !== currentUser) return;
+
+            const members = gVal.members ? Object.keys(gVal.members) : [currentUser];
+            const chatId = gVal.chatId || ('group_' + groupId);
+
+            await Promise.all(members.map(m => db.ref(`userGroups/${m}/${groupId}`).remove()));
+            await db.ref(`chats/${chatId}`).remove();
+            await db.ref(`groups/${groupId}`).remove();
+
+            delete groupsCache[groupId];
+            showInAppToast('تم حذف المجموعة', 'تم حذف المجموعة ورسائلها نهائياً.');
+            if (activeGroupId === groupId) {
+                closeSubpanel(false);
+                backToHome(true);
+            } else {
+                renderActiveHomeTab();
+            }
+        }
+
+        async function removeMemberFromGroup(groupId, memberKey) {
+            if (!groupId || !memberKey) return;
+            await db.ref(`groups/${groupId}/members/${memberKey}`).remove();
+            await db.ref(`userGroups/${memberKey}/${groupId}`).remove();
+            showInAppToast('تمت الإزالة', `تمت إزالة @${memberKey} من المجموعة.`);
+            if (activeSubpanelType === 'groupSettings') renderGroupSettingsPanel(groupId);
+        }
+
+        async function renderGroupSettingsPanel(groupId) {
+            const container = document.getElementById('groupSettingsContent');
+            if (!container) return;
+
+            const gSnap = await db.ref('groups/' + groupId).once('value');
+            if (!gSnap.exists()) {
+                container.innerHTML = '<div class="empty-state">المجموعة غير موجودة.</div>';
+                return;
+            }
+            const gVal = gSnap.val();
+            const isCreator = gVal.creator === currentUser;
+            const memberKeys = gVal.members ? Object.keys(gVal.members) : [];
+
+            await Promise.all(memberKeys.map(m => fetchUserBadges(m)));
+
+            let membersHtml = memberKeys.map(mKey => {
+                const info = userBadgeCache[mKey] || { displayName: mKey, avatar: '' };
+                const isOwnerBadge = mKey === gVal.creator ? '<span class="group-pill">المنشئ</span>' : '';
+                const kickBtn = (isCreator && mKey !== currentUser)
+                    ? `<button type="button" class="mini-action-btn danger" onclick="removeMemberFromGroup('${escapeJs(groupId)}', '${escapeJs(mKey)}')"><i class="fas fa-user-xmark"></i> إزالة</button>`
+                    : '';
+                return `
+                    <div class="chat-row-card" style="cursor:default;">
+                        <div class="row-left">
+                            <div class="row-avatar">${renderAvatarInner(info.avatar, info.displayName)}</div>
+                            <div class="row-info">
+                                <div class="rname">${escapeHtml(info.displayName)} ${isOwnerBadge}</div>
+                                <div class="rlast">@${escapeHtml(mKey)}</div>
+                            </div>
+                        </div>
+                        ${kickBtn}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="info-card">
+                    <h4>${escapeHtml(gVal.name || 'مجموعة')}</h4>
+                    <p>عدد الأعضاء: <strong>${memberKeys.length}</strong></p>
+                    <div class="input-group" style="margin-top:10px;">
+                        <label>إرسال دعوة لعضو جديد (باسم المستخدم):</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="inviteGroupMemberInput" placeholder="مثال: ali_ahmed" maxlength="20">
+                            <button type="button" class="btn" style="width:auto; padding:0 16px;" onclick="sendInviteFromGroupPanel('${escapeJs(groupId)}', '${escapeJs(gVal.name || 'مجموعة')}')">
+                                دعوة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>الأعضاء (${memberKeys.length})</h4>
+                    ${membersHtml}
+                </div>
+
+                <div class="info-card">
+                    <h4>إجراءات المجموعة</h4>
+                    <button type="button" class="btn" style="margin-bottom:8px;" onclick="exportActiveChatTxt()">
+                        <i class="fas fa-file-export"></i> تصدير رسائل المجموعة
+                    </button>
+                    <button type="button" class="btn btn-outline" style="margin-bottom:8px;" onclick="openConfirmModal('مغادرة المجموعة', 'هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟', 'مغادرة', async () => { await leaveGroupById('${escapeJs(groupId)}'); })">
+                        <i class="fas fa-right-from-bracket"></i> مغادرة المجموعة
+                    </button>
+                    ${isCreator ? `
+                        <button type="button" class="btn btn-danger" onclick="openConfirmModal('حذف المجموعة نهائياً', 'سيتم حذف المجموعة وجميع رسائلها لجميع الأعضاء. هل أنت متأكد؟', 'حذف المجموعة', async () => { await deleteGroupCompletely('${escapeJs(groupId)}'); })">
+                            <i class="fas fa-trash"></i> حذف المجموعة بالكامل
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        async function sendInviteFromGroupPanel(groupId, groupName) {
+            const input = document.getElementById('inviteGroupMemberInput');
+            const key = sanitizeKey(input?.value || '');
+            if (!key) return;
+            input.value = '';
+            await inviteUserToSpecificGroup(key, key, groupId, groupName);
         }
 
         async function startChatWithRegisteredUser(userItem) {
@@ -3425,7 +4122,7 @@
             if (!container) return;
 
             const q = (document.getElementById('homeSearchInput')?.value || '').trim().toLowerCase();
-            let items = allUsersCache;
+            let items = allUsersCache.filter(u => !blockedByMeCache[u.username] && !blockedMeCache[u.username]);
             if (q) {
                 items = items.filter(u =>
                     (u.displayName || '').toLowerCase().includes(q) ||
@@ -3464,7 +4161,7 @@
                             <i class="fas ${isAlreadyFriend ? 'fa-check' : 'fa-user-plus'}"></i> صديق
                         </button>
                         <button type="button" class="mini-action-btn group-add" onclick="handleQuickAddToGroup('${escapeJs(u.username)}', '${escapeJs(u.displayName)}')">
-                            <i class="fas fa-users"></i> مجموعة
+                            <i class="fas fa-users"></i> دعوة
                         </button>
                     </div>
                 `;
@@ -3484,59 +4181,48 @@
                 return;
             }
 
-            const rawMembers = (membersInput?.value || '').split(/[\s,،]+/).map(sanitizeKey).filter(Boolean);
-            const membersSet = new Set([currentUser, ...rawMembers]);
-            const membersObj = {};
-            membersSet.forEach(m => { membersObj[m] = true; });
+            const rawInvited = (membersInput?.value || '').split(/[\s,،]+/).map(sanitizeKey).filter(m => m && m !== currentUser);
+            const invitedSet = new Set(rawInvited);
 
             const groupId = 'grp_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
             const chatId = 'group_' + groupId;
+            const cleanName = groupName.slice(0, 32);
 
+            // المنشئ فقط يدخل فوراً، والبقية تصلهم دعوة للموافقة
             await db.ref('groups/' + groupId).set({
                 id: groupId,
                 chatId,
-                name: groupName.slice(0, 32),
+                name: cleanName,
                 creator: currentUser,
-                members: membersObj,
+                members: { [currentUser]: true },
                 createdAt: Date.now()
             });
 
-            await Promise.all(Array.from(membersSet).map(async (memberKey) => {
+            await db.ref(`userGroups/${currentUser}/${groupId}`).set({
+                groupId,
+                chatId,
+                name: cleanName,
+                addedAt: Date.now()
+            });
+
+            await Promise.all(Array.from(invitedSet).map(async (memberKey) => {
                 const uSnap = await db.ref('users/' + memberKey).once('value');
                 if (uSnap.exists()) {
-                    await db.ref(`userGroups/${memberKey}/${groupId}`).set({
+                    await db.ref(`groupInvites/${memberKey}/${groupId}`).set({
                         groupId,
                         chatId,
-                        name: groupName.slice(0, 32),
-                        addedAt: Date.now()
+                        groupName: cleanName,
+                        invitedBy: currentUser,
+                        invitedByName: currentDisplayName || currentUser,
+                        invitedAt: Date.now()
                     });
                 }
             }));
 
-            openGroupChat(groupId, groupName.slice(0, 32), chatId, Object.keys(membersObj).length);
-        }
-
-        async function addMemberToActiveGroup() {
-            if (!activeGroupId || activeChatType !== 'group') return;
-            const raw = prompt('أدخل اسم مستخدم العضو الجديد لإضافته للمجموعة:');
-            const memberKey = sanitizeKey(raw || '');
-            if (!memberKey) return;
-
-            const uSnap = await db.ref('users/' + memberKey).once('value');
-            if (!uSnap.exists()) return;
-
-            const gSnap = await db.ref('groups/' + activeGroupId).once('value');
-            const gVal = gSnap.val() || {};
-            const chatId = gVal.chatId || ('group_' + activeGroupId);
-            const gName = gVal.name || 'مجموعة';
-
-            await db.ref(`groups/${activeGroupId}/members/${memberKey}`).set(true);
-            await db.ref(`userGroups/${memberKey}/${activeGroupId}`).set({
-                groupId: activeGroupId,
-                chatId,
-                name: gName,
-                addedAt: Date.now()
-            });
+            if (invitedSet.size > 0) {
+                showInAppToast('تم إنشاء المجموعة', `تم إرسال ${invitedSet.size} دعوة انضمام للأعضاء.`);
+            }
+            openGroupChat(groupId, cleanName, chatId, 1);
         }
 
         function renderUnifiedFeed() {
@@ -3549,6 +4235,12 @@
                 ...Object.values(groupsCache).map(g => ({ ...g, kind: 'group' }))
             ];
 
+            if (activeFeedFilter === 'unread') {
+                combined = combined.filter(item => (item.unreadCount || 0) > 0);
+            } else if (activeFeedFilter === 'groups') {
+                combined = combined.filter(item => item.kind === 'group');
+            }
+
             if (q) {
                 combined = combined.filter(item =>
                     (item.displayName || '').toLowerCase().includes(q) ||
@@ -3558,8 +4250,8 @@
             }
 
             if (!combined.length) {
-                container.innerHTML = q
-                    ? '<div class="empty-state">لا توجد نتائج مطابقة للبحث.</div>'
+                container.innerHTML = q || activeFeedFilter !== 'all'
+                    ? '<div class="empty-state">لا توجد نتائج مطابقة حالياً.</div>'
                     : '<div class="empty-state"><i class="fas fa-comments" style="font-size:1.8rem; margin-bottom:8px; display:block; opacity:0.55;"></i>لا توجد محادثات أو مجموعات بعد.<br>اختر مستخدماً من تبويب <strong>المستخدمون</strong> أو أنشئ مجموعة جديدة.</div>';
                 return;
             }
@@ -3591,17 +4283,19 @@
                         </div>
                     `;
                 } else {
+                    const isBlocked = !!(blockedByMeCache[item.username] || blockedMeCache[item.username]);
                     div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin, item.avatar || '');
                     div.innerHTML = `
                         <div class="row-left">
                             <div class="row-avatar">
                                 ${renderAvatarInner(item.avatar, item.displayName)}
-                                <span class="status-dot ${item.online ? 'online' : ''}"></span>
+                                <span class="status-dot ${item.online && !isBlocked ? 'online' : ''}"></span>
                             </div>
                             <div class="row-info">
                                 <div class="rname">
                                     <span>${escapeHtml(item.displayName)}</span>
                                     ${getBadgesHtml(item.verified, item.vipAdmin)}
+                                    ${isBlocked ? '<span style="font-size:0.68rem; color:#ff6b8b; margin-right:5px;">(محظور)</span>' : ''}
                                 </div>
                                 <div class="rlast">${escapeHtml(item.lastText || item.bio || 'ابدأ المحادثة الآن...')}</div>
                             </div>
@@ -3644,7 +4338,8 @@
                         unreadCount = msgs.filter(m => m.sender !== currentUser && !m.read).length;
 
                         const prevTs = lastSeenMsgTimestampByChat[chatId] || 0;
-                        if (prevTs > 0 && last.timestamp > prevTs && last.sender !== currentUser && activeChatId !== chatId) {
+                        const senderBlocked = !!(blockedByMeCache[last.sender] || blockedMeCache[last.sender]);
+                        if (prevTs > 0 && last.timestamp > prevTs && last.sender !== currentUser && activeChatId !== chatId && !senderBlocked) {
                             showInAppToast(
                                 metaInfo.kind === 'group' ? `${targetObj.displayName} • ${last.senderName || last.sender}` : (last.senderName || targetObj.displayName),
                                 summary || 'رسالة جديدة',
@@ -3744,6 +4439,10 @@
 
                 await Promise.all(Object.values(grpObj).map(async (g) => {
                     const gSnap = await db.ref('groups/' + g.groupId).once('value');
+                    if (!gSnap.exists()) {
+                        delete groupsCache[g.groupId];
+                        return;
+                    }
                     const gVal = gSnap.val() || {};
                     const memberCount = gVal.members ? Object.keys(gVal.members).length : 1;
                     const chatId = gVal.chatId || g.chatId || ('group_' + g.groupId);
@@ -3812,6 +4511,7 @@
             activeRoomCode = null;
             activePartner = partnerKey;
             activeGroupId = null;
+            activeGroupData = null;
             activeChatId = chatId;
 
             const isVip = !!(partnerVipAdmin || isAdminUsername(partnerKey));
@@ -3822,9 +4522,10 @@
             document.getElementById('chatTitleText').textContent = partnerDisplay;
             document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(partnerVerified || isVip, isVip);
             document.getElementById('copyRoomBtn').style.display = 'none';
-            document.getElementById('addGroupMemberBtn').style.display = 'none';
+            document.getElementById('chatSettingsBtn').style.display = 'inline-flex';
 
             enterChatScreen();
+            updateActiveChatBlockUI();
             listenPartnerPresence(partnerKey);
             listenPinnedMessage();
             listenForMessages();
@@ -3844,12 +4545,13 @@
             document.getElementById('chatTitleText').textContent = groupName;
             document.getElementById('chatTitleBadges').innerHTML = '<span class="group-pill"><i class="fas fa-users"></i> مجموعة</span>';
             document.getElementById('copyRoomBtn').style.display = 'none';
-            document.getElementById('addGroupMemberBtn').style.display = 'inline-flex';
+            document.getElementById('chatSettingsBtn').style.display = 'inline-flex';
             const statusEl = document.getElementById('chatPartnerStatus');
-            statusEl.textContent = `${memberCount} أعضاء`;
+            statusEl.textContent = `${memberCount} أعضاء • اضغط للإدارة`;
             statusEl.style.color = 'var(--accent)';
 
             enterChatScreen();
+            updateActiveChatBlockUI();
             listenGroupMeta(groupId);
             listenPinnedMessage();
             listenForMessages();
@@ -3874,18 +4576,20 @@
             activeRoomCode = code;
             activePartner = null;
             activeGroupId = null;
+            activeGroupData = null;
             activeChatId = 'room_' + code;
 
             document.getElementById('chatHeaderAvatar').innerHTML = '<i class="fas fa-hashtag"></i>';
             document.getElementById('chatTitleText').textContent = `الغرفة: ${code}`;
             document.getElementById('chatTitleBadges').innerHTML = '';
             document.getElementById('copyRoomBtn').style.display = 'inline-block';
-            document.getElementById('addGroupMemberBtn').style.display = 'none';
+            document.getElementById('chatSettingsBtn').style.display = 'none';
             const statusEl = document.getElementById('chatPartnerStatus');
             statusEl.textContent = 'غرفة نشطة';
             statusEl.style.color = 'var(--neon-green)';
 
             enterChatScreen();
+            updateActiveChatBlockUI();
             listenPinnedMessage();
             listenForMessages();
             listenForTyping();
@@ -3894,6 +4598,7 @@
         function copyActiveRoomCode() {
             if (!activeRoomCode) return;
             navigator.clipboard?.writeText(activeRoomCode);
+            showInAppToast('تم النسخ', `تم نسخ كود الغرفة ${activeRoomCode}`);
         }
 
         function enterChatScreen() {
@@ -3934,6 +4639,7 @@
             activeRoomCode = null;
             activePartner = null;
             activeGroupId = null;
+            activeGroupData = null;
             cancelReply();
             cancelEdit();
             clearPendingImage();
@@ -3965,7 +4671,10 @@
                 document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(isVer, isVip);
 
                 const statusEl = document.getElementById('chatPartnerStatus');
-                if (val.online) {
+                if (blockedByMeCache[partnerKey] || blockedMeCache[partnerKey]) {
+                    statusEl.textContent = 'محظور';
+                    statusEl.style.color = '#ff6b8b';
+                } else if (val.online) {
                     statusEl.textContent = val.bio ? `متصل • ${val.bio}` : 'متصل الآن';
                     statusEl.style.color = 'var(--neon-green)';
                 } else {
@@ -3979,11 +4688,20 @@
             if (groupMetaRef && groupMetaCallback) groupMetaRef.off('value', groupMetaCallback);
             groupMetaRef = db.ref('groups/' + groupId);
             groupMetaCallback = groupMetaRef.on('value', (snap) => {
+                if (!snap.exists()) {
+                    backToHome(true);
+                    return;
+                }
                 const val = snap.val() || {};
+                activeGroupData = val;
+                if (!val.members || !val.members[currentUser]) {
+                    backToHome(true);
+                    return;
+                }
                 const count = val.members ? Object.keys(val.members).length : 1;
                 if (val.name) document.getElementById('chatTitleText').textContent = val.name;
                 const statusEl = document.getElementById('chatPartnerStatus');
-                statusEl.textContent = `${count} أعضاء`;
+                statusEl.textContent = `${count} أعضاء • اضغط للإدارة`;
                 statusEl.style.color = 'var(--accent)';
             });
         }
@@ -4090,7 +4808,7 @@
                 if (currentCount > lastMessageCount && lastMessageCount !== 0) {
                     const msgs = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
                     const lastMsg = msgs[msgs.length - 1];
-                    if (lastMsg.sender !== currentUser) playNotificationSound();
+                    if (lastMsg.sender !== currentUser && !blockedByMeCache[lastMsg.sender]) playNotificationSound();
                 }
                 lastMessageCount = currentCount;
                 latestMessagesData = data;
@@ -4227,7 +4945,7 @@
         }
 
         async function sendMessage() {
-            if (isSendingMessage) return;
+            if (isSendingMessage || isChatBlocked()) return;
 
             if (isRecordingVoice) {
                 stopVoiceRecording();
@@ -4310,7 +5028,7 @@
             typingRefCurrent = db.ref(`chats/${activeChatId}/typing`);
             typingCallbackCurrent = typingRefCurrent.on('value', (snapshot) => {
                 const typingData = snapshot.val();
-                if (!typingData) return typingIndicator.classList.remove('active');
+                if (!typingData || isChatBlocked()) return typingIndicator.classList.remove('active');
 
                 let otherTyping = false;
                 for (let user in typingData) {
@@ -4321,7 +5039,7 @@
         }
 
         chatInput.addEventListener('input', () => {
-            if (!activeChatId || !currentUser) return;
+            if (!activeChatId || !currentUser || isChatBlocked()) return;
             if (!isTyping) {
                 isTyping = true;
                 db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(true);
