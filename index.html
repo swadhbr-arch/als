@@ -383,7 +383,6 @@
         .main-brand-title span { color: var(--accent); }
         .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
-        /* شريط الحالات */
         .stories-strip {
             display: flex;
             align-items: flex-start;
@@ -467,7 +466,6 @@
             text-overflow: ellipsis;
         }
 
-        /* عارض الحالات الكامل */
         .wa-story-modal {
             display: none;
             position: fixed;
@@ -748,6 +746,7 @@
             overflow-y: auto;
             padding: 12px 14px 92px;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         .chats-list-area::-webkit-scrollbar { width: 4px; }
         .chats-list-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
@@ -776,7 +775,6 @@
             white-space: nowrap;
         }
 
-        /* بطاقة دعوات المجموعات المعلقة */
         .invite-card {
             background: linear-gradient(135deg, rgba(0, 168, 132, 0.14), rgba(17, 27, 33, 0.95));
             border: 1px solid var(--accent);
@@ -821,7 +819,6 @@
             border-radius: 14px;
             margin-bottom: 9px;
             cursor: pointer;
-            transition: background-color 0.12s ease, border-color 0.12s ease;
         }
         .chat-row-card:hover { background: var(--bg-card-hover); border-color: var(--accent); }
         .row-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
@@ -1183,7 +1180,7 @@
         .confirm-box p { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px; }
         .confirm-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        #chatScreen { background: var(--bg-app); }
+        #chatScreen { background: var(--bg-app); position: relative; }
 
         .chat-header {
             background: var(--bg-header);
@@ -1314,6 +1311,7 @@
         }
         .blocked-notice-bar.active { display: flex; }
 
+        /* منطقة الرسائل المسرّعة للتمرير السلس */
         .chat-messages {
             flex: 1;
             padding: 14px 12px;
@@ -1322,11 +1320,39 @@
             flex-direction: column;
             gap: 10px;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            contain: layout style;
+            will-change: scroll-position;
         }
         .chat-messages::-webkit-scrollbar { width: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        .message-wrapper { display: flex; flex-direction: column; max-width: 84%; }
+        .scroll-bottom-btn {
+            position: absolute;
+            bottom: 122px;
+            left: 16px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 15;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+        }
+        .scroll-bottom-btn.visible { display: flex; }
+
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 84%;
+            contain: layout style;
+        }
+        .message-wrapper.hidden-by-search { display: none; }
         .message-wrapper.me { align-self: flex-end; }
         .message-wrapper.other { align-self: flex-start; }
 
@@ -1669,7 +1695,6 @@
                 </div>
             </div>
 
-            <!-- شريط الحالات -->
             <div class="stories-strip" id="storiesStrip"></div>
 
             <div class="home-nav-tabs">
@@ -1699,7 +1724,6 @@
                         <button type="button" class="filter-pill" id="filterGroups" onclick="setFeedFilter('groups')">المجموعات</button>
                     </div>
 
-                    <!-- دعوات المجموعات المعلقة -->
                     <div id="groupInvitesContainer"></div>
 
                     <div id="unifiedFeedContainer">
@@ -1906,7 +1930,7 @@
             </div>
 
             <div class="search-bar-box" id="searchBarBox">
-                <input type="text" id="chatSearchInput" placeholder="ابحث داخل هذه المحادثة..." oninput="renderMessagesList()">
+                <input type="text" id="chatSearchInput" placeholder="ابحث داخل هذه المحادثة..." oninput="applyChatSearchFilter()">
                 <button type="button" class="icon-btn" onclick="toggleSearchBar(false)"><i class="fas fa-times"></i></button>
             </div>
 
@@ -1920,7 +1944,11 @@
                 </button>
             </div>
 
-            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-messages" id="chatMessages" onscroll="handleChatScroll()"></div>
+
+            <button type="button" class="scroll-bottom-btn" id="scrollBottomBtn" title="الانتقال لآخر رسالة" onclick="scrollChatToBottom(true)">
+                <i class="fas fa-chevron-down"></i>
+            </button>
 
             <div class="typing-indicator" id="typingIndicator">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
@@ -2029,6 +2057,9 @@
         let pendingCompressedImage = null;
         let pendingAudioClip = null;
         let latestMessagesData = null;
+        let renderedMsgIdsOrder = [];
+        let renderedMsgSignatures = {};
+        let isNearBottom = true;
         let userBadgeCache = {};
         let friendsCache = {};
         let groupsCache = {};
@@ -2088,6 +2119,23 @@
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const typingIndicator = document.getElementById('typingIndicator');
+        const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+
+        function handleChatScroll() {
+            const distFromBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight;
+            isNearBottom = distFromBottom < 90;
+            scrollBottomBtn.classList.toggle('visible', distFromBottom > 180);
+        }
+
+        function scrollChatToBottom(smooth = false) {
+            if (smooth) {
+                chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+            } else {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            isNearBottom = true;
+            scrollBottomBtn.classList.remove('visible');
+        }
 
         function focusChatInput() {
             if (!chatScreen.classList.contains('active')) return;
@@ -2212,7 +2260,7 @@
 
         function renderAvatarInner(avatarUrl, fallbackName) {
             if (avatarUrl && avatarUrl.startsWith('data:image')) {
-                return `<img class="av-img" src="${avatarUrl}" alt="صورة">`;
+                return `<img class="av-img" src="${avatarUrl}" alt="صورة" loading="lazy" decoding="async">`;
             }
             return escapeHtml((fallbackName || 'ع').charAt(0).toUpperCase());
         }
@@ -3006,7 +3054,6 @@
             }
         }
 
-        // نظام الحظر وإزالة الأصدقاء وحذف المحادثات
         function listenToBlockLists() {
             if (blockedByMeRef && blockedByMeCallback) blockedByMeRef.off('value', blockedByMeCallback);
             if (blockedMeRef && blockedMeCallback) blockedMeRef.off('value', blockedMeCallback);
@@ -3094,6 +3141,9 @@
             await db.ref(`chats/${activeChatId}/messages`).remove();
             await db.ref(`chats/${activeChatId}/pinned`).remove();
             latestMessagesData = null;
+            renderedMsgIdsOrder = [];
+            renderedMsgSignatures = {};
+            chatMessages.innerHTML = '';
             renderMessagesList();
             showInAppToast('تم حذف المحادثة', 'تم مسح جميع الرسائل في هذه المحادثة.');
         }
@@ -3818,7 +3868,6 @@
             }
         }
 
-        // نظام دعوات المجموعات (الموافقة مطلوبة قبل الدخول)
         async function inviteUserToSpecificGroup(memberKey, memberDisplay, groupId, groupName) {
             const key = sanitizeKey(memberKey);
             if (!key || !groupId || key === currentUser) return;
@@ -4186,870 +4235,4 @@
 
             const groupId = 'grp_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
             const chatId = 'group_' + groupId;
-            const cleanName = groupName.slice(0, 32);
-
-            // المنشئ فقط يدخل فوراً، والبقية تصلهم دعوة للموافقة
-            await db.ref('groups/' + groupId).set({
-                id: groupId,
-                chatId,
-                name: cleanName,
-                creator: currentUser,
-                members: { [currentUser]: true },
-                createdAt: Date.now()
-            });
-
-            await db.ref(`userGroups/${currentUser}/${groupId}`).set({
-                groupId,
-                chatId,
-                name: cleanName,
-                addedAt: Date.now()
-            });
-
-            await Promise.all(Array.from(invitedSet).map(async (memberKey) => {
-                const uSnap = await db.ref('users/' + memberKey).once('value');
-                if (uSnap.exists()) {
-                    await db.ref(`groupInvites/${memberKey}/${groupId}`).set({
-                        groupId,
-                        chatId,
-                        groupName: cleanName,
-                        invitedBy: currentUser,
-                        invitedByName: currentDisplayName || currentUser,
-                        invitedAt: Date.now()
-                    });
-                }
-            }));
-
-            if (invitedSet.size > 0) {
-                showInAppToast('تم إنشاء المجموعة', `تم إرسال ${invitedSet.size} دعوة انضمام للأعضاء.`);
-            }
-            openGroupChat(groupId, cleanName, chatId, 1);
-        }
-
-        function renderUnifiedFeed() {
-            const container = document.getElementById('unifiedFeedContainer');
-            if (!container) return;
-
-            const q = (document.getElementById('homeSearchInput')?.value || '').trim().toLowerCase();
-            let combined = [
-                ...Object.values(friendsCache).map(f => ({ ...f, kind: 'direct' })),
-                ...Object.values(groupsCache).map(g => ({ ...g, kind: 'group' }))
-            ];
-
-            if (activeFeedFilter === 'unread') {
-                combined = combined.filter(item => (item.unreadCount || 0) > 0);
-            } else if (activeFeedFilter === 'groups') {
-                combined = combined.filter(item => item.kind === 'group');
-            }
-
-            if (q) {
-                combined = combined.filter(item =>
-                    (item.displayName || '').toLowerCase().includes(q) ||
-                    (item.username || '').toLowerCase().includes(q) ||
-                    (item.lastText || '').toLowerCase().includes(q)
-                );
-            }
-
-            if (!combined.length) {
-                container.innerHTML = q || activeFeedFilter !== 'all'
-                    ? '<div class="empty-state">لا توجد نتائج مطابقة حالياً.</div>'
-                    : '<div class="empty-state"><i class="fas fa-comments" style="font-size:1.8rem; margin-bottom:8px; display:block; opacity:0.55;"></i>لا توجد محادثات أو مجموعات بعد.<br>اختر مستخدماً من تبويب <strong>المستخدمون</strong> أو أنشئ مجموعة جديدة.</div>';
-                return;
-            }
-
-            combined.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
-            container.innerHTML = '';
-
-            combined.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'chat-row-card';
-                if (item.kind === 'group') {
-                    div.onclick = () => openGroupChat(item.groupId, item.displayName, item.chatId, item.memberCount || 1);
-                    div.innerHTML = `
-                        <div class="row-left">
-                            <div class="row-avatar group-av">
-                                <i class="fas fa-users" style="font-size:0.95rem;"></i>
-                            </div>
-                            <div class="row-info">
-                                <div class="rname">
-                                    <span>${escapeHtml(item.displayName)}</span>
-                                    <span class="group-pill"><i class="fas fa-users"></i> مجموعة • ${item.memberCount || 1}</span>
-                                </div>
-                                <div class="rlast">${escapeHtml(item.lastText || 'مجموعة جديدة • ابدأ المحادثة')}</div>
-                            </div>
-                        </div>
-                        <div class="row-right">
-                            ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
-                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.82rem;"></i>
-                        </div>
-                    `;
-                } else {
-                    const isBlocked = !!(blockedByMeCache[item.username] || blockedMeCache[item.username]);
-                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin, item.avatar || '');
-                    div.innerHTML = `
-                        <div class="row-left">
-                            <div class="row-avatar">
-                                ${renderAvatarInner(item.avatar, item.displayName)}
-                                <span class="status-dot ${item.online && !isBlocked ? 'online' : ''}"></span>
-                            </div>
-                            <div class="row-info">
-                                <div class="rname">
-                                    <span>${escapeHtml(item.displayName)}</span>
-                                    ${getBadgesHtml(item.verified, item.vipAdmin)}
-                                    ${isBlocked ? '<span style="font-size:0.68rem; color:#ff6b8b; margin-right:5px;">(محظور)</span>' : ''}
-                                </div>
-                                <div class="rlast">${escapeHtml(item.lastText || item.bio || 'ابدأ المحادثة الآن...')}</div>
-                            </div>
-                        </div>
-                        <div class="row-right">
-                            ${item.unreadCount > 0 ? `<span class="unread-badge">${item.unreadCount}</span>` : ''}
-                            <i class="fas fa-chevron-left" style="color:var(--accent); font-size:0.82rem;"></i>
-                        </div>
-                    `;
-                }
-                container.appendChild(div);
-            });
-        }
-
-        function attachFeedLiveSummary(chatId, metaInfo) {
-            if (feedMsgListeners[chatId]) return;
-            const ref = db.ref(`chats/${chatId}/messages`).limitToLast(15);
-            const cb = ref.on('value', (msgsSnap) => {
-                const targetObj = metaInfo.kind === 'group' ? groupsCache[metaInfo.key] : friendsCache[metaInfo.key];
-                if (!targetObj) return;
-
-                let lastText = targetObj.defaultText || 'ابدأ المحادثة الآن...';
-                let lastTime = targetObj.addedAt || 0;
-                let unreadCount = 0;
-
-                if (msgsSnap.exists()) {
-                    const msgs = Object.values(msgsSnap.val()).sort((a, b) => a.timestamp - b.timestamp);
-                    if (msgs.length > 0) {
-                        const last = msgs[msgs.length - 1];
-                        let summary = last.text || '';
-                        if (last.image) summary = '📷 صورة' + (last.text ? ' • ' + last.text : '');
-                        else if (last.audio) summary = `🎤 صوتية (${last.audioDuration || 0}ث)`;
-
-                        const prefix = metaInfo.kind === 'group'
-                            ? (last.sender === currentUser ? 'أنت: ' : `${last.senderName || last.sender}: `)
-                            : (last.sender === currentUser ? 'أنت: ' : '');
-
-                        lastText = prefix + summary;
-                        lastTime = last.timestamp || lastTime;
-                        unreadCount = msgs.filter(m => m.sender !== currentUser && !m.read).length;
-
-                        const prevTs = lastSeenMsgTimestampByChat[chatId] || 0;
-                        const senderBlocked = !!(blockedByMeCache[last.sender] || blockedMeCache[last.sender]);
-                        if (prevTs > 0 && last.timestamp > prevTs && last.sender !== currentUser && activeChatId !== chatId && !senderBlocked) {
-                            showInAppToast(
-                                metaInfo.kind === 'group' ? `${targetObj.displayName} • ${last.senderName || last.sender}` : (last.senderName || targetObj.displayName),
-                                summary || 'رسالة جديدة',
-                                () => {
-                                    if (metaInfo.kind === 'group') {
-                                        openGroupChat(targetObj.groupId, targetObj.displayName, chatId, targetObj.memberCount || 1);
-                                    } else {
-                                        openDirectChat(targetObj.username, targetObj.displayName, chatId, targetObj.verified, targetObj.vipAdmin, targetObj.avatar || '');
-                                    }
-                                }
-                            );
-                        }
-                        lastSeenMsgTimestampByChat[chatId] = last.timestamp || prevTs;
-                    }
-                }
-
-                targetObj.lastText = lastText;
-                targetObj.lastTime = lastTime;
-                targetObj.unreadCount = unreadCount;
-                if (activeHomeTab === 'chats') renderUnifiedFeed();
-            });
-            feedMsgListeners[chatId] = { ref, cb };
-        }
-
-        function listenToFriends() {
-            if (friendsListenerRef && friendsListenerCallback) friendsListenerRef.off('value', friendsListenerCallback);
-            friendsCache = {};
-
-            friendsListenerRef = db.ref('friends/' + currentUser);
-            friendsListenerCallback = friendsListenerRef.on('value', async (snapshot) => {
-                const friendsObj = snapshot.val();
-                if (!friendsObj) {
-                    friendsCache = {};
-                    if (activeHomeTab === 'chats') renderUnifiedFeed();
-                    else renderAllUsersList();
-                    return;
-                }
-
-                const activeKeys = new Set(Object.keys(friendsObj));
-                Object.keys(friendsCache).forEach(k => {
-                    if (!activeKeys.has(k)) delete friendsCache[k];
-                });
-
-                await Promise.all(Object.values(friendsObj).map(async (f) => {
-                    const uSnap = await db.ref('users/' + f.username).once('value');
-                    const uVal = uSnap.val() || {};
-                    const isVip = !!(uVal.vipAdmin || isAdminUsername(f.username));
-                    const isVer = !!(uVal.verified || isVip);
-                    const avatarUrl = uVal.avatar || '';
-                    const dName = uVal.displayName || f.displayName || f.username;
-                    userBadgeCache[f.username] = { verified: isVer, vipAdmin: isVip, avatar: avatarUrl, displayName: dName };
-
-                    const chatId = f.chatId || getDirectChatId(currentUser, f.username);
-                    const prev = friendsCache[f.username] || {};
-
-                    friendsCache[f.username] = {
-                        username: f.username,
-                        displayName: dName,
-                        avatar: avatarUrl,
-                        bio: uVal.bio || '',
-                        defaultText: uVal.bio || 'ابدأ المحادثة الآن...',
-                        verified: isVer,
-                        vipAdmin: isVip,
-                        online: !!uVal.online,
-                        addedAt: f.addedAt || 0,
-                        lastText: prev.lastText || uVal.bio || 'ابدأ المحادثة الآن...',
-                        lastTime: prev.lastTime || f.addedAt || 0,
-                        unreadCount: prev.unreadCount || 0,
-                        chatId
-                    };
-
-                    attachFeedLiveSummary(chatId, { kind: 'direct', key: f.username });
-                }));
-
-                if (activeHomeTab === 'chats') renderUnifiedFeed();
-                else renderAllUsersList();
-            });
-        }
-
-        function listenToGroups() {
-            if (groupsListenerRef && groupsListenerCallback) groupsListenerRef.off('value', groupsListenerCallback);
-            groupsCache = {};
-
-            groupsListenerRef = db.ref('userGroups/' + currentUser);
-            groupsListenerCallback = groupsListenerRef.on('value', async (snapshot) => {
-                const grpObj = snapshot.val();
-                if (!grpObj) {
-                    groupsCache = {};
-                    if (activeHomeTab === 'chats') renderUnifiedFeed();
-                    return;
-                }
-
-                const activeKeys = new Set(Object.keys(grpObj));
-                Object.keys(groupsCache).forEach(k => {
-                    if (!activeKeys.has(k)) delete groupsCache[k];
-                });
-
-                await Promise.all(Object.values(grpObj).map(async (g) => {
-                    const gSnap = await db.ref('groups/' + g.groupId).once('value');
-                    if (!gSnap.exists()) {
-                        delete groupsCache[g.groupId];
-                        return;
-                    }
-                    const gVal = gSnap.val() || {};
-                    const memberCount = gVal.members ? Object.keys(gVal.members).length : 1;
-                    const chatId = gVal.chatId || g.chatId || ('group_' + g.groupId);
-                    const gName = gVal.name || g.name || 'مجموعة';
-                    const prev = groupsCache[g.groupId] || {};
-
-                    groupsCache[g.groupId] = {
-                        groupId: g.groupId,
-                        displayName: gName,
-                        memberCount,
-                        defaultText: 'مجموعة • ابدأ المحادثة',
-                        addedAt: g.addedAt || gVal.createdAt || 0,
-                        lastText: prev.lastText || 'مجموعة • ابدأ المحادثة',
-                        lastTime: prev.lastTime || g.addedAt || gVal.createdAt || 0,
-                        unreadCount: prev.unreadCount || 0,
-                        chatId
-                    };
-
-                    attachFeedLiveSummary(chatId, { kind: 'group', key: g.groupId });
-                }));
-
-                if (activeHomeTab === 'chats') renderUnifiedFeed();
-            });
-        }
-
-        function renderFeaturedInSubpanel() {
-            const container = document.getElementById('subpanelFeaturedList');
-            if (!container) return;
-            if (!featuredUsersCache.length) {
-                container.innerHTML = '<div class="empty-state">لا توجد حسابات مميزة أخرى حالياً.</div>';
-                return;
-            }
-            container.innerHTML = '';
-            featuredUsersCache.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'chat-row-card';
-                div.onclick = () => {
-                    closeSubpanel(false);
-                    closeSideDrawer(false);
-                    openDirectChat(item.username, item.displayName, getDirectChatId(currentUser, item.username), item.verified, item.vipAdmin, item.avatar || '');
-                };
-                div.innerHTML = `
-                    <div class="row-left">
-                        <div class="row-avatar">
-                            ${renderAvatarInner(item.avatar, item.displayName)}
-                            <span class="status-dot ${item.online ? 'online' : ''}"></span>
-                        </div>
-                        <div class="row-info">
-                            <div class="rname">
-                                <span>${escapeHtml(item.displayName)}</span>
-                                ${getBadgesHtml(item.verified, item.vipAdmin)}
-                            </div>
-                            <div class="rlast">${escapeHtml(item.bio)}</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false, partnerAvatar = '') {
-            closeSideDrawer(false);
-            closeSubpanel(false);
-            activeChatType = 'direct';
-            activeRoomCode = null;
-            activePartner = partnerKey;
-            activeGroupId = null;
-            activeGroupData = null;
-            activeChatId = chatId;
-
-            const isVip = !!(partnerVipAdmin || isAdminUsername(partnerKey));
-            const headerAv = document.getElementById('chatHeaderAvatar');
-            const cachedAv = partnerAvatar || (userBadgeCache[partnerKey] && userBadgeCache[partnerKey].avatar) || '';
-            headerAv.innerHTML = renderAvatarInner(cachedAv, partnerDisplay);
-
-            document.getElementById('chatTitleText').textContent = partnerDisplay;
-            document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(partnerVerified || isVip, isVip);
-            document.getElementById('copyRoomBtn').style.display = 'none';
-            document.getElementById('chatSettingsBtn').style.display = 'inline-flex';
-
-            enterChatScreen();
-            updateActiveChatBlockUI();
-            listenPartnerPresence(partnerKey);
-            listenPinnedMessage();
-            listenForMessages();
-            listenForTyping();
-        }
-
-        function openGroupChat(groupId, groupName, chatId, memberCount = 1) {
-            closeSideDrawer(false);
-            closeSubpanel(false);
-            activeChatType = 'group';
-            activeRoomCode = null;
-            activePartner = null;
-            activeGroupId = groupId;
-            activeChatId = chatId;
-
-            document.getElementById('chatHeaderAvatar').innerHTML = '<i class="fas fa-users"></i>';
-            document.getElementById('chatTitleText').textContent = groupName;
-            document.getElementById('chatTitleBadges').innerHTML = '<span class="group-pill"><i class="fas fa-users"></i> مجموعة</span>';
-            document.getElementById('copyRoomBtn').style.display = 'none';
-            document.getElementById('chatSettingsBtn').style.display = 'inline-flex';
-            const statusEl = document.getElementById('chatPartnerStatus');
-            statusEl.textContent = `${memberCount} أعضاء • اضغط للإدارة`;
-            statusEl.style.color = 'var(--accent)';
-
-            enterChatScreen();
-            updateActiveChatBlockUI();
-            listenGroupMeta(groupId);
-            listenPinnedMessage();
-            listenForMessages();
-            listenForTyping();
-        }
-
-        function createQuickRoom() {
-            const code = Math.random().toString(36).substring(2, 6).toUpperCase();
-            openRoomChat(code);
-        }
-
-        function joinQuickRoom() {
-            const code = (document.getElementById('roomCodeInput')?.value || '').trim().toUpperCase();
-            if (!code) return;
-            openRoomChat(code);
-        }
-
-        function openRoomChat(code) {
-            closeSubpanel(false);
-            closeSideDrawer(false);
-            activeChatType = 'room';
-            activeRoomCode = code;
-            activePartner = null;
-            activeGroupId = null;
-            activeGroupData = null;
-            activeChatId = 'room_' + code;
-
-            document.getElementById('chatHeaderAvatar').innerHTML = '<i class="fas fa-hashtag"></i>';
-            document.getElementById('chatTitleText').textContent = `الغرفة: ${code}`;
-            document.getElementById('chatTitleBadges').innerHTML = '';
-            document.getElementById('copyRoomBtn').style.display = 'inline-block';
-            document.getElementById('chatSettingsBtn').style.display = 'none';
-            const statusEl = document.getElementById('chatPartnerStatus');
-            statusEl.textContent = 'غرفة نشطة';
-            statusEl.style.color = 'var(--neon-green)';
-
-            enterChatScreen();
-            updateActiveChatBlockUI();
-            listenPinnedMessage();
-            listenForMessages();
-            listenForTyping();
-        }
-
-        function copyActiveRoomCode() {
-            if (!activeRoomCode) return;
-            navigator.clipboard?.writeText(activeRoomCode);
-            showInAppToast('تم النسخ', `تم نسخ كود الغرفة ${activeRoomCode}`);
-        }
-
-        function enterChatScreen() {
-            homeScreen.classList.remove('active');
-            chatScreen.classList.add('active');
-            chatMessages.innerHTML = '';
-            chatInput.value = '';
-            lastMessageCount = 0;
-            latestMessagesData = null;
-            cancelReply();
-            cancelEdit();
-            clearPendingImage();
-            clearPendingAudio();
-            if (isRecordingVoice) stopVoiceRecording();
-            document.getElementById('searchBarBox').classList.remove('active');
-            document.getElementById('chatSearchInput').value = '';
-            typingIndicator.classList.remove('active');
-            pushNavState('chat');
-            focusChatInput();
-        }
-
-        function cleanupChatListeners() {
-            if (messagesRefCurrent && messagesCallbackCurrent) messagesRefCurrent.off('value', messagesCallbackCurrent);
-            if (pinnedRefCurrent && pinnedCallbackCurrent) pinnedRefCurrent.off('value', pinnedCallbackCurrent);
-            if (typingRefCurrent && typingCallbackCurrent) typingRefCurrent.off('value', typingCallbackCurrent);
-            if (partnerPresenceRef && partnerPresenceCallback) partnerPresenceRef.off('value', partnerPresenceCallback);
-            if (groupMetaRef && groupMetaCallback) groupMetaRef.off('value', groupMetaCallback);
-            if (activeChatId && currentUser) {
-                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
-            }
-        }
-
-        function backToHome(syncHistory = true) {
-            dismissKeyboard();
-            cleanupChatListeners();
-            activeChatId = null;
-            activeChatType = null;
-            activeRoomCode = null;
-            activePartner = null;
-            activeGroupId = null;
-            activeGroupData = null;
-            cancelReply();
-            cancelEdit();
-            clearPendingImage();
-            clearPendingAudio();
-            if (isRecordingVoice) stopVoiceRecording();
-            chatScreen.classList.remove('active');
-            homeScreen.classList.add('active');
-            renderActiveHomeTab();
-
-            if (syncHistory && history.state && history.state.legendaryView === 'chat') {
-                ignoreNextPopState = true;
-                history.back();
-            }
-        }
-
-        function listenPartnerPresence(partnerKey) {
-            if (partnerPresenceRef && partnerPresenceCallback) partnerPresenceRef.off('value', partnerPresenceCallback);
-            partnerPresenceRef = db.ref('users/' + partnerKey);
-            partnerPresenceCallback = partnerPresenceRef.on('value', (snap) => {
-                const val = snap.val() || {};
-                const isVip = !!(val.vipAdmin || isAdminUsername(partnerKey));
-                const isVer = !!(val.verified || isVip);
-                const dName = val.displayName || partnerKey;
-                const av = val.avatar || '';
-                userBadgeCache[partnerKey] = { verified: isVer, vipAdmin: isVip, avatar: av, displayName: dName };
-
-                document.getElementById('chatTitleText').textContent = dName;
-                document.getElementById('chatHeaderAvatar').innerHTML = renderAvatarInner(av, dName);
-                document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(isVer, isVip);
-
-                const statusEl = document.getElementById('chatPartnerStatus');
-                if (blockedByMeCache[partnerKey] || blockedMeCache[partnerKey]) {
-                    statusEl.textContent = 'محظور';
-                    statusEl.style.color = '#ff6b8b';
-                } else if (val.online) {
-                    statusEl.textContent = val.bio ? `متصل • ${val.bio}` : 'متصل الآن';
-                    statusEl.style.color = 'var(--neon-green)';
-                } else {
-                    statusEl.textContent = val.bio ? `غير متصل • ${val.bio}` : 'غير متصل';
-                    statusEl.style.color = 'var(--text-muted)';
-                }
-            });
-        }
-
-        function listenGroupMeta(groupId) {
-            if (groupMetaRef && groupMetaCallback) groupMetaRef.off('value', groupMetaCallback);
-            groupMetaRef = db.ref('groups/' + groupId);
-            groupMetaCallback = groupMetaRef.on('value', (snap) => {
-                if (!snap.exists()) {
-                    backToHome(true);
-                    return;
-                }
-                const val = snap.val() || {};
-                activeGroupData = val;
-                if (!val.members || !val.members[currentUser]) {
-                    backToHome(true);
-                    return;
-                }
-                const count = val.members ? Object.keys(val.members).length : 1;
-                if (val.name) document.getElementById('chatTitleText').textContent = val.name;
-                const statusEl = document.getElementById('chatPartnerStatus');
-                statusEl.textContent = `${count} أعضاء • اضغط للإدارة`;
-                statusEl.style.color = 'var(--accent)';
-            });
-        }
-
-        function listenPinnedMessage() {
-            if (pinnedRefCurrent && pinnedCallbackCurrent) pinnedRefCurrent.off('value', pinnedCallbackCurrent);
-            pinnedRefCurrent = db.ref(`chats/${activeChatId}/pinned`);
-            pinnedCallbackCurrent = pinnedRefCurrent.on('value', (snap) => {
-                const bar = document.getElementById('pinnedBar');
-                const val = snap.val();
-                if (val && (val.text || val.hasMedia)) {
-                    document.getElementById('pinnedMessageText').textContent = `${val.senderName || ''}: ${val.text || 'رسالة وسائط مثبتة'}`;
-                    bar.classList.add('active');
-                } else {
-                    bar.classList.remove('active');
-                }
-            });
-        }
-
-        async function pinMessage(senderName, text, hasMedia = false) {
-            if (!activeChatId) return;
-            await db.ref(`chats/${activeChatId}/pinned`).set({
-                senderName: senderName || '',
-                text: text || '',
-                hasMedia: !!hasMedia,
-                pinnedAt: Date.now()
-            });
-        }
-
-        async function unpinMessage() {
-            if (!activeChatId) return;
-            await db.ref(`chats/${activeChatId}/pinned`).remove();
-        }
-
-        function toggleSearchBar(show = null) {
-            const box = document.getElementById('searchBarBox');
-            const input = document.getElementById('chatSearchInput');
-            const shouldOpen = show === null ? !box.classList.contains('active') : !!show;
-            box.classList.toggle('active', shouldOpen);
-            if (shouldOpen) {
-                setTimeout(() => input.focus(), 30);
-            } else {
-                input.value = '';
-                renderMessagesList();
-            }
-        }
-
-        function startEditMessage(msgId, currentText) {
-            cancelReply();
-            clearPendingImage();
-            clearPendingAudio();
-            editingMsgId = msgId;
-            document.getElementById('editBanner').classList.add('active');
-            chatInput.value = currentText;
-            focusChatInput();
-        }
-
-        function cancelEdit() {
-            editingMsgId = null;
-            document.getElementById('editBanner').classList.remove('active');
-        }
-
-        function setReplyTarget(msgId, senderName, text) {
-            cancelEdit();
-            replyingTo = { id: msgId, senderName, text };
-            document.getElementById('replyBannerText').textContent = `الرد على ${senderName}: ${text}`;
-            document.getElementById('replyBanner').classList.add('active');
-            focusChatInput();
-        }
-
-        function cancelReply() {
-            replyingTo = null;
-            document.getElementById('replyBanner').classList.remove('active');
-        }
-
-        function insertEmoji(emoji) {
-            chatInput.value += emoji;
-            focusChatInput();
-        }
-
-        function copyTextToClipboard(text) { navigator.clipboard?.writeText(text); }
-
-        async function toggleReaction(msgId, emoji) {
-            if (!activeChatId || !currentUser) return;
-            const ref = db.ref(`chats/${activeChatId}/messages/${msgId}/reactions/${emoji}/${currentUser}`);
-            const snap = await ref.once('value');
-            if (snap.exists()) await ref.remove();
-            else await ref.set(true);
-        }
-
-        async function deleteMessage(msgId) {
-            if (!activeChatId || !msgId) return;
-            if (editingMsgId === msgId) cancelEdit();
-            await db.ref(`chats/${activeChatId}/messages/${msgId}`).remove();
-        }
-
-        function listenForMessages() {
-            if (messagesRefCurrent && messagesCallbackCurrent) messagesRefCurrent.off('value', messagesCallbackCurrent);
-            messagesRefCurrent = db.ref(`chats/${activeChatId}/messages`).limitToLast(60);
-            messagesCallbackCurrent = messagesRefCurrent.on('value', async (snapshot) => {
-                const data = snapshot.val();
-                const currentCount = data ? Object.keys(data).length : 0;
-
-                if (currentCount > lastMessageCount && lastMessageCount !== 0) {
-                    const msgs = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
-                    const lastMsg = msgs[msgs.length - 1];
-                    if (lastMsg.sender !== currentUser && !blockedByMeCache[lastMsg.sender]) playNotificationSound();
-                }
-                lastMessageCount = currentCount;
-                latestMessagesData = data;
-
-                if (data) {
-                    const msgs = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
-                    if (msgs.length > 0 && activeChatId) {
-                        lastSeenMsgTimestampByChat[activeChatId] = msgs[msgs.length - 1].timestamp || 0;
-                    }
-                    const senders = [...new Set(msgs.map(m => m.sender).filter(Boolean))];
-                    await Promise.all(senders.map(s => fetchUserBadges(s)));
-                }
-                renderMessagesList();
-            });
-        }
-
-        function renderMessagesList() {
-            const data = latestMessagesData;
-            const query = (document.getElementById('chatSearchInput')?.value || '').trim().toLowerCase();
-
-            chatMessages.innerHTML = '';
-            if (!data) {
-                chatMessages.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:24px; font-size:0.88rem;"><i class="fas fa-comments"></i> لا توجد رسائل بعد. ابدأ المحادثة.</div>';
-                return;
-            }
-
-            let messagesArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-            messagesArray.sort((a, b) => a.timestamp - b.timestamp);
-
-            if (query) {
-                messagesArray = messagesArray.filter(m => (m.text || '').toLowerCase().includes(query));
-            }
-
-            if (messagesArray.length === 0) {
-                chatMessages.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:24px; font-size:0.86rem;">لا توجد نتائج مطابقة للبحث.</div>';
-                return;
-            }
-
-            messagesArray.forEach(msg => {
-                if (msg.sender !== currentUser && !msg.read) {
-                    db.ref(`chats/${activeChatId}/messages/${msg.id}/read`).set(true);
-                }
-
-                const isMe = msg.sender === currentUser;
-                const cachedBadges = userBadgeCache[msg.sender] || { verified: false, vipAdmin: isAdminUsername(msg.sender) };
-                const senderVipAdmin = isMe ? currentUserVipAdmin : !!(cachedBadges.vipAdmin || isAdminUsername(msg.sender));
-                const senderVerified = isMe ? currentUserVerified : !!(cachedBadges.verified || senderVipAdmin);
-                const senderShownName = isMe ? (currentDisplayName || currentUser) : (cachedBadges.displayName || msg.senderName || msg.sender);
-
-                const wrapper = document.createElement('div');
-                wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
-
-                const nameHtml = isMe
-                    ? ''
-                    : `<div class="msg-name"><span>${escapeHtml(senderShownName)}</span>${getBadgesHtml(senderVerified, senderVipAdmin)}</div>`;
-
-                const replyHtml = msg.replyTo
-                    ? `<div class="reply-quote"><strong>${escapeHtml(msg.replyTo.senderName || '')}:</strong> ${escapeHtml(msg.replyTo.text || '')}</div>`
-                    : '';
-
-                const imgHtml = msg.image
-                    ? `<img class="msg-image" src="${msg.image}" alt="صورة مرسلة" onclick="openLightbox(this.src)">`
-                    : '';
-
-                const audioHtml = msg.audio
-                    ? `<audio class="msg-audio" controls preload="metadata" src="${msg.audio}"></audio>`
-                    : '';
-
-                const textHtml = msg.text ? `<div>${escapeHtml(msg.text)}</div>` : '';
-
-                const date = new Date(msg.timestamp);
-                const timeString = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-                const editedLabel = msg.edited ? ' • معدّلة' : '';
-                const durationLabel = msg.audio && msg.audioDuration ? ` • ${msg.audioDuration}ث` : '';
-                const readIcon = isMe ? `<span style="color:${msg.read ? '#25d366' : 'rgba(255,255,255,0.7)'};">${msg.read ? '✓✓' : '✓'}</span>` : '';
-
-                let chipsHtml = '';
-                if (msg.reactions) {
-                    for (const [emo, usersObj] of Object.entries(msg.reactions)) {
-                        const count = usersObj ? Object.keys(usersObj).length : 0;
-                        if (count > 0) {
-                            const iReacted = !!(usersObj && usersObj[currentUser]);
-                            chipsHtml += `<button type="button" class="reaction-chip ${iReacted ? 'active' : ''}" onclick="toggleReaction('${msg.id}', '${emo}')">${emo} ${count}</button>`;
-                        }
-                    }
-                }
-
-                const quickAddChips = REACTION_EMOJIS.map(emo =>
-                    `<button type="button" class="msg-action-btn" onclick="toggleReaction('${msg.id}', '${emo}')">${emo}</button>`
-                ).join('');
-
-                const pinSummary = msg.text || (msg.image ? '📷 صورة' : (msg.audio ? `🎤 صوتية (${msg.audioDuration || 0}ث)` : ''));
-
-                wrapper.innerHTML = `
-                    ${nameHtml}
-                    <div class="msg-bubble">
-                        ${replyHtml}
-                        ${imgHtml}
-                        ${audioHtml}
-                        ${textHtml}
-                        <div class="msg-meta-row">
-                            <span>${timeString}${durationLabel}${editedLabel}</span>
-                            ${readIcon}
-                        </div>
-                    </div>
-                    ${chipsHtml ? `<div class="reactions-bar">${chipsHtml}</div>` : ''}
-                    <div class="msg-actions">
-                        <button type="button" class="msg-action-btn" onclick="setReplyTarget('${msg.id}', '${escapeJs(senderShownName)}', '${escapeJs(pinSummary)}')">
-                            <i class="fas fa-reply"></i> رد
-                        </button>
-                        <button type="button" class="msg-action-btn" title="تثبيت" onclick="pinMessage('${escapeJs(senderShownName)}', '${escapeJs(pinSummary)}', ${!!(msg.image || msg.audio)})">
-                            <i class="fas fa-thumbtack"></i>
-                        </button>
-                        ${msg.text ? `<button type="button" class="msg-action-btn" title="نسخ النص" onclick="copyTextToClipboard('${escapeJs(msg.text)}')"><i class="fas fa-copy"></i></button>` : ''}
-                        ${quickAddChips}
-                        ${isMe ? `<button type="button" class="msg-action-btn" title="تعديل" onclick="startEditMessage('${msg.id}', '${escapeJs(msg.text || '')}')"><i class="fas fa-edit"></i></button>` : ''}
-                        ${isMe ? `<button type="button" class="msg-action-btn del" title="حذف" onclick="deleteMessage('${msg.id}')"><i class="fas fa-trash"></i></button>` : ''}
-                    </div>
-                `;
-                chatMessages.appendChild(wrapper);
-            });
-
-            if (!query) chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text || '';
-            return div.innerHTML;
-        }
-
-        function escapeJs(str) {
-            return String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, ' ');
-        }
-
-        async function sendMessage() {
-            if (isSendingMessage || isChatBlocked()) return;
-
-            if (isRecordingVoice) {
-                stopVoiceRecording();
-                return;
-            }
-
-            const text = chatInput.value.trim();
-            if ((!text && !pendingCompressedImage && !pendingAudioClip) || !activeChatId || !currentUser) {
-                focusChatInput();
-                return;
-            }
-
-            isSendingMessage = true;
-            try {
-                if (editingMsgId) {
-                    if (!text) {
-                        isSendingMessage = false;
-                        focusChatInput();
-                        return;
-                    }
-                    await db.ref(`chats/${activeChatId}/messages/${editingMsgId}`).update({
-                        text,
-                        edited: true,
-                        editedAt: Date.now()
-                    });
-                    chatInput.value = '';
-                    cancelEdit();
-                } else {
-                    const payload = {
-                        sender: currentUser,
-                        senderName: currentDisplayName || currentUser,
-                        text,
-                        timestamp: Date.now(),
-                        read: false
-                    };
-
-                    if (pendingCompressedImage && pendingCompressedImage.dataUrl) {
-                        payload.image = pendingCompressedImage.dataUrl;
-                    }
-                    if (pendingAudioClip && pendingAudioClip.dataUrl) {
-                        payload.audio = pendingAudioClip.dataUrl;
-                        payload.audioDuration = pendingAudioClip.durationSec || 0;
-                    }
-                    if (replyingTo) {
-                        payload.replyTo = {
-                            senderName: replyingTo.senderName,
-                            text: replyingTo.text
-                        };
-                    }
-
-                    await db.ref(`chats/${activeChatId}/messages`).push(payload);
-                    chatInput.value = '';
-                    cancelReply();
-                    clearPendingImage();
-                    clearPendingAudio();
-                }
-
-                isTyping = false;
-                clearTimeout(typingTimeout);
-                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
-                focusChatInput();
-            } finally {
-                isSendingMessage = false;
-            }
-        }
-
-        document.getElementById('sendChatBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            sendMessage();
-        });
-        chatInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        function listenForTyping() {
-            if (typingRefCurrent && typingCallbackCurrent) typingRefCurrent.off('value', typingCallbackCurrent);
-            typingRefCurrent = db.ref(`chats/${activeChatId}/typing`);
-            typingCallbackCurrent = typingRefCurrent.on('value', (snapshot) => {
-                const typingData = snapshot.val();
-                if (!typingData || isChatBlocked()) return typingIndicator.classList.remove('active');
-
-                let otherTyping = false;
-                for (let user in typingData) {
-                    if (user !== currentUser && typingData[user] === true) otherTyping = true;
-                }
-                typingIndicator.classList.toggle('active', otherTyping);
-            });
-        }
-
-        chatInput.addEventListener('input', () => {
-            if (!activeChatId || !currentUser || isChatBlocked()) return;
-            if (!isTyping) {
-                isTyping = true;
-                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(true);
-            }
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                isTyping = false;
-                db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
-            }, 2000);
-        });
-    </script>
-</body>
-</html>
+            const cleanName = groupName.slice(0, 3
