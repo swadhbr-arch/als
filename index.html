@@ -61,17 +61,18 @@
             box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
 
         input, textarea {
             user-select: text !important;
             -webkit-user-select: text !important;
+            touch-action: manipulation !important;
         }
 
         button, .chat-row-card, .drawer-item, .auth-tab, .theme-card {
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
         }
         
         html, body {
@@ -1238,6 +1239,8 @@
         }
 
         .chat-input-area {
+            position: relative;
+            z-index: 20;
             padding: 10px 15px 12px;
             background: rgba(15, 20, 30, 0.97);
             display: flex;
@@ -1269,12 +1272,14 @@
 
         .input-wrapper {
             flex: 1;
+            min-width: 0;
             display: flex;
             background: rgba(0,0,0,0.45);
             border-radius: 25px;
             border: 1px solid rgba(255,255,255,0.12);
             padding: 4px 12px;
             align-items: center;
+            cursor: text;
         }
         .input-wrapper:focus-within {
             border-color: var(--accent);
@@ -1282,6 +1287,7 @@
         }
 
         .chat-input-area input {
+            width: 100%;
             flex: 1;
             min-width: 0;
             padding: 9px 4px;
@@ -1290,6 +1296,7 @@
             color: #fff;
             outline: none;
             font-size: 0.95rem;
+            pointer-events: auto !important;
         }
 
         .btn-send {
@@ -1361,7 +1368,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">تواصل فوول سريع، مجموعات، قائمة المستخدمين، وصوتيات ⚡</div>
+                <div class="subtitle">تواصل سريع، مجموعات، قائمة المستخدمين، وصوتيات ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1617,7 +1624,7 @@
                 <button type="button" class="quick-emoji-btn" onclick="insertEmoji('🫡')">🫡</button>
             </div>
 
-            <div class="chat-input-area">
+            <div class="chat-input-area" id="chatInputArea">
                 <input type="file" id="imageFileInput" accept="image/*" style="display:none;" onchange="handleImageFileSelected(event)">
                 <button type="button" class="btn-attach" title="اختيار صورة مضغوطة" onclick="document.getElementById('imageFileInput').click()">
                     <i class="fas fa-image"></i>
@@ -1625,7 +1632,7 @@
                 <button type="button" class="btn-attach" id="voiceRecordBtn" title="تسجيل رسالة صوتية" onclick="toggleVoiceRecording()">
                     <i class="fas fa-microphone"></i>
                 </button>
-                <div class="input-wrapper">
+                <div class="input-wrapper" id="chatInputWrapper" onclick="focusChatInput()">
                     <input type="text" id="chatInput" placeholder="اكتب رسالة..." autocomplete="off">
                 </div>
                 <button type="button" class="btn-send" id="sendChatBtn" title="إرسال"><i class="fas fa-paper-plane"></i></button>
@@ -1727,6 +1734,15 @@
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const typingIndicator = document.getElementById('typingIndicator');
+
+        function focusChatInput() {
+            if (!chatScreen.classList.contains('active')) return;
+            requestAnimationFrame(() => {
+                if (document.activeElement !== chatInput) {
+                    chatInput.focus();
+                }
+            });
+        }
 
         function dismissKeyboard() {
             const active = document.activeElement;
@@ -3106,6 +3122,7 @@
             document.getElementById('chatSearchInput').value = '';
             typingIndicator.classList.remove('active');
             pushNavState('chat');
+            focusChatInput();
         }
 
         function cleanupChatListeners() {
@@ -3226,7 +3243,7 @@
             editingMsgId = msgId;
             document.getElementById('editBanner').classList.add('active');
             chatInput.value = currentText;
-            chatInput.focus();
+            focusChatInput();
         }
 
         function cancelEdit() {
@@ -3239,7 +3256,7 @@
             replyingTo = { id: msgId, senderName, text };
             document.getElementById('replyBannerText').textContent = `الرد على ${senderName}: ${text}`;
             document.getElementById('replyBanner').classList.add('active');
-            chatInput.focus();
+            focusChatInput();
         }
 
         function cancelReply() {
@@ -3249,7 +3266,7 @@
 
         function insertEmoji(emoji) {
             chatInput.value += emoji;
-            chatInput.focus();
+            focusChatInput();
         }
 
         function copyTextToClipboard(text) {
@@ -3425,6 +3442,7 @@
 
             const text = chatInput.value.trim();
             if ((!text && !pendingCompressedImage && !pendingAudioClip) || !activeChatId || !currentUser) {
+                focusChatInput();
                 return;
             }
 
@@ -3433,6 +3451,7 @@
                 if (editingMsgId) {
                     if (!text) {
                         isSendingMessage = false;
+                        focusChatInput();
                         return;
                     }
                     await db.ref(`chats/${activeChatId}/messages/${editingMsgId}`).update({
@@ -3475,13 +3494,12 @@
                 isTyping = false;
                 clearTimeout(typingTimeout);
                 db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
-                chatInput.focus();
+                focusChatInput();
             } finally {
                 isSendingMessage = false;
             }
         }
 
-        document.getElementById('sendChatBtn').addEventListener('mousedown', (e) => e.preventDefault());
         document.getElementById('sendChatBtn').addEventListener('click', (e) => {
             e.preventDefault();
             sendMessage();
