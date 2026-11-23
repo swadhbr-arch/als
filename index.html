@@ -696,18 +696,25 @@
             line-height: 1.7;
         }
 
-        /* عارض الحالة (الستوري) */
+        /* عارض الحالة (الستوري) المتناسق */
         .story-viewer-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: #060b0e;
+            background: var(--bg-app);
             z-index: 75;
             flex-direction: column;
             max-width: 560px;
             margin: 0 auto;
         }
         .story-viewer-modal.active { display: flex; }
+
+        .story-progress-bar {
+            height: 3px;
+            background: var(--accent);
+            width: 100%;
+            flex-shrink: 0;
+        }
 
         .story-viewer-top {
             padding: 12px 14px;
@@ -717,40 +724,115 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            flex-shrink: 0;
         }
+
         .story-viewer-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 18px;
-            text-align: center;
+            padding: 16px;
             gap: 14px;
             overflow-y: auto;
         }
-        .story-viewer-content img.story-photo {
-            max-width: 100%;
-            max-height: 55dvh;
-            border-radius: 16px;
-            object-fit: contain;
+
+        .story-media-frame {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .story-viewer-content img.story-photo,
+        .story-viewer-content video.story-video {
+            width: 100%;
+            max-height: 48dvh;
+            border-radius: 14px;
+            object-fit: contain;
+            background: #060b0e;
+        }
+
         .story-text-box {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-right: 4px solid var(--accent);
+            border-radius: 15px;
+            padding: 13px 16px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            line-height: 1.65;
+            text-align: right;
+            color: var(--text-main);
+        }
+
+        .story-reactions-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .story-react-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: var(--text-main);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .story-react-btn.active {
+            border-color: var(--accent);
+            background: rgba(0, 168, 132, 0.16);
+        }
+
+        .story-viewers-card {
+            width: 100%;
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: 16px;
-            padding: 14px 18px;
-            font-size: 1.02rem;
-            font-weight: 700;
-            line-height: 1.6;
-            max-width: 100%;
+            padding: 12px 14px;
+            text-align: right;
         }
+        .story-viewers-title {
+            font-size: 0.84rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .story-viewer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.8rem;
+        }
+        .story-viewer-row:first-of-type { border-top: none; }
+
         .story-viewer-bottom {
             padding: 12px 14px;
             background: var(--bg-header);
             border-top: 1px solid var(--border-subtle);
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .drawer-backdrop {
@@ -1472,6 +1554,7 @@
 
         <!-- عارض الحالة (الستوري) -->
         <div class="story-viewer-modal" id="storyViewerModal">
+            <div class="story-progress-bar"></div>
             <div class="story-viewer-top">
                 <div class="chat-header-start">
                     <div class="chat-header-avatar" id="storyViewerAvatar">ع</div>
@@ -1726,7 +1809,8 @@
         let pendingAuthAvatar = '';
         let pendingEditProfileAvatar = null;
         let pendingStoryImage = null;
-        let activeViewingStory = null;
+        let pendingStoryVideo = null;
+        let activeViewingStoryId = null;
 
         let activeChatId = null;
         let activeChatType = null;
@@ -2063,7 +2147,7 @@
             setTimeout(() => closeSubpanel(true), 650);
         }
 
-        // نظام الحالات (الستوري)
+        // نظام الحالات (الستوري) مع الفيديو والتفاعلات وسجل المشاهدات
         function listenToStories() {
             if (storiesListenerRef && storiesListenerCallback) storiesListenerRef.off('value', storiesListenerCallback);
             storiesListenerRef = db.ref('stories').limitToLast(40);
@@ -2081,6 +2165,15 @@
                 list.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 storiesCache = list;
                 renderStoriesStrip();
+
+                if (activeViewingStoryId && document.getElementById('storyViewerModal').classList.contains('active')) {
+                    const updated = storiesCache.find(s => s.id === activeViewingStoryId);
+                    if (updated) {
+                        renderStoryViewerBody(updated);
+                    } else {
+                        closeStoryViewer(false);
+                    }
+                }
             });
         }
 
@@ -2130,13 +2223,44 @@
             event.target.value = '';
             if (!file || !file.type.startsWith('image/')) return;
             try {
+                pendingStoryVideo = null;
                 const res = await compressImageFile(file, 720, 0.65);
                 pendingStoryImage = res.dataUrl;
-                const box = document.getElementById('storyImagePreviewWrap');
+                const box = document.getElementById('storyMediaPreviewWrap');
                 if (box) {
                     box.innerHTML = `<img src="${res.dataUrl}" style="width:100%; max-height:190px; object-fit:cover; border-radius:12px; margin-top:8px;">`;
                 }
             } catch (err) {}
+        }
+
+        function handleStoryVideoSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = '';
+            const statusEl = document.getElementById('storyStatusMsg');
+            if (!file || !file.type.startsWith('video/')) return;
+
+            if (file.size > 1600000) {
+                if (statusEl) {
+                    statusEl.style.color = '#ff6b8b';
+                    statusEl.textContent = 'حجم الفيديو كبير قليلاً؛ اختر مقطعاً قصيراً (أقل من 1.6 MB).';
+                }
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                pendingStoryImage = null;
+                pendingStoryVideo = {
+                    dataUrl: reader.result,
+                    mime: file.type || 'video/mp4'
+                };
+                if (statusEl) statusEl.textContent = '';
+                const box = document.getElementById('storyMediaPreviewWrap');
+                if (box) {
+                    box.innerHTML = `<video src="${reader.result}" controls playsinline style="width:100%; max-height:190px; border-radius:12px; margin-top:8px; background:#060b0e;"></video>`;
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         async function publishNewStory() {
@@ -2145,10 +2269,10 @@
             const statusEl = document.getElementById('storyStatusMsg');
             const caption = (textInput?.value || '').trim().slice(0, 180);
 
-            if (!caption && !pendingStoryImage) {
+            if (!caption && !pendingStoryImage && !pendingStoryVideo) {
                 if (statusEl) {
                     statusEl.style.color = '#ff6b8b';
-                    statusEl.textContent = 'اكتب نصاً أو اختر صورة لنشر الحالة.';
+                    statusEl.textContent = 'اكتب نصاً أو اختر صورة أو فيديو لنشر الحالة.';
                 }
                 return;
             }
@@ -2162,18 +2286,41 @@
                 ownerAvatar: currentUserAvatar || '',
                 text: caption,
                 image: pendingStoryImage || '',
+                video: pendingStoryVideo ? pendingStoryVideo.dataUrl : '',
                 timestamp: Date.now()
             });
 
             pendingStoryImage = null;
-            showInAppToast('تم نشر الحالة', 'حالتك أصبحت مرئية للمستخدمين الآن.');
+            pendingStoryVideo = null;
+            showInAppToast('تم نشر الحالة', 'حالتك أصبحت متاحة للمشاهدة والتفاعل الآن.');
             closeSubpanel(true);
+        }
+
+        async function recordStoryView(storyId) {
+            if (!storyId || !currentUser) return;
+            const st = storiesCache.find(s => s.id === storyId);
+            if (!st || st.owner === currentUser) return;
+
+            await db.ref(`stories/${storyId}/viewers/${currentUser}`).set({
+                username: currentUser,
+                displayName: currentDisplayName || currentUser,
+                avatar: currentUserAvatar || '',
+                viewedAt: Date.now()
+            });
+        }
+
+        async function toggleStoryReaction(storyId, emoji) {
+            if (!storyId || !currentUser || !emoji) return;
+            const ref = db.ref(`stories/${storyId}/reactions/${emoji}/${currentUser}`);
+            const snap = await ref.once('value');
+            if (snap.exists()) await ref.remove();
+            else await ref.set(true);
         }
 
         async function openStoryViewer(storyId) {
             const st = storiesCache.find(s => s.id === storyId);
             if (!st) return;
-            activeViewingStory = st;
+            activeViewingStoryId = storyId;
 
             const badges = await fetchUserBadges(st.owner);
             const displayName = badges.displayName || st.ownerName || st.owner;
@@ -2185,14 +2332,76 @@
             document.getElementById('storyViewerTime').textContent = formatRelativeTime(st.timestamp);
             document.getElementById('deleteStoryBtn').style.display = st.owner === currentUser ? 'inline-flex' : 'none';
 
-            let contentHtml = '';
-            if (st.image) {
-                contentHtml += `<img class="story-photo" src="${st.image}" alt="حالة" onclick="openLightbox(this.src)">`;
+            renderStoryViewerBody(st);
+            document.getElementById('storyViewerModal').classList.add('active');
+            pushNavState('storyViewer');
+
+            await recordStoryView(storyId);
+        }
+
+        function renderStoryViewerBody(st) {
+            const badges = userBadgeCache[st.owner] || {};
+            const displayName = badges.displayName || st.ownerName || st.owner;
+            const avUrl = badges.avatar || st.ownerAvatar || '';
+
+            let mediaHtml = '';
+            if (st.video) {
+                mediaHtml = `
+                    <div class="story-media-frame">
+                        <video class="story-video" controls autoplay playsinline src="${st.video}"></video>
+                    </div>
+                `;
+            } else if (st.image) {
+                mediaHtml = `
+                    <div class="story-media-frame">
+                        <img class="story-photo" src="${st.image}" alt="صورة الحالة" onclick="openLightbox(this.src)">
+                    </div>
+                `;
             }
-            if (st.text) {
-                contentHtml += `<div class="story-text-box">${escapeHtml(st.text)}</div>`;
+
+            const textHtml = st.text ? `<div class="story-text-box">${escapeHtml(st.text)}</div>` : '';
+
+            const reactionsButtonsHtml = REACTION_EMOJIS.map(emo => {
+                const usersMap = (st.reactions && st.reactions[emo]) || {};
+                const count = Object.keys(usersMap).length;
+                const iReacted = !!usersMap[currentUser];
+                return `
+                    <button type="button" class="story-react-btn ${iReacted ? 'active' : ''}" onclick="toggleStoryReaction('${escapeJs(st.id)}', '${emo}')">
+                        <span>${emo}</span>
+                        <span>${count}</span>
+                    </button>
+                `;
+            }).join('');
+
+            let viewersSectionHtml = '';
+            if (st.owner === currentUser) {
+                const viewersObj = st.viewers || {};
+                const viewersArr = Object.values(viewersObj).sort((a, b) => (b.viewedAt || 0) - (a.viewedAt || 0));
+                const rowsHtml = viewersArr.length
+                    ? viewersArr.map(v => `
+                        <div class="story-viewer-row">
+                            <span style="font-weight:800;">${escapeHtml(v.displayName || v.username)} <span style="color:var(--text-muted); font-weight:600;">(@${escapeHtml(v.username)})</span></span>
+                            <span style="color:var(--text-muted); font-size:0.72rem;">${formatRelativeTime(v.viewedAt)}</span>
+                        </div>
+                    `).join('')
+                    : '<div style="color:var(--text-muted); font-size:0.8rem; padding:6px 0;">لا توجد مشاهدات حتى الآن.</div>';
+
+                viewersSectionHtml = `
+                    <div class="story-viewers-card">
+                        <div class="story-viewers-title">
+                            <span><i class="fas fa-eye"></i> سجل المشاهدات (${viewersArr.length})</span>
+                        </div>
+                        ${rowsHtml}
+                    </div>
+                `;
             }
-            document.getElementById('storyViewerContent').innerHTML = contentHtml;
+
+            document.getElementById('storyViewerContent').innerHTML = `
+                ${mediaHtml}
+                ${textHtml}
+                <div class="story-reactions-row">${reactionsButtonsHtml}</div>
+                ${viewersSectionHtml}
+            `;
 
             const bottomEl = document.getElementById('storyViewerBottom');
             if (st.owner !== currentUser) {
@@ -2208,13 +2417,10 @@
                     </button>
                 `;
             }
-
-            document.getElementById('storyViewerModal').classList.add('active');
-            pushNavState('storyViewer');
         }
 
         function closeStoryViewer(syncHistory = false) {
-            activeViewingStory = null;
+            activeViewingStoryId = null;
             document.getElementById('storyViewerModal').classList.remove('active');
             if (syncHistory && history.state && history.state.legendaryView === 'storyViewer') {
                 ignoreNextPopState = true;
@@ -2223,8 +2429,10 @@
         }
 
         async function deleteActiveStory() {
-            if (!activeViewingStory || activeViewingStory.owner !== currentUser) return;
-            const id = activeViewingStory.id;
+            if (!activeViewingStoryId) return;
+            const st = storiesCache.find(s => s.id === activeViewingStoryId);
+            if (!st || st.owner !== currentUser) return;
+            const id = st.id;
             closeStoryViewer(false);
             await db.ref('stories/' + id).remove();
         }
@@ -2482,21 +2690,28 @@
 
             if (type === 'createStory') {
                 pendingStoryImage = null;
+                pendingStoryVideo = null;
                 titleEl.textContent = 'نشر حالة جديدة';
                 bodyEl.innerHTML = `
                     <div class="info-card">
-                        <h4>شارك يومك مع الآخرين</h4>
+                        <h4>شارك نصاً أو صورة أو فيديو قصير</h4>
                         <div class="input-group">
                             <label>نص الحالة (اختياري):</label>
                             <textarea id="storyTextInput" rows="3" placeholder="اكتب حالتك أو خاطرتك الآن..." maxlength="180"></textarea>
                         </div>
                         <div class="input-group">
-                            <label>صورة الحالة (اختياري):</label>
+                            <label>وسائط الحالة (صورة أو فيديو قصير):</label>
                             <input type="file" id="storyImageFileInput" accept="image/*" style="display:none;" onchange="handleStoryImageSelected(event)">
-                            <button type="button" class="btn btn-outline" style="color:var(--accent); border-color:var(--accent);" onclick="document.getElementById('storyImageFileInput').click()">
-                                <i class="fas fa-image"></i> اختيار صورة مضغوطة
-                            </button>
-                            <div id="storyImagePreviewWrap"></div>
+                            <input type="file" id="storyVideoFileInput" accept="video/*" style="display:none;" onchange="handleStoryVideoSelected(event)">
+                            <div class="admin-actions-row" style="margin-top:0;">
+                                <button type="button" class="btn btn-outline" style="color:var(--accent); border-color:var(--accent);" onclick="document.getElementById('storyImageFileInput').click()">
+                                    <i class="fas fa-image"></i> صورة
+                                </button>
+                                <button type="button" class="btn btn-outline" style="color:var(--accent); border-color:var(--accent);" onclick="document.getElementById('storyVideoFileInput').click()">
+                                    <i class="fas fa-video"></i> فيديو
+                                </button>
+                            </div>
+                            <div id="storyMediaPreviewWrap"></div>
                         </div>
                         <button type="button" class="btn" onclick="publishNewStory()">
                             <i class="fas fa-paper-plane"></i> نشر الحالة الآن
@@ -2664,7 +2879,7 @@
                 bodyEl.innerHTML = `
                     <div class="info-card">
                         <h4>نبض التواصل</h4>
-                        <p>تطبيق تواصل سريع ومتناسق يدعم الاسم المستعار وصورة الملف الشخصي والحالات والدردشات المباشرة والمجموعات والرسائل الصوتية والصور المضغوطة.</p>
+                        <p>تطبيق تواصل سريع ومتناسق يدعم الاسم المستعار وصورة الملف الشخصي والحالات (نصوص، صور، فيديو، تفاعلات، وسجل مشاهدات) والدردشات والمجموعات.</p>
                     </div>
                 `;
             } else if (type === 'aboutDev') {
