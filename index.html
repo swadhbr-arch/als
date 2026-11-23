@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0b141a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>نبض | تطبيق التواصل الفوري</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -23,7 +25,6 @@
             --accent: #00a884;
             --accent-strong: #008069;
             --accent-secondary: #ff3b6b;
-            --accent-glow: rgba(0, 168, 132, 0.25);
             --neon-green: #25d366;
             --text-main: #e9edef;
             --text-muted: #8696a0;
@@ -35,7 +36,6 @@
         body[data-theme="purple"] {
             --accent: #a855f7;
             --accent-strong: #7e22ce;
-            --accent-glow: rgba(168, 85, 247, 0.28);
             --my-msg: #581c87;
             --other-msg: #221d2b;
         }
@@ -43,7 +43,6 @@
         body[data-theme="emerald"] {
             --accent: #10b981;
             --accent-strong: #047857;
-            --accent-glow: rgba(16, 185, 129, 0.28);
             --my-msg: #065f46;
             --other-msg: #182622;
         }
@@ -51,7 +50,6 @@
         body[data-theme="gold"] {
             --accent: #eab308;
             --accent-strong: #ca8a04;
-            --accent-glow: rgba(234, 179, 8, 0.25);
             --my-msg: #713f12;
             --other-msg: #242118;
         }
@@ -99,7 +97,6 @@
             transform: translateZ(0);
         }
 
-        /* إشعار داخلي علوي سريع */
         .inapp-toast {
             position: fixed;
             top: 12px;
@@ -120,14 +117,8 @@
             transition: transform 0.2s ease-out;
             cursor: pointer;
         }
-        .inapp-toast.show {
-            transform: translate(-50%, 0);
-        }
-        .toast-title {
-            font-size: 0.84rem;
-            font-weight: 800;
-            color: var(--accent);
-        }
+        .inapp-toast.show { transform: translate(-50%, 0); }
+        .toast-title { font-size: 0.84rem; font-weight: 800; color: var(--accent); }
         .toast-body {
             font-size: 0.78rem;
             color: var(--text-main);
@@ -137,7 +128,6 @@
             max-width: 340px;
         }
 
-        /* شارات التوثيق */
         .verified-badge {
             display: inline-flex;
             align-items: center;
@@ -184,7 +174,6 @@
             margin-right: 5px;
         }
 
-        /* الشاشات */
         .screen {
             display: none;
             flex-direction: column;
@@ -194,7 +183,6 @@
         }
         .screen.active { display: flex; }
 
-        /* 1. شاشة الدخول */
         #authScreen {
             padding: 20px;
             justify-content: center;
@@ -205,7 +193,7 @@
         .auth-card {
             width: 100%;
             background: var(--bg-header);
-            padding: 24px 20px;
+            padding: 22px 20px;
             border-radius: 20px;
             border: 1px solid var(--border-subtle);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
@@ -213,29 +201,20 @@
         }
 
         .brand-logo-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 18px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: #fff;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 10px;
         }
 
-        .title {
-            font-size: 1.65rem;
-            font-weight: 900;
-            margin-bottom: 4px;
-            color: var(--text-main);
-        }
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.86rem;
-            margin-bottom: 18px;
-        }
+        .title { font-size: 1.55rem; font-weight: 900; margin-bottom: 3px; color: var(--text-main); }
+        .subtitle { color: var(--text-muted); font-size: 0.84rem; margin-bottom: 16px; }
 
         .auth-tabs {
             display: grid;
@@ -244,7 +223,7 @@
             background: var(--bg-app);
             padding: 4px;
             border-radius: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             border: 1px solid var(--border-subtle);
         }
         .auth-tab {
@@ -263,10 +242,55 @@
             border: 1px solid var(--accent);
         }
 
-        .input-group {
-            margin-bottom: 13px;
-            text-align: right;
+        .avatar-picker-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 14px;
         }
+        .avatar-picker-circle {
+            position: relative;
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px dashed var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 900;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .avatar-picker-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .avatar-picker-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-header);
+        }
+        .avatar-picker-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .input-group { margin-bottom: 12px; text-align: right; }
         .input-group label {
             display: block;
             color: var(--text-muted);
@@ -276,7 +300,7 @@
         }
         .input-group input, .input-group textarea {
             width: 100%;
-            padding: 11px 13px;
+            padding: 10px 13px;
             border-radius: 12px;
             border: 1px solid var(--border-subtle);
             background: var(--bg-input);
@@ -284,9 +308,7 @@
             font-size: 0.94rem;
             outline: none;
         }
-        .input-group input:focus, .input-group textarea:focus {
-            border-color: var(--accent);
-        }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); }
 
         .auth-error {
             color: #ff6b8b;
@@ -324,17 +346,9 @@
             color: var(--accent-secondary);
             border: 1.5px solid var(--accent-secondary);
         }
-        .btn-outline:hover {
-            background: var(--accent-secondary);
-            color: #fff;
-        }
+        .btn-outline:hover { background: var(--accent-secondary); color: #fff; }
+        .btn-verify-blue { background: linear-gradient(135deg, #1d9bf0, #0284c7); color: #fff; }
 
-        .btn-verify-blue {
-            background: linear-gradient(135deg, #1d9bf0, #0284c7);
-            color: #fff;
-        }
-
-        /* 2. الشاشة الرئيسية */
         .main-header {
             background: var(--bg-header);
             padding: 11px 14px;
@@ -346,12 +360,7 @@
             gap: 10px;
         }
 
-        .header-start {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-        }
+        .header-start { display: flex; align-items: center; gap: 10px; min-width: 0; }
 
         .icon-btn {
             width: 36px;
@@ -367,25 +376,11 @@
             justify-content: center;
             flex-shrink: 0;
         }
-        .icon-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
+        .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        .main-brand-title {
-            font-size: 1.1rem;
-            font-weight: 900;
-            color: var(--text-main);
-            white-space: nowrap;
-        }
+        .main-brand-title { font-size: 1.1rem; font-weight: 900; color: var(--text-main); white-space: nowrap; }
         .main-brand-title span { color: var(--accent); }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
+        .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
         .home-nav-tabs {
             display: grid;
@@ -447,11 +442,7 @@
         .chats-list-area::-webkit-scrollbar { width: 4px; }
         .chats-list-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        .quick-add-inline {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+        .quick-add-inline { display: flex; gap: 8px; margin-bottom: 12px; }
         .quick-add-inline input {
             flex: 1;
             padding: 10px 12px;
@@ -488,17 +479,8 @@
             cursor: pointer;
             transition: background-color 0.12s ease, border-color 0.12s ease;
         }
-        .chat-row-card:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--accent);
-        }
-        .row-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-            flex: 1;
-        }
+        .chat-row-card:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .row-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
         .row-avatar {
             position: relative;
             width: 44px;
@@ -514,6 +496,12 @@
             color: var(--accent);
             flex-shrink: 0;
         }
+        .row-avatar img.av-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
         .row-avatar.group-av {
             background: rgba(0, 168, 132, 0.16);
             border-color: rgba(0, 168, 132, 0.35);
@@ -528,13 +516,8 @@
             border: 2px solid var(--bg-card);
             background: #64748b;
         }
-        .status-dot.online {
-            background: var(--neon-green);
-        }
-        .row-info {
-            min-width: 0;
-            flex: 1;
-        }
+        .status-dot.online { background: var(--neon-green); }
+        .row-info { min-width: 0; flex: 1; }
         .row-info .rname {
             font-weight: 800;
             font-size: 0.9rem;
@@ -551,18 +534,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .row-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-        .quick-user-btns {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-shrink: 0;
-        }
+        .row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .quick-user-btns { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
         .mini-action-btn {
             padding: 5px 8px;
             border-radius: 9px;
@@ -577,19 +550,13 @@
             gap: 4px;
             white-space: nowrap;
         }
-        .mini-action-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
+        .mini-action-btn:hover { border-color: var(--accent); color: var(--accent); }
         .mini-action-btn.added {
             border-color: rgba(37, 211, 102, 0.4);
             color: var(--neon-green);
             background: rgba(37, 211, 102, 0.09);
         }
-        .mini-action-btn.group-add {
-            border-color: rgba(0, 168, 132, 0.35);
-            color: var(--accent);
-        }
+        .mini-action-btn.group-add { border-color: rgba(0, 168, 132, 0.35); color: var(--accent); }
 
         .unread-badge {
             background: var(--accent);
@@ -605,7 +572,6 @@
             padding: 0 6px;
         }
 
-        /* أزرار عائمة سريعة */
         .fab-stack {
             position: absolute;
             bottom: 18px;
@@ -628,10 +594,7 @@
             justify-content: center;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
         }
-        .fab-group {
-            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-            color: #fff;
-        }
+        .fab-group { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #fff; }
         .fab-room {
             width: 40px;
             height: 40px;
@@ -650,7 +613,6 @@
             line-height: 1.7;
         }
 
-        /* 3. القائمة الجانبية */
         .drawer-backdrop {
             display: none;
             position: fixed;
@@ -683,10 +645,11 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
         .drawer-avatar {
-            width: 46px;
-            height: 46px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: #fff;
@@ -696,29 +659,36 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            overflow: hidden;
         }
-        .drawer-user-info {
-            min-width: 0;
-            flex: 1;
+        .drawer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+        .drawer-user-info { min-width: 0; flex: 1; }
         .drawer-user-name {
             font-weight: 900;
-            font-size: 0.92rem;
+            font-size: 0.94rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
             flex-wrap: wrap;
         }
+        .drawer-user-handle {
+            font-size: 0.74rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-top: 1px;
+        }
         .drawer-user-bio {
             font-size: 0.75rem;
             color: var(--text-muted);
             margin-top: 2px;
-            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
         }
-        .drawer-user-bio:hover { color: var(--accent); }
 
         .drawer-menu {
             flex: 1;
@@ -743,20 +713,9 @@
             align-items: center;
             justify-content: space-between;
         }
-        .drawer-item:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--accent);
-        }
-        .drawer-item-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .drawer-item i.main-icon {
-            color: var(--accent);
-            width: 18px;
-            text-align: center;
-        }
+        .drawer-item:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .drawer-item-left { display: flex; align-items: center; gap: 10px; }
+        .drawer-item i.main-icon { color: var(--accent); width: 18px; text-align: center; }
 
         .drawer-footer {
             padding: 12px 14px;
@@ -779,12 +738,8 @@
             justify-content: center;
             gap: 8px;
         }
-        .btn-confirm-logout:hover {
-            background: var(--accent-secondary);
-            color: #fff;
-        }
+        .btn-confirm-logout:hover { background: var(--accent-secondary); color: #fff; }
 
-        /* لوحات فرعية */
         .subpanel-modal {
             display: none;
             position: fixed;
@@ -805,16 +760,8 @@
             align-items: center;
             justify-content: space-between;
         }
-        .subpanel-title {
-            font-weight: 900;
-            font-size: 0.98rem;
-            color: var(--accent);
-        }
-        .subpanel-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-        }
+        .subpanel-title { font-weight: 900; font-size: 0.98rem; color: var(--accent); }
+        .subpanel-body { flex: 1; overflow-y: auto; padding: 15px; }
 
         .info-card {
             background: var(--bg-card);
@@ -824,22 +771,10 @@
             margin-bottom: 12px;
             line-height: 1.7;
         }
-        .info-card h4 {
-            color: var(--accent);
-            font-size: 0.96rem;
-            font-weight: 900;
-            margin-bottom: 7px;
-        }
-        .info-card p {
-            color: var(--text-main);
-            font-size: 0.86rem;
-        }
+        .info-card h4 { color: var(--accent); font-size: 0.96rem; font-weight: 900; margin-bottom: 7px; }
+        .info-card p { color: var(--text-main); font-size: 0.86rem; }
 
-        .theme-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .theme-card {
             background: var(--bg-card);
             border: 2px solid var(--border-subtle);
@@ -848,36 +783,13 @@
             cursor: pointer;
             text-align: center;
         }
-        .theme-card.active {
-            border-color: var(--accent);
-            background: var(--bg-card-hover);
-        }
-        .theme-swatch {
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            margin: 0 auto 7px;
-        }
-        .theme-name {
-            font-weight: 800;
-            font-size: 0.88rem;
-        }
+        .theme-card.active { border-color: var(--accent); background: var(--bg-card-hover); }
+        .theme-swatch { width: 38px; height: 38px; border-radius: 12px; margin: 0 auto 7px; }
+        .theme-name { font-weight: 800; font-size: 0.88rem; }
 
-        .admin-actions-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .admin-status-msg {
-            margin-top: 10px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--neon-green);
-            min-height: 18px;
-        }
+        .admin-actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .admin-status-msg { margin-top: 10px; font-size: 0.82rem; font-weight: 700; color: var(--neon-green); min-height: 18px; }
 
-        /* نافذة تأكيد الخروج */
         .confirm-modal {
             display: none;
             position: fixed;
@@ -898,24 +810,10 @@
             padding: 20px 16px;
             text-align: center;
         }
-        .confirm-box h4 {
-            font-size: 1.02rem;
-            font-weight: 900;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-        .confirm-box p {
-            font-size: 0.84rem;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-        .confirm-btns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
+        .confirm-box h4 { font-size: 1.02rem; font-weight: 900; color: var(--text-main); margin-bottom: 6px; }
+        .confirm-box p { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px; }
+        .confirm-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        /* 4. شاشة الدردشة */
         #chatScreen { background: var(--bg-app); }
 
         .chat-header {
@@ -928,11 +826,33 @@
             flex-shrink: 0;
             gap: 8px;
         }
-        .chat-header-info {
+        .chat-header-start {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 9px;
             min-width: 0;
         }
+        .chat-header-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .chat-header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .chat-header-info { display: flex; flex-direction: column; min-width: 0; }
         .chat-room-code {
             font-weight: 900;
             font-size: 0.96rem;
@@ -960,12 +880,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .chat-header-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
+        .chat-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .btn-leave {
             background: rgba(255, 59, 107, 0.14);
             color: #ff6b8b;
@@ -1012,11 +927,7 @@
             gap: 8px;
         }
         .pinned-bar.active { display: flex; }
-        .pinned-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .pinned-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .chat-messages {
             flex: 1;
@@ -1030,11 +941,7 @@
         .chat-messages::-webkit-scrollbar { width: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        .message-wrapper {
-            display: flex;
-            flex-direction: column;
-            max-width: 84%;
-        }
+        .message-wrapper { display: flex; flex-direction: column; max-width: 84%; }
         .message-wrapper.me { align-self: flex-end; }
         .message-wrapper.other { align-self: flex-start; }
 
@@ -1070,11 +977,7 @@
             -webkit-user-select: text;
         }
 
-        .message-wrapper.me .msg-bubble {
-            background: var(--my-msg);
-            color: #fff;
-            border-top-right-radius: 4px;
-        }
+        .message-wrapper.me .msg-bubble { background: var(--my-msg); color: #fff; border-top-right-radius: 4px; }
         .message-wrapper.other .msg-bubble {
             background: var(--other-msg);
             color: var(--text-main);
@@ -1093,13 +996,7 @@
             cursor: zoom-in;
         }
 
-        .msg-audio {
-            width: 220px;
-            max-width: 100%;
-            height: 36px;
-            margin-bottom: 4px;
-            border-radius: 10px;
-        }
+        .msg-audio { width: 220px; max-width: 100%; height: 36px; margin-bottom: 4px; border-radius: 10px; }
 
         .msg-meta-row {
             display: flex;
@@ -1131,12 +1028,7 @@
         .msg-action-btn:hover { color: var(--accent); }
         .msg-action-btn.del:hover { color: #ff6b8b; }
 
-        .reactions-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 4px;
-        }
+        .reactions-bar { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
         .reaction-chip {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
@@ -1146,10 +1038,7 @@
             cursor: pointer;
             color: var(--text-main);
         }
-        .reaction-chip.active {
-            border-color: var(--accent);
-            background: rgba(0, 168, 132, 0.16);
-        }
+        .reaction-chip.active { border-color: var(--accent); background: rgba(0, 168, 132, 0.16); }
 
         .edit-banner, .reply-banner, .image-preview-banner, .audio-preview-banner {
             display: none;
@@ -1171,13 +1060,7 @@
             font-size: 0.88rem;
             cursor: pointer;
         }
-        .image-preview-thumb {
-            width: 42px;
-            height: 42px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--accent);
-        }
+        .image-preview-thumb { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; border: 1px solid var(--accent); }
 
         .quick-emojis {
             display: flex;
@@ -1206,11 +1089,7 @@
             margin: 0 12px 6px;
             width: fit-content;
         }
-        .typing-indicator.active {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
+        .typing-indicator.active { display: flex; gap: 4px; align-items: center; }
         .dot {
             width: 6px;
             height: 6px;
@@ -1269,9 +1148,7 @@
             align-items: center;
             cursor: text;
         }
-        .input-wrapper:focus-within {
-            border-color: var(--accent);
-        }
+        .input-wrapper:focus-within { border-color: var(--accent); }
 
         .chat-input-area input {
             width: 100%;
@@ -1301,7 +1178,6 @@
             flex-shrink: 0;
         }
 
-        /* عارض الصورة المكبرة */
         .lightbox-modal {
             display: none;
             position: fixed;
@@ -1314,11 +1190,7 @@
             cursor: zoom-out;
         }
         .lightbox-modal.active { display: flex; }
-        .lightbox-modal img {
-            max-width: 100%;
-            max-height: 88dvh;
-            border-radius: 12px;
-        }
+        .lightbox-modal img { max-width: 100%; max-height: 88dvh; border-radius: 12px; }
 
         .divider {
             display: flex;
@@ -1328,18 +1200,12 @@
             font-size: 0.78rem;
             font-weight: 700;
         }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border-subtle);
-        }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
         .divider span { padding: 0 10px; }
     </style>
 </head>
 <body data-theme="blue">
 
-    <!-- إشعار داخلي علوي سريع -->
     <div class="inapp-toast" id="inappToast" onclick="handleToastClick()">
         <div style="min-width:0;">
             <div class="toast-title" id="toastTitle">رسالة جديدة</div>
@@ -1349,13 +1215,12 @@
     </div>
 
     <div class="app-container">
-        
         <!-- 1. شاشة تسجيل الدخول / إنشاء الحساب -->
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="brand-logo-circle"><i class="fas fa-comments"></i></div>
                 <div class="title">نبض التواصل</div>
-                <div class="subtitle">رسائل فورية، مجموعات، قائمة المستخدمين، وصوتيات</div>
+                <div class="subtitle">رسائل فورية، مجموعات، وملف شخصي متكامل</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1364,8 +1229,25 @@
 
                 <div class="auth-error" id="authError"></div>
 
+                <!-- اختيار صورة الملف الشخصي والاسم المستعار عند إنشاء حساب جديد -->
+                <div id="registerExtraFields" style="display:none;">
+                    <div class="avatar-picker-wrap">
+                        <input type="file" id="authAvatarInput" accept="image/*" style="display:none;" onchange="handleAuthAvatarSelected(event)">
+                        <div class="avatar-picker-circle" id="authAvatarPreviewBox" onclick="document.getElementById('authAvatarInput').click()">
+                            <i class="fas fa-camera"></i>
+                            <span class="avatar-picker-badge"><i class="fas fa-plus"></i></span>
+                        </div>
+                        <div class="avatar-picker-hint">اضغط لاختيار صورة للملف الشخصي (اختياري)</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>الاسم المستعار (يظهر للآخرين):</label>
+                        <input type="text" id="authNickname" placeholder="مثال: أبو ميزر الجياشي" maxlength="28">
+                    </div>
+                </div>
+
                 <div class="input-group">
-                    <label>اسم المستخدم:</label>
+                    <label>اسم المستخدم (للدخول والإضافة):</label>
                     <input type="text" id="authUsername" placeholder="مثال: abdulrahim" maxlength="20" autocomplete="username">
                 </div>
 
@@ -1391,6 +1273,9 @@
                 </div>
 
                 <div class="header-actions">
+                    <button type="button" class="icon-btn" title="تعديل الملف الشخصي" onclick="openSubpanel('editProfile')">
+                        <i class="fas fa-user-pen"></i>
+                    </button>
                     <button type="button" class="icon-btn" title="إنشاء مجموعة" onclick="openSubpanel('createGroup')">
                         <i class="fas fa-users"></i>
                     </button>
@@ -1446,14 +1331,15 @@
         <!-- 3. القائمة الجانبية -->
         <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeSideDrawer(true)"></div>
         <aside class="side-drawer" id="sideDrawer">
-            <div class="drawer-header">
+            <div class="drawer-header" onclick="openSubpanel('editProfile')">
                 <div class="drawer-avatar" id="drawerAvatar">ع</div>
                 <div class="drawer-user-info">
                     <div class="drawer-user-name">
                         <span id="drawerDisplayName">المستخدم</span>
                         <span id="drawerBadgesContainer"></span>
                     </div>
-                    <div class="drawer-user-bio" onclick="editMyBio()">
+                    <div class="drawer-user-handle" id="drawerUsernameHandle">@user</div>
+                    <div class="drawer-user-bio">
                         <i class="fas fa-pen" style="font-size:10px;"></i>
                         <span id="drawerBioText">متاح للدردشة</span>
                     </div>
@@ -1461,6 +1347,11 @@
             </div>
 
             <div class="drawer-menu">
+                <button type="button" class="drawer-item" onclick="openSubpanel('editProfile')">
+                    <span class="drawer-item-left"><i class="fas fa-user-pen main-icon"></i> تعديل الملف الشخصي</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
                 <button type="button" class="drawer-item" onclick="closeSideDrawer(false); switchHomeTab('users');">
                     <span class="drawer-item-left"><i class="fas fa-user-group main-icon"></i> قائمة المستخدمين</span>
                     <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
@@ -1535,15 +1426,18 @@
         <!-- 4. شاشة الدردشة -->
         <div class="screen" id="chatScreen">
             <div class="chat-header">
-                <div class="chat-header-info">
-                    <span class="chat-room-code" id="displayChatTitle">
-                        <span id="chatTitleText">الدردشة</span>
-                        <span id="chatTitleBadges"></span>
-                        <button type="button" class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
-                            <i class="fas fa-copy"></i> نسخ الكود
-                        </button>
-                    </span>
-                    <span class="chat-status" id="chatPartnerStatus">متصل الآن</span>
+                <div class="chat-header-start">
+                    <div class="chat-header-avatar" id="chatHeaderAvatar">ع</div>
+                    <div class="chat-header-info">
+                        <span class="chat-room-code" id="displayChatTitle">
+                            <span id="chatTitleText">الدردشة</span>
+                            <span id="chatTitleBadges"></span>
+                            <button type="button" class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
+                                <i class="fas fa-copy"></i> نسخ الكود
+                            </button>
+                        </span>
+                        <span class="chat-status" id="chatPartnerStatus">متصل الآن</span>
+                    </div>
                 </div>
                 <div class="chat-header-actions">
                     <button type="button" class="icon-btn" id="addGroupMemberBtn" style="display:none;" title="إضافة عضو للمجموعة" onclick="addMemberToActiveGroup()">
@@ -1625,10 +1519,8 @@
                 <button type="button" class="btn-send" id="sendChatBtn" title="إرسال"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
-
     </div>
 
-    <!-- عارض الصورة المكبرة -->
     <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(true)">
         <img id="lightboxImg" src="" alt="صورة مكبرة">
     </div>
@@ -1655,8 +1547,12 @@
         let activeHomeTab = 'chats';
         let currentUser = null;
         let currentDisplayName = null;
+        let currentUserAvatar = '';
         let currentUserVerified = false;
         let currentUserVipAdmin = false;
+        let pendingAuthAvatar = '';
+        let pendingEditProfileAvatar = null;
+
         let activeChatId = null;
         let activeChatType = null;
         let activeRoomCode = null;
@@ -1735,9 +1631,7 @@
         }
 
         function pushNavState(viewName) {
-            try {
-                history.pushState({ legendaryView: viewName, ts: Date.now() }, '');
-            } catch (e) {}
+            try { history.pushState({ legendaryView: viewName, ts: Date.now() }, ''); } catch (e) {}
         }
 
         window.addEventListener('popstate', () => {
@@ -1779,16 +1673,12 @@
             toastActionPayload = onClickAction;
             toast.classList.add('show');
             clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3200);
+            toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 3200);
         }
 
         function handleToastClick() {
             document.getElementById('inappToast').classList.remove('show');
-            if (typeof toastActionPayload === 'function') {
-                toastActionPayload();
-            }
+            if (typeof toastActionPayload === 'function') toastActionPayload();
         }
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1816,25 +1706,31 @@
             return !!usernameKey && ADMIN_USERNAMES.map(sanitizeKey).includes(sanitizeKey(usernameKey));
         }
 
-        function isCurrentUserAdmin() {
-            return isAdminUsername(currentUser);
+        function isCurrentUserAdmin() { return isAdminUsername(currentUser); }
+
+        function renderAvatarInner(avatarUrl, fallbackName) {
+            if (avatarUrl && avatarUrl.startsWith('data:image')) {
+                return `<img class="av-img" src="${avatarUrl}" alt="صورة">`;
+            }
+            return escapeHtml((fallbackName || 'ع').charAt(0).toUpperCase());
         }
 
         function getBadgesHtml(isVerified, isVipAdmin) {
-            const verHtml = isVerified
-                ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>'
-                : '';
-            const vipHtml = isVipAdmin
-                ? '<span class="vip-badge" title="توثيق المطور / الإداري المميز"><i class="fas fa-crown"></i> مطور • VIP</span>'
-                : '';
+            const verHtml = isVerified ? '<span class="verified-badge" title="حساب موثق"><i class="fas fa-check"></i></span>' : '';
+            const vipHtml = isVipAdmin ? '<span class="vip-badge" title="توثيق المطور / الإداري المميز"><i class="fas fa-crown"></i> مطور • VIP</span>' : '';
             return verHtml + vipHtml;
         }
 
         async function fetchUserBadges(usernameKey) {
             const key = sanitizeKey(usernameKey);
-            if (!key) return { verified: false, vipAdmin: false };
+            if (!key) return { verified: false, vipAdmin: false, avatar: '', displayName: '' };
             if (key === currentUser) {
-                return { verified: !!currentUserVerified, vipAdmin: !!currentUserVipAdmin };
+                return {
+                    verified: !!currentUserVerified,
+                    vipAdmin: !!currentUserVipAdmin,
+                    avatar: currentUserAvatar || '',
+                    displayName: currentDisplayName || currentUser
+                };
             }
             if (userBadgeCache[key]) return userBadgeCache[key];
             const snap = await db.ref('users/' + key).once('value');
@@ -1842,7 +1738,9 @@
             const isVip = !!(val.vipAdmin || isAdminUsername(key));
             const badges = {
                 verified: !!(val.verified || isVip),
-                vipAdmin: isVip
+                vipAdmin: isVip,
+                avatar: val.avatar || '',
+                displayName: val.displayName || key
             };
             userBadgeCache[key] = badges;
             return badges;
@@ -1850,11 +1748,126 @@
 
         function refreshUserIdentityUI() {
             const bio = document.getElementById('drawerBioText').textContent;
-            document.getElementById('drawerDisplayName').textContent = `${currentDisplayName || currentUser} (@${currentUser})`;
+            const shownName = currentDisplayName || currentUser;
+            document.getElementById('drawerDisplayName').textContent = shownName;
+            document.getElementById('drawerUsernameHandle').textContent = `@${currentUser}`;
             document.getElementById('drawerBadgesContainer').innerHTML = getBadgesHtml(currentUserVerified, currentUserVipAdmin);
-            document.getElementById('drawerAvatar').textContent = (currentDisplayName || currentUser || 'ع').charAt(0).toUpperCase();
+
+            const drawerAvatarEl = document.getElementById('drawerAvatar');
+            if (currentUserAvatar && currentUserAvatar.startsWith('data:image')) {
+                drawerAvatarEl.innerHTML = `<img src="${currentUserAvatar}" alt="صورتي">`;
+            } else {
+                drawerAvatarEl.textContent = (shownName || 'ع').charAt(0).toUpperCase();
+            }
+
             document.getElementById('drawerAdminItem').style.display = isCurrentUserAdmin() ? 'flex' : 'none';
             document.getElementById('drawerBioText').textContent = bio;
+        }
+
+        // ضغط صورة البروفايل إلى مربع خفيف وسريع (220x220)
+        function compressAvatarFile(file, size = 220, quality = 0.72) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('error'));
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('error'));
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+
+                        const minSide = Math.min(img.width, img.height);
+                        const sx = (img.width - minSide) / 2;
+                        const sy = (img.height - minSide) / 2;
+                        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleAuthAvatarSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = '';
+            if (!file || !file.type.startsWith('image/')) return;
+            try {
+                const dataUrl = await compressAvatarFile(file);
+                pendingAuthAvatar = dataUrl;
+                document.getElementById('authAvatarPreviewBox').innerHTML = `
+                    <img src="${dataUrl}" alt="صورة الملف الشخصي">
+                    <span class="avatar-picker-badge"><i class="fas fa-pen"></i></span>
+                `;
+            } catch (err) {}
+        }
+
+        async function handleEditProfileAvatarSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = '';
+            if (!file || !file.type.startsWith('image/')) return;
+            try {
+                const dataUrl = await compressAvatarFile(file);
+                pendingEditProfileAvatar = dataUrl;
+                const box = document.getElementById('editProfileAvatarPreview');
+                if (box) {
+                    box.innerHTML = `
+                        <img src="${dataUrl}" alt="صورة الملف الشخصي">
+                        <span class="avatar-picker-badge"><i class="fas fa-camera"></i></span>
+                    `;
+                }
+            } catch (err) {}
+        }
+
+        function removePendingEditAvatar() {
+            pendingEditProfileAvatar = '';
+            const box = document.getElementById('editProfileAvatarPreview');
+            const nameVal = (document.getElementById('editNicknameInput')?.value || currentDisplayName || currentUser || 'ع').trim();
+            if (box) {
+                box.innerHTML = `
+                    <span>${escapeHtml(nameVal.charAt(0).toUpperCase())}</span>
+                    <span class="avatar-picker-badge"><i class="fas fa-camera"></i></span>
+                `;
+            }
+        }
+
+        async function saveProfileChanges() {
+            if (!currentUser) return;
+            const nickInput = document.getElementById('editNicknameInput');
+            const bioInput = document.getElementById('editBioInput');
+            const statusEl = document.getElementById('profileStatusMsg');
+
+            const newNickname = (nickInput?.value || '').trim().slice(0, 28) || currentDisplayName || currentUser;
+            const newBio = (bioInput?.value || '').trim().slice(0, 60) || 'متاح للدردشة';
+            const finalAvatar = pendingEditProfileAvatar !== null ? pendingEditProfileAvatar : currentUserAvatar;
+
+            await db.ref('users/' + currentUser).update({
+                displayName: newNickname,
+                bio: newBio,
+                avatar: finalAvatar
+            });
+
+            currentDisplayName = newNickname;
+            currentUserAvatar = finalAvatar;
+            userBadgeCache[currentUser] = {
+                verified: currentUserVerified,
+                vipAdmin: currentUserVipAdmin,
+                avatar: currentUserAvatar,
+                displayName: currentDisplayName
+            };
+
+            document.getElementById('drawerBioText').textContent = newBio;
+            refreshUserIdentityUI();
+
+            if (statusEl) {
+                statusEl.style.color = 'var(--neon-green)';
+                statusEl.textContent = 'تم حفظ الاسم المستعار وصورة الملف الشخصي بنجاح.';
+            }
+            showInAppToast('تم تحديث الملف الشخصي', `الاسم المستعار: ${newNickname}`);
+            setTimeout(() => closeSubpanel(true), 650);
         }
 
         async function setVerificationStatus(status) {
@@ -1881,11 +1894,14 @@
                 return;
             }
 
-            const isVipTarget = !!(snap.val()?.vipAdmin || isAdminUsername(targetKey));
+            const uVal = snap.val() || {};
+            const isVipTarget = !!(uVal.vipAdmin || isAdminUsername(targetKey));
             await ref.update({ verified: !!(status || isVipTarget) });
             userBadgeCache[targetKey] = {
                 verified: !!(status || isVipTarget),
-                vipAdmin: isVipTarget
+                vipAdmin: isVipTarget,
+                avatar: uVal.avatar || '',
+                displayName: uVal.displayName || targetKey
             };
 
             if (targetKey === currentUser) {
@@ -1911,9 +1927,7 @@
             el.textContent = msg;
             el.style.display = 'block';
         }
-        function hideAuthError() {
-            document.getElementById('authError').style.display = 'none';
-        }
+        function hideAuthError() { document.getElementById('authError').style.display = 'none'; }
 
         function pickSupportedAudioMimeType() {
             const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
@@ -1967,11 +1981,7 @@
                     const reader = new FileReader();
                     reader.onloadend = () => {
                         const sizeKb = Math.max(1, Math.round(blob.size / 1024));
-                        pendingAudioClip = {
-                            dataUrl: reader.result,
-                            durationSec: recordingSeconds,
-                            sizeKb
-                        };
+                        pendingAudioClip = { dataUrl: reader.result, durationSec: recordingSeconds, sizeKb };
                         document.getElementById('audioPreviewInfo').innerHTML =
                             `<i class="fas fa-microphone" style="color:var(--accent);"></i> صوت جاهز (${recordingSeconds}ث • ${sizeKb} KB)`;
                         document.getElementById('audioPreviewBanner').classList.add('active');
@@ -2077,17 +2087,6 @@
             if (currentUser) db.ref('users/' + currentUser + '/theme').set(chosen);
         }
 
-        async function editMyBio() {
-            if (!currentUser) return;
-            const currentBio = document.getElementById('drawerBioText').textContent;
-            const updated = prompt('اكتب حالتك أو نبذتك القصيرة:', currentBio);
-            if (updated !== null && updated.trim() !== '') {
-                const cleanBio = updated.trim().slice(0, 60);
-                document.getElementById('drawerBioText').textContent = cleanBio;
-                await db.ref('users/' + currentUser + '/bio').set(cleanBio);
-            }
-        }
-
         function openSideDrawer() {
             document.getElementById('drawerBackdrop').classList.add('active');
             document.getElementById('sideDrawer').classList.add('open');
@@ -2110,7 +2109,50 @@
             const bodyEl = document.getElementById('subpanelBody');
             const currentTheme = document.body.getAttribute('data-theme') || 'blue';
 
-            if (type === 'createGroup') {
+            if (type === 'editProfile') {
+                pendingEditProfileAvatar = null;
+                titleEl.textContent = 'تعديل الملف الشخصي';
+                const currentBio = document.getElementById('drawerBioText').textContent;
+                const shownName = currentDisplayName || currentUser;
+                const avatarInner = (currentUserAvatar && currentUserAvatar.startsWith('data:image'))
+                    ? `<img src="${currentUserAvatar}" alt="صورة الملف الشخصي"><span class="avatar-picker-badge"><i class="fas fa-camera"></i></span>`
+                    : `<span>${escapeHtml((shownName || 'ع').charAt(0).toUpperCase())}</span><span class="avatar-picker-badge"><i class="fas fa-camera"></i></span>`;
+
+                bodyEl.innerHTML = `
+                    <div class="info-card">
+                        <div class="avatar-picker-wrap">
+                            <input type="file" id="editProfileAvatarInput" accept="image/*" style="display:none;" onchange="handleEditProfileAvatarSelected(event)">
+                            <div class="avatar-picker-circle" id="editProfileAvatarPreview" onclick="document.getElementById('editProfileAvatarInput').click()">
+                                ${avatarInner}
+                            </div>
+                            <div class="avatar-picker-hint">اضغط على الدائرة لتغيير صورة الملف الشخصي</div>
+                            <button type="button" class="mini-action-btn" style="margin-top:6px; color:#ff6b8b;" onclick="removePendingEditAvatar()">
+                                <i class="fas fa-trash"></i> إزالة الصورة الشخصية
+                            </button>
+                        </div>
+
+                        <div class="input-group">
+                            <label>الاسم المستعار (الاسم الظاهر للجميع):</label>
+                            <input type="text" id="editNicknameInput" value="${escapeHtml(shownName)}" placeholder="اكتب اسمك المستعار..." maxlength="28">
+                        </div>
+
+                        <div class="input-group">
+                            <label>الحالة / النبذة القصيرة:</label>
+                            <input type="text" id="editBioInput" value="${escapeHtml(currentBio)}" placeholder="متاح للدردشة" maxlength="60">
+                        </div>
+
+                        <div class="input-group">
+                            <label>اسم المستخدم الثابت (للبحث والإضافة):</label>
+                            <input type="text" value="@${escapeHtml(currentUser)}" disabled style="opacity:0.65;">
+                        </div>
+
+                        <button type="button" class="btn" onclick="saveProfileChanges()">
+                            <i class="fas fa-check"></i> حفظ التعديلات
+                        </button>
+                        <div class="admin-status-msg" id="profileStatusMsg"></div>
+                    </div>
+                `;
+            } else if (type === 'createGroup') {
                 const prefillMember = extraData && extraData.prefillMember ? extraData.prefillMember : '';
                 titleEl.textContent = 'إنشاء مجموعة جديدة';
                 bodyEl.innerHTML = `
@@ -2227,7 +2269,7 @@
                 bodyEl.innerHTML = `
                     <div class="info-card">
                         <h4>نبض التواصل</h4>
-                        <p>تطبيق تواصل سريع ومتناسق يجمع الدردشات المباشرة والمجموعات وقائمة المستخدمين مع إضافة سريعة للأصدقاء والمجموعات والرسائل الصوتية والصور المضغوطة.</p>
+                        <p>تطبيق تواصل سريع ومتناسق يدعم الاسم المستعار وصورة الملف الشخصي والدردشات المباشرة والمجموعات والرسائل الصوتية والصور المضغوطة.</p>
                     </div>
                 `;
             } else if (type === 'aboutDev') {
@@ -2253,19 +2295,15 @@
             }
         }
 
-        function askLogoutConfirm() {
-            document.getElementById('confirmLogoutModal').classList.add('active');
-        }
-
-        function closeLogoutConfirm() {
-            document.getElementById('confirmLogoutModal').classList.remove('active');
-        }
+        function askLogoutConfirm() { document.getElementById('confirmLogoutModal').classList.add('active'); }
+        function closeLogoutConfirm() { document.getElementById('confirmLogoutModal').classList.remove('active'); }
 
         function switchAuthMode(mode) {
             authMode = mode;
             hideAuthError();
             document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
             document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+            document.getElementById('registerExtraFields').style.display = mode === 'register' ? 'block' : 'none';
             document.getElementById('authSubmitBtn').innerHTML = mode === 'login'
                 ? '<i class="fas fa-right-to-bracket"></i> دخول إلى حسابي'
                 : '<i class="fas fa-user-check"></i> إنشاء الحساب والبدء';
@@ -2274,6 +2312,7 @@
         async function handleAuthSubmit() {
             hideAuthError();
             const rawUsername = document.getElementById('authUsername').value.trim();
+            const rawNickname = document.getElementById('authNickname')?.value.trim();
             const password = document.getElementById('authPassword').value;
             const usernameKey = sanitizeKey(rawUsername);
 
@@ -2300,9 +2339,12 @@
                         btn.disabled = false;
                         return;
                     }
+                    const chosenDisplayName = (rawNickname || rawUsername).slice(0, 28);
+                    const chosenAvatar = pendingAuthAvatar || '';
                     await userRef.set({
                         username: usernameKey,
-                        displayName: rawUsername,
+                        displayName: chosenDisplayName,
+                        avatar: chosenAvatar,
                         passwordHash: passHash,
                         bio: 'متاح للدردشة',
                         theme: savedTheme,
@@ -2312,7 +2354,8 @@
                         online: true,
                         lastSeen: Date.now()
                     });
-                    completeLogin(usernameKey, rawUsername, 'متاح للدردشة', savedTheme, isAdminAccount, isAdminAccount);
+                    pendingAuthAvatar = '';
+                    completeLogin(usernameKey, chosenDisplayName, 'متاح للدردشة', savedTheme, isAdminAccount, isAdminAccount, chosenAvatar);
                 } else {
                     if (!snapshot.exists()) {
                         showAuthError('هذا الحساب غير موجود.');
@@ -2329,8 +2372,9 @@
                     const userBio = userData.bio || 'متاح للدردشة';
                     const isVip = !!(userData.vipAdmin || isAdminAccount);
                     const isVer = !!(userData.verified || isVip);
+                    const avatarUrl = userData.avatar || '';
                     await userRef.update({ online: true, lastSeen: Date.now(), vipAdmin: isVip, verified: isVer });
-                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme, isVer, isVip);
+                    completeLogin(usernameKey, userData.displayName || rawUsername, userBio, userTheme, isVer, isVip, avatarUrl);
                 }
             } catch (err) {
                 showAuthError('حدث خطأ في الاتصال بقاعدة البيانات.');
@@ -2338,12 +2382,18 @@
             btn.disabled = false;
         }
 
-        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة', themeName = 'blue', isVerified = false, isVipAdmin = false) {
+        function completeLogin(usernameKey, displayName, bioText = 'متاح للدردشة', themeName = 'blue', isVerified = false, isVipAdmin = false, avatarUrl = '') {
             currentUser = usernameKey;
             currentDisplayName = displayName;
+            currentUserAvatar = avatarUrl || '';
             currentUserVipAdmin = !!(isVipAdmin || isAdminUsername(usernameKey));
             currentUserVerified = !!(isVerified || currentUserVipAdmin);
-            userBadgeCache[usernameKey] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
+            userBadgeCache[usernameKey] = {
+                verified: currentUserVerified,
+                vipAdmin: currentUserVipAdmin,
+                avatar: currentUserAvatar,
+                displayName: currentDisplayName
+            };
             localStorage.setItem('legendary_chat_session', JSON.stringify({ username: usernameKey, displayName }));
 
             applyTheme(themeName);
@@ -2358,9 +2408,16 @@
             myPresenceRef.off();
             myPresenceRef.on('value', (snap) => {
                 const uVal = snap.val() || {};
+                currentDisplayName = uVal.displayName || currentDisplayName || currentUser;
+                currentUserAvatar = uVal.avatar || '';
                 currentUserVipAdmin = !!(uVal.vipAdmin || isAdminUsername(currentUser));
                 currentUserVerified = !!(uVal.verified || currentUserVipAdmin);
-                userBadgeCache[currentUser] = { verified: currentUserVerified, vipAdmin: currentUserVipAdmin };
+                userBadgeCache[currentUser] = {
+                    verified: currentUserVerified,
+                    vipAdmin: currentUserVipAdmin,
+                    avatar: currentUserAvatar,
+                    displayName: currentDisplayName
+                };
                 refreshUserIdentityUI();
             });
 
@@ -2404,6 +2461,7 @@
             localStorage.removeItem('legendary_chat_session');
             currentUser = null;
             currentDisplayName = null;
+            currentUserAvatar = '';
             currentUserVerified = false;
             currentUserVipAdmin = false;
             document.getElementById('drawerAdminItem').style.display = 'none';
@@ -2432,7 +2490,8 @@
                             uVal.bio || 'متاح للدردشة',
                             uVal.theme || savedTheme,
                             !!(uVal.verified || isVip),
-                            isVip
+                            isVip,
+                            uVal.avatar || ''
                         );
                     }
                 } catch (e) {}
@@ -2478,7 +2537,7 @@
             if (!friendSnap.exists()) return;
 
             const friendData = friendSnap.val();
-            const display = friendDisplay || friendData.displayName || key;
+            const display = friendData.displayName || friendDisplay || key;
             const chatId = getDirectChatId(currentUser, key);
 
             await db.ref(`friends/${currentUser}/${key}`).update({
@@ -2499,7 +2558,7 @@
 
             if (openAfter) {
                 const isVip = !!(friendData.vipAdmin || isAdminUsername(key));
-                openDirectChat(key, display, chatId, !!(friendData.verified || isVip), isVip);
+                openDirectChat(key, display, chatId, !!(friendData.verified || isVip), isVip, friendData.avatar || '');
             }
         }
 
@@ -2556,7 +2615,7 @@
                 chatId,
                 addedAt: Date.now()
             });
-            openDirectChat(userItem.username, userItem.displayName, chatId, userItem.verified, userItem.vipAdmin);
+            openDirectChat(userItem.username, userItem.displayName, chatId, userItem.verified, userItem.vipAdmin, userItem.avatar || '');
         }
 
         function listenToAllUsers() {
@@ -2571,11 +2630,14 @@
                     if (key === currentUser) return;
                     const isVip = !!(val.vipAdmin || isAdminUsername(key));
                     const isVer = !!(val.verified || isVip);
-                    userBadgeCache[key] = { verified: isVer, vipAdmin: isVip };
+                    const avatarUrl = val.avatar || '';
+                    const dName = val.displayName || key;
+                    userBadgeCache[key] = { verified: isVer, vipAdmin: isVip, avatar: avatarUrl, displayName: dName };
 
                     const item = {
                         username: key,
-                        displayName: val.displayName || key,
+                        displayName: dName,
+                        avatar: avatarUrl,
                         bio: val.bio || 'متاح للدردشة',
                         online: !!val.online,
                         verified: isVer,
@@ -2630,7 +2692,7 @@
                 div.innerHTML = `
                     <div class="row-left">
                         <div class="row-avatar">
-                            ${u.displayName.charAt(0).toUpperCase()}
+                            ${renderAvatarInner(u.avatar, u.displayName)}
                             <span class="status-dot ${u.online ? 'online' : ''}"></span>
                         </div>
                         <div class="row-info">
@@ -2643,7 +2705,7 @@
                     </div>
                     <div class="quick-user-btns" onclick="event.stopPropagation()">
                         <button type="button" class="mini-action-btn ${isAlreadyFriend ? 'added' : ''}" onclick="quickAddFriendByKey('${escapeJs(u.username)}', '${escapeJs(u.displayName)}', false)">
-                            <i class="fas ${isAlreadyFriend ? 'fa-check' : 'fa-user-plus'}"></i> ${isAlreadyFriend ? 'صديق' : 'صديق'}
+                            <i class="fas ${isAlreadyFriend ? 'fa-check' : 'fa-user-plus'}"></i> صديق
                         </button>
                         <button type="button" class="mini-action-btn group-add" onclick="handleQuickAddToGroup('${escapeJs(u.username)}', '${escapeJs(u.displayName)}')">
                             <i class="fas fa-users"></i> مجموعة
@@ -2773,11 +2835,11 @@
                         </div>
                     `;
                 } else {
-                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin);
+                    div.onclick = () => openDirectChat(item.username, item.displayName, item.chatId, item.verified, item.vipAdmin, item.avatar || '');
                     div.innerHTML = `
                         <div class="row-left">
                             <div class="row-avatar">
-                                ${item.displayName.charAt(0).toUpperCase()}
+                                ${renderAvatarInner(item.avatar, item.displayName)}
                                 <span class="status-dot ${item.online ? 'online' : ''}"></span>
                             </div>
                             <div class="row-info">
@@ -2834,7 +2896,7 @@
                                     if (metaInfo.kind === 'group') {
                                         openGroupChat(targetObj.groupId, targetObj.displayName, chatId, targetObj.memberCount || 1);
                                     } else {
-                                        openDirectChat(targetObj.username, targetObj.displayName, chatId, targetObj.verified, targetObj.vipAdmin);
+                                        openDirectChat(targetObj.username, targetObj.displayName, chatId, targetObj.verified, targetObj.vipAdmin, targetObj.avatar || '');
                                     }
                                 }
                             );
@@ -2875,14 +2937,17 @@
                     const uVal = uSnap.val() || {};
                     const isVip = !!(uVal.vipAdmin || isAdminUsername(f.username));
                     const isVer = !!(uVal.verified || isVip);
-                    userBadgeCache[f.username] = { verified: isVer, vipAdmin: isVip };
+                    const avatarUrl = uVal.avatar || '';
+                    const dName = uVal.displayName || f.displayName || f.username;
+                    userBadgeCache[f.username] = { verified: isVer, vipAdmin: isVip, avatar: avatarUrl, displayName: dName };
 
                     const chatId = f.chatId || getDirectChatId(currentUser, f.username);
                     const prev = friendsCache[f.username] || {};
 
                     friendsCache[f.username] = {
                         username: f.username,
-                        displayName: uVal.displayName || f.displayName || f.username,
+                        displayName: dName,
+                        avatar: avatarUrl,
                         bio: uVal.bio || '',
                         defaultText: uVal.bio || 'ابدأ المحادثة الآن...',
                         verified: isVer,
@@ -2962,12 +3027,12 @@
                 div.onclick = () => {
                     closeSubpanel(false);
                     closeSideDrawer(false);
-                    openDirectChat(item.username, item.displayName, getDirectChatId(currentUser, item.username), item.verified, item.vipAdmin);
+                    openDirectChat(item.username, item.displayName, getDirectChatId(currentUser, item.username), item.verified, item.vipAdmin, item.avatar || '');
                 };
                 div.innerHTML = `
                     <div class="row-left">
                         <div class="row-avatar">
-                            ${item.displayName.charAt(0).toUpperCase()}
+                            ${renderAvatarInner(item.avatar, item.displayName)}
                             <span class="status-dot ${item.online ? 'online' : ''}"></span>
                         </div>
                         <div class="row-info">
@@ -2984,7 +3049,7 @@
             });
         }
 
-        function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false) {
+        function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false, partnerAvatar = '') {
             closeSideDrawer(false);
             closeSubpanel(false);
             activeChatType = 'direct';
@@ -2994,6 +3059,10 @@
             activeChatId = chatId;
 
             const isVip = !!(partnerVipAdmin || isAdminUsername(partnerKey));
+            const headerAv = document.getElementById('chatHeaderAvatar');
+            const cachedAv = partnerAvatar || (userBadgeCache[partnerKey] && userBadgeCache[partnerKey].avatar) || '';
+            headerAv.innerHTML = renderAvatarInner(cachedAv, partnerDisplay);
+
             document.getElementById('chatTitleText').textContent = partnerDisplay;
             document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(partnerVerified || isVip, isVip);
             document.getElementById('copyRoomBtn').style.display = 'none';
@@ -3015,6 +3084,7 @@
             activeGroupId = groupId;
             activeChatId = chatId;
 
+            document.getElementById('chatHeaderAvatar').innerHTML = '<i class="fas fa-users"></i>';
             document.getElementById('chatTitleText').textContent = groupName;
             document.getElementById('chatTitleBadges').innerHTML = '<span class="group-pill"><i class="fas fa-users"></i> مجموعة</span>';
             document.getElementById('copyRoomBtn').style.display = 'none';
@@ -3050,6 +3120,7 @@
             activeGroupId = null;
             activeChatId = 'room_' + code;
 
+            document.getElementById('chatHeaderAvatar').innerHTML = '<i class="fas fa-hashtag"></i>';
             document.getElementById('chatTitleText').textContent = `الغرفة: ${code}`;
             document.getElementById('chatTitleBadges').innerHTML = '';
             document.getElementById('copyRoomBtn').style.display = 'inline-block';
@@ -3129,7 +3200,12 @@
                 const val = snap.val() || {};
                 const isVip = !!(val.vipAdmin || isAdminUsername(partnerKey));
                 const isVer = !!(val.verified || isVip);
-                userBadgeCache[partnerKey] = { verified: isVer, vipAdmin: isVip };
+                const dName = val.displayName || partnerKey;
+                const av = val.avatar || '';
+                userBadgeCache[partnerKey] = { verified: isVer, vipAdmin: isVip, avatar: av, displayName: dName };
+
+                document.getElementById('chatTitleText').textContent = dName;
+                document.getElementById('chatHeaderAvatar').innerHTML = renderAvatarInner(av, dName);
                 document.getElementById('chatTitleBadges').innerHTML = getBadgesHtml(isVer, isVip);
 
                 const statusEl = document.getElementById('chatPartnerStatus');
@@ -3232,9 +3308,7 @@
             focusChatInput();
         }
 
-        function copyTextToClipboard(text) {
-            navigator.clipboard?.writeText(text);
-        }
+        function copyTextToClipboard(text) { navigator.clipboard?.writeText(text); }
 
         async function toggleReaction(msgId, emoji) {
             if (!activeChatId || !currentUser) return;
@@ -3252,7 +3326,7 @@
 
         function listenForMessages() {
             if (messagesRefCurrent && messagesCallbackCurrent) messagesRefCurrent.off('value', messagesCallbackCurrent);
-            messagesRefCurrent = db.ref(`chats/${activeChatId}/messages`);
+            messagesRefCurrent = db.ref(`chats/${activeChatId}/messages`).limitToLast(60);
             messagesCallbackCurrent = messagesRefCurrent.on('value', async (snapshot) => {
                 const data = snapshot.val();
                 const currentCount = data ? Object.keys(data).length : 0;
@@ -3308,13 +3382,14 @@
                 const cachedBadges = userBadgeCache[msg.sender] || { verified: false, vipAdmin: isAdminUsername(msg.sender) };
                 const senderVipAdmin = isMe ? currentUserVipAdmin : !!(cachedBadges.vipAdmin || isAdminUsername(msg.sender));
                 const senderVerified = isMe ? currentUserVerified : !!(cachedBadges.verified || senderVipAdmin);
+                const senderShownName = isMe ? (currentDisplayName || currentUser) : (cachedBadges.displayName || msg.senderName || msg.sender);
 
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
 
                 const nameHtml = isMe
                     ? ''
-                    : `<div class="msg-name"><span>${escapeHtml(msg.senderName || msg.sender)}</span>${getBadgesHtml(senderVerified, senderVipAdmin)}</div>`;
+                    : `<div class="msg-name"><span>${escapeHtml(senderShownName)}</span>${getBadgesHtml(senderVerified, senderVipAdmin)}</div>`;
 
                 const replyHtml = msg.replyTo
                     ? `<div class="reply-quote"><strong>${escapeHtml(msg.replyTo.senderName || '')}:</strong> ${escapeHtml(msg.replyTo.text || '')}</div>`
@@ -3367,10 +3442,10 @@
                     </div>
                     ${chipsHtml ? `<div class="reactions-bar">${chipsHtml}</div>` : ''}
                     <div class="msg-actions">
-                        <button type="button" class="msg-action-btn" onclick="setReplyTarget('${msg.id}', '${escapeJs(msg.senderName || msg.sender)}', '${escapeJs(pinSummary)}')">
+                        <button type="button" class="msg-action-btn" onclick="setReplyTarget('${msg.id}', '${escapeJs(senderShownName)}', '${escapeJs(pinSummary)}')">
                             <i class="fas fa-reply"></i> رد
                         </button>
-                        <button type="button" class="msg-action-btn" title="تثبيت" onclick="pinMessage('${escapeJs(msg.senderName || msg.sender)}', '${escapeJs(pinSummary)}', ${!!(msg.image || msg.audio)})">
+                        <button type="button" class="msg-action-btn" title="تثبيت" onclick="pinMessage('${escapeJs(senderShownName)}', '${escapeJs(pinSummary)}', ${!!(msg.image || msg.audio)})">
                             <i class="fas fa-thumbtack"></i>
                         </button>
                         ${msg.text ? `<button type="button" class="msg-action-btn" title="نسخ النص" onclick="copyTextToClipboard('${escapeJs(msg.text)}')"><i class="fas fa-copy"></i></button>` : ''}
