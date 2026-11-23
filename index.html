@@ -60,8 +60,18 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
-            user-select: none;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        input, textarea {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
+
+        button, .chat-row-card, .drawer-item, .auth-tab, .theme-card {
+            user-select: none;
+            -webkit-user-select: none;
         }
         
         html, body {
@@ -264,10 +274,10 @@
             width: 100%;
             padding: 12px 14px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.12);
             background: rgba(0,0,0,0.45);
             color: #fff;
-            font-size: 0.93rem;
+            font-size: 0.95rem;
             outline: none;
         }
         .input-group input:focus, .input-group textarea:focus {
@@ -376,6 +386,35 @@
             flex-shrink: 0;
         }
 
+        .home-nav-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(10, 14, 24, 0.96);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
+        .home-nav-tab {
+            padding: 8px 10px;
+            border-radius: 11px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-muted);
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .home-nav-tab.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
         .home-search-bar {
             display: none;
             padding: 8px 14px;
@@ -394,7 +433,7 @@
             background: rgba(0,0,0,0.5);
             color: #fff;
             outline: none;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
         }
         .home-search-bar input:focus { border-color: var(--accent); }
 
@@ -416,10 +455,10 @@
             flex: 1;
             padding: 10px 13px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.11);
+            border: 1px solid rgba(255,255,255,0.12);
             background: rgba(0,0,0,0.45);
             color: #fff;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             outline: none;
         }
         .quick-add-inline input:focus { border-color: var(--accent); }
@@ -439,9 +478,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.07);
-            padding: 12px 14px;
+            padding: 11px 12px;
             border-radius: 16px;
             margin-bottom: 10px;
             cursor: pointer;
@@ -454,20 +494,21 @@
         .row-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             min-width: 0;
+            flex: 1;
         }
         .row-avatar {
             position: relative;
-            width: 46px;
-            height: 46px;
-            border-radius: 15px;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
             background: rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             color: var(--accent);
             flex-shrink: 0;
         }
@@ -489,19 +530,22 @@
             background: var(--neon-green);
             box-shadow: 0 0 8px var(--neon-green);
         }
+        .row-info {
+            min-width: 0;
+            flex: 1;
+        }
         .row-info .rname {
             font-weight: 800;
-            font-size: 0.94rem;
+            font-size: 0.92rem;
             color: #fff;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
         }
         .row-info .rlast {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-muted);
             margin-top: 2px;
-            max-width: 225px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -509,8 +553,43 @@
         .row-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-shrink: 0;
         }
+        .quick-user-btns {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+        .mini-action-btn {
+            padding: 5px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .mini-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .mini-action-btn.added {
+            border-color: rgba(0, 255, 102, 0.35);
+            color: var(--neon-green);
+            background: rgba(0, 255, 102, 0.08);
+        }
+        .mini-action-btn.group-add {
+            border-color: rgba(0, 243, 255, 0.3);
+            color: var(--accent);
+        }
+
         .unread-badge {
             background: var(--accent-secondary);
             color: #fff;
@@ -920,7 +999,7 @@
             background: rgba(0,0,0,0.45);
             color: #fff;
             outline: none;
-            font-size: 0.86rem;
+            font-size: 0.88rem;
         }
 
         .pinned-bar {
@@ -996,6 +1075,8 @@
             word-wrap: break-word;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .message-wrapper.me .msg-bubble { 
@@ -1191,7 +1272,7 @@
             display: flex;
             background: rgba(0,0,0,0.45);
             border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.12);
             padding: 4px 12px;
             align-items: center;
         }
@@ -1208,7 +1289,7 @@
             background: transparent;
             color: #fff;
             outline: none;
-            font-size: 0.94rem;
+            font-size: 0.95rem;
         }
 
         .btn-send {
@@ -1265,7 +1346,7 @@
 </head>
 <body data-theme="blue">
 
-    <!-- إشعار داخلي سريع -->
+    <!-- إشعار داخلي علوي سريع -->
     <div class="inapp-toast" id="inappToast" onclick="handleToastClick()">
         <div style="min-width:0;">
             <div class="toast-title" id="toastTitle">رسالة جديدة</div>
@@ -1280,7 +1361,7 @@
         <div class="screen active" id="authScreen">
             <div class="auth-card">
                 <div class="title">الدردشة الأسطورية</div>
-                <div class="subtitle">تواصل فوول سريع، مجموعات، غرف كود، صوتيات، وصور ⚡</div>
+                <div class="subtitle">تواصل فوول سريع، مجموعات، قائمة المستخدمين، وصوتيات ⚡</div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -1299,7 +1380,7 @@
                     <input type="password" id="authPassword" placeholder="••••••••" maxlength="32" autocomplete="current-password">
                 </div>
 
-                <button class="btn" id="authSubmitBtn" onclick="handleAuthSubmit()">
+                <button type="button" class="btn" id="authSubmitBtn" onclick="handleAuthSubmit()">
                     <i class="fas fa-right-to-bracket"></i> دخول إلى حسابي
                 </button>
             </div>
@@ -1319,25 +1400,42 @@
                     <button type="button" class="icon-btn" title="إنشاء مجموعة" onclick="openSubpanel('createGroup')">
                         <i class="fas fa-users"></i>
                     </button>
-                    <button type="button" class="icon-btn" title="بحث في الدردشات والمجموعات" onclick="toggleHomeSearch()">
+                    <button type="button" class="icon-btn" title="بحث" onclick="toggleHomeSearch()">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
             </div>
 
+            <div class="home-nav-tabs">
+                <button type="button" class="home-nav-tab active" id="tabChatsGroups" onclick="switchHomeTab('chats')">
+                    <i class="fas fa-comments"></i> الدردشات والمجموعات
+                </button>
+                <button type="button" class="home-nav-tab" id="tabAllUsers" onclick="switchHomeTab('users')">
+                    <i class="fas fa-user-group"></i> المستخدمون (<span id="allUsersCount">0</span>)
+                </button>
+            </div>
+
             <div class="home-search-bar" id="homeSearchBar">
-                <input type="text" id="homeSearchInput" placeholder="ابحث عن صديق، مجموعة، أو رسالة..." oninput="renderUnifiedFeed()">
+                <input type="text" id="homeSearchInput" placeholder="ابحث هنا..." oninput="renderActiveHomeTab()">
                 <button type="button" class="icon-btn" onclick="toggleHomeSearch(false)"><i class="fas fa-times"></i></button>
             </div>
 
             <div class="chats-list-area" id="chatsListArea">
-                <div class="quick-add-inline">
-                    <input type="text" id="friendUsernameInput" placeholder="إضافة صديق باسم المستخدم..." maxlength="20">
-                    <button type="button" onclick="addFriend()"><i class="fas fa-user-plus"></i> إضافة</button>
+                <div id="chatsTabContent">
+                    <div class="quick-add-inline">
+                        <input type="text" id="friendUsernameInput" placeholder="إضافة صديق باسم المستخدم..." maxlength="20">
+                        <button type="button" onclick="addFriend()"><i class="fas fa-user-plus"></i> إضافة</button>
+                    </div>
+
+                    <div id="unifiedFeedContainer">
+                        <div class="empty-state">جاري تحميل المحادثات والمجموعات...</div>
+                    </div>
                 </div>
 
-                <div id="unifiedFeedContainer">
-                    <div class="empty-state">جاري تحميل المحادثات والمجموعات...</div>
+                <div id="usersTabContent" style="display:none;">
+                    <div id="allUsersListContainer">
+                        <div class="empty-state">جاري تحميل قائمة المستخدمين...</div>
+                    </div>
                 </div>
             </div>
 
@@ -1369,6 +1467,11 @@
             </div>
 
             <div class="drawer-menu">
+                <button type="button" class="drawer-item" onclick="closeSideDrawer(false); switchHomeTab('users');">
+                    <span class="drawer-item-left"><i class="fas fa-user-group main-icon"></i> قائمة المستخدمين</span>
+                    <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
+                </button>
+
                 <button type="button" class="drawer-item" onclick="openSubpanel('createGroup')">
                     <span class="drawer-item-left"><i class="fas fa-users main-icon"></i> إنشاء مجموعة جديدة</span>
                     <i class="fas fa-chevron-left" style="font-size:0.75rem; color:var(--text-muted);"></i>
@@ -1442,7 +1545,7 @@
                     <span class="chat-room-code" id="displayChatTitle">
                         <span id="chatTitleText">الدردشة</span>
                         <span id="chatTitleBadges"></span>
-                        <button class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
+                        <button type="button" class="copy-code-btn" id="copyRoomBtn" style="display:none;" onclick="copyActiveRoomCode()">
                             <i class="fas fa-copy"></i> نسخ الكود
                         </button>
                     </span>
@@ -1476,7 +1579,7 @@
                 </button>
             </div>
 
-            <div class="chat-messages" id="chatMessages" onclick="dismissKeyboard()"></div>
+            <div class="chat-messages" id="chatMessages"></div>
 
             <div class="typing-indicator" id="typingIndicator">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
@@ -1561,12 +1664,13 @@
         // 2. المتغيرات العامة
         // ==========================================
         let authMode = 'login';
+        let activeHomeTab = 'chats';
         let currentUser = null;
         let currentDisplayName = null;
         let currentUserVerified = false;
         let currentUserVipAdmin = false;
         let activeChatId = null;
-        let activeChatType = null; // 'direct' | 'group' | 'room'
+        let activeChatType = null;
         let activeRoomCode = null;
         let activePartner = null;
         let activeGroupId = null;
@@ -1579,6 +1683,7 @@
         let userBadgeCache = {};
         let friendsCache = {};
         let groupsCache = {};
+        let allUsersCache = [];
         let featuredUsersCache = [];
         let lastSeenMsgTimestampByChat = {};
         let toastActionPayload = null;
@@ -1606,8 +1711,8 @@
         let friendsListenerCallback = null;
         let groupsListenerRef = null;
         let groupsListenerCallback = null;
-        let featuredListenerRef = null;
-        let featuredListenerCallback = null;
+        let usersListenerRef = null;
+        let usersListenerCallback = null;
         let feedMsgListeners = {};
 
         let typingTimeout = null;
@@ -1624,8 +1729,11 @@
         const typingIndicator = document.getElementById('typingIndicator');
 
         function dismissKeyboard() {
-            if (document.activeElement && typeof document.activeElement.blur === 'function') {
-                document.activeElement.blur();
+            const active = document.activeElement;
+            if (active && active !== document.body && typeof active.blur === 'function') {
+                if (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') {
+                    active.blur();
+                }
             }
         }
 
@@ -1704,7 +1812,7 @@
         }
 
         function sanitizeKey(str) {
-            return str.trim().toLowerCase().replace(/[.#$\[\]/\s]+/g, '_');
+            return String(str || '').trim().toLowerCase().replace(/[.#$\[\]/\s]+/g, '_');
         }
 
         function isAdminUsername(usernameKey) {
@@ -1791,7 +1899,6 @@
             statusMsg.textContent = status
                 ? `تم توثيق الحساب (@${targetKey}) بنجاح.`
                 : (isVipTarget ? `حساب المطور (@${targetKey}) يحتفظ بشاراته المميزة.` : `تم إلغاء توثيق الحساب (@${targetKey}).`);
-            dismissKeyboard();
         }
 
         async function hashPassword(password) {
@@ -1824,7 +1931,6 @@
         }
 
         async function toggleVoiceRecording() {
-            dismissKeyboard();
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') return;
             if (isRecordingVoice && mediaRecorder) {
                 stopVoiceRecording();
@@ -1939,7 +2045,6 @@
                 document.getElementById('imagePreviewThumb').src = result.dataUrl;
                 document.getElementById('imagePreviewInfo').textContent = `صورة مضغوطة (${result.sizeKb} KB)`;
                 document.getElementById('imagePreviewBanner').classList.add('active');
-                dismissKeyboard();
             } catch (err) {}
         }
 
@@ -1951,7 +2056,6 @@
 
         function openLightbox(src) {
             if (!src) return;
-            dismissKeyboard();
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightboxModal').classList.add('active');
             pushNavState('lightbox');
@@ -1994,7 +2098,6 @@
         }
 
         function openSideDrawer() {
-            dismissKeyboard();
             document.getElementById('drawerBackdrop').classList.add('active');
             document.getElementById('sideDrawer').classList.add('open');
             pushNavState('drawer');
@@ -2009,8 +2112,7 @@
             }
         }
 
-        function openSubpanel(type) {
-            dismissKeyboard();
+        function openSubpanel(type, extraData = null) {
             activeSubpanelType = type;
             const modal = document.getElementById('subpanelModal');
             const titleEl = document.getElementById('subpanelTitle');
@@ -2018,6 +2120,7 @@
             const currentTheme = document.body.getAttribute('data-theme') || 'blue';
 
             if (type === 'createGroup') {
+                const prefillMember = extraData && extraData.prefillMember ? extraData.prefillMember : '';
                 titleEl.textContent = 'إنشاء مجموعة جديدة';
                 bodyEl.innerHTML = `
                     <div class="info-card">
@@ -2028,12 +2131,41 @@
                         </div>
                         <div class="input-group">
                             <label>أسماء مستخدمي الأعضاء (مفصولة بفاصلة أو مسافة):</label>
-                            <textarea id="newGroupMembersInput" rows="3" placeholder="مثال: ali_ahmed, sara99, omar_dev"></textarea>
+                            <textarea id="newGroupMembersInput" rows="3" placeholder="مثال: ali_ahmed, sara99">${escapeHtml(prefillMember)}</textarea>
                         </div>
                         <button type="button" class="btn" id="createGroupBtn" onclick="createNewGroup()">
                             <i class="fas fa-users"></i> إنشاء المجموعة والبدء
                         </button>
                         <div class="admin-status-msg" id="groupStatusMsg"></div>
+                    </div>
+                `;
+            } else if (type === 'selectGroupForUser' && extraData && extraData.username) {
+                const targetUser = extraData.username;
+                const targetDisplay = extraData.displayName || targetUser;
+                titleEl.textContent = `إضافة ${targetDisplay} إلى مجموعة`;
+                const groupList = Object.values(groupsCache);
+                let cardsHtml = '';
+                groupList.forEach(g => {
+                    cardsHtml += `
+                        <div class="chat-row-card" onclick="addUserToSpecificGroup('${escapeJs(targetUser)}', '${escapeJs(targetDisplay)}', '${escapeJs(g.groupId)}', '${escapeJs(g.displayName)}')">
+                            <div class="row-left">
+                                <div class="row-avatar group-av"><i class="fas fa-users"></i></div>
+                                <div class="row-info">
+                                    <div class="rname">${escapeHtml(g.displayName)}</div>
+                                    <div class="rlast">${g.memberCount || 1} أعضاء</div>
+                                </div>
+                            </div>
+                            <span class="mini-action-btn group-add"><i class="fas fa-plus"></i> إضافة</span>
+                        </div>
+                    `;
+                });
+                bodyEl.innerHTML = `
+                    <div class="info-card">
+                        <h4>اختر مجموعة:</h4>
+                        ${cardsHtml || '<div class="empty-state">لا توجد مجموعات حالياً.</div>'}
+                        <button type="button" class="btn btn-outline" style="margin-top:8px;" onclick="openSubpanel('createGroup', { prefillMember: '${escapeJs(targetUser)}' })">
+                            <i class="fas fa-users"></i> إنشاء مجموعة جديدة تضم ${escapeHtml(targetDisplay)}
+                        </button>
                     </div>
                 `;
             } else if (type === 'featured') {
@@ -2104,7 +2236,7 @@
                 bodyEl.innerHTML = `
                     <div class="info-card">
                         <h4>الدردشة الأسطورية</h4>
-                        <p>تطبيق تواصل متلاحم وسريع يجمع الدردشات المباشرة والمجموعات وغرف الكود الفورية والإشعارات الداخلية والرسائل الصوتية والصور المضغوطة مع دعم كامل لزر الرجوع في الهاتف.</p>
+                        <p>تطبيق تواصل متلاحم وسريع يجمع الدردشات المباشرة والمجموعات وقائمة المستخدمين مع إضافة سريعة للأصدقاء والمجموعات والرسائل الصوتية والصور المضغوطة.</p>
                     </div>
                 `;
             } else if (type === 'aboutDev') {
@@ -2131,7 +2263,6 @@
         }
 
         function askLogoutConfirm() {
-            dismissKeyboard();
             document.getElementById('confirmLogoutModal').classList.add('active');
         }
 
@@ -2153,7 +2284,6 @@
         }
 
         async function handleAuthSubmit() {
-            dismissKeyboard();
             hideAuthError();
             const rawUsername = document.getElementById('authUsername').value.trim();
             const password = document.getElementById('authPassword').value;
@@ -2249,10 +2379,11 @@
             authScreen.classList.remove('active');
             homeScreen.classList.add('active');
             chatScreen.classList.remove('active');
+            switchHomeTab('chats');
 
             listenToFriends();
             listenToGroups();
-            listenToFeaturedUsers();
+            listenToAllUsers();
         }
 
         function cleanupFeedSubListeners() {
@@ -2267,7 +2398,6 @@
             closeSideDrawer(false);
             closeSubpanel(false);
             if (!currentUser) return;
-            dismissKeyboard();
 
             db.ref('users/' + currentUser).update({ online: false, lastSeen: Date.now() });
             db.ref('users/' + currentUser).off();
@@ -2276,10 +2406,11 @@
 
             if (friendsListenerRef && friendsListenerCallback) friendsListenerRef.off('value', friendsListenerCallback);
             if (groupsListenerRef && groupsListenerCallback) groupsListenerRef.off('value', groupsListenerCallback);
-            if (featuredListenerRef && featuredListenerCallback) featuredListenerRef.off('value', featuredListenerCallback);
+            if (usersListenerRef && usersListenerCallback) usersListenerRef.off('value', usersListenerCallback);
 
             friendsCache = {};
             groupsCache = {};
+            allUsersCache = [];
             featuredUsersCache = [];
             lastSeenMsgTimestampByChat = {};
             localStorage.removeItem('legendary_chat_session');
@@ -2321,19 +2452,32 @@
         });
 
         // ==========================================
-        // 6. التغذية المتلاحمة: أصدقاء + مجموعات + بحث + إشعارات
+        // 6. التبويبات والإضافة السريعة للمستخدمين والمجموعات
         // ==========================================
+        function switchHomeTab(tabName) {
+            activeHomeTab = tabName === 'users' ? 'users' : 'chats';
+            document.getElementById('tabChatsGroups').classList.toggle('active', activeHomeTab === 'chats');
+            document.getElementById('tabAllUsers').classList.toggle('active', activeHomeTab === 'users');
+            document.getElementById('chatsTabContent').style.display = activeHomeTab === 'chats' ? 'block' : 'none';
+            document.getElementById('usersTabContent').style.display = activeHomeTab === 'users' ? 'block' : 'none';
+            renderActiveHomeTab();
+        }
+
+        function renderActiveHomeTab() {
+            if (activeHomeTab === 'users') renderAllUsersList();
+            else renderUnifiedFeed();
+        }
+
         function toggleHomeSearch(show = null) {
             const bar = document.getElementById('homeSearchBar');
             const input = document.getElementById('homeSearchInput');
             const shouldOpen = show === null ? !bar.classList.contains('active') : !!show;
             bar.classList.toggle('active', shouldOpen);
             if (shouldOpen) {
-                input.focus();
+                setTimeout(() => input.focus(), 30);
             } else {
                 input.value = '';
-                dismissKeyboard();
-                renderUnifiedFeed();
+                renderActiveHomeTab();
             }
         }
 
@@ -2341,40 +2485,191 @@
             return 'direct_' + [sanitizeKey(userA), sanitizeKey(userB)].sort().join('__');
         }
 
-        async function addFriend() {
-            dismissKeyboard();
-            const input = document.getElementById('friendUsernameInput');
-            const friendKey = sanitizeKey(input.value);
-            if (!friendKey || friendKey === currentUser) return;
+        async function quickAddFriendByKey(friendKey, friendDisplay = '', openAfter = false) {
+            const key = sanitizeKey(friendKey);
+            if (!key || key === currentUser) return;
 
-            const friendSnap = await db.ref('users/' + friendKey).once('value');
+            const friendSnap = await db.ref('users/' + key).once('value');
             if (!friendSnap.exists()) return;
 
             const friendData = friendSnap.val();
-            const friendDisplay = friendData.displayName || friendKey;
-            const chatId = getDirectChatId(currentUser, friendKey);
+            const display = friendDisplay || friendData.displayName || key;
+            const chatId = getDirectChatId(currentUser, key);
 
-            await db.ref(`friends/${currentUser}/${friendKey}`).update({
-                username: friendKey,
-                displayName: friendDisplay,
+            await db.ref(`friends/${currentUser}/${key}`).update({
+                username: key,
+                displayName: display,
                 chatId,
                 addedAt: Date.now()
             });
 
-            await db.ref(`friends/${friendKey}/${currentUser}`).update({
+            await db.ref(`friends/${key}/${currentUser}`).update({
                 username: currentUser,
                 displayName: currentDisplayName || currentUser,
                 chatId,
                 addedAt: Date.now()
             });
 
+            showInAppToast('تمت الإضافة للأصدقاء', `تمت إضافة ${display} إلى قائمة أصدقائك.`);
+
+            if (openAfter) {
+                const isVip = !!(friendData.vipAdmin || isAdminUsername(key));
+                openDirectChat(key, display, chatId, !!(friendData.verified || isVip), isVip);
+            }
+        }
+
+        async function addFriend() {
+            const input = document.getElementById('friendUsernameInput');
+            const friendKey = sanitizeKey(input.value);
+            if (!friendKey || friendKey === currentUser) return;
             input.value = '';
-            const isVip = !!(friendData.vipAdmin || isAdminUsername(friendKey));
-            openDirectChat(friendKey, friendDisplay, chatId, !!(friendData.verified || isVip), isVip);
+            await quickAddFriendByKey(friendKey, '', true);
+        }
+
+        async function handleQuickAddToGroup(targetUsername, targetDisplay) {
+            const key = sanitizeKey(targetUsername);
+            if (!key) return;
+            const groupsList = Object.values(groupsCache);
+
+            if (groupsList.length === 1) {
+                const g = groupsList[0];
+                await addUserToSpecificGroup(key, targetDisplay, g.groupId, g.displayName);
+            } else {
+                openSubpanel('selectGroupForUser', { username: key, displayName: targetDisplay });
+            }
+        }
+
+        async function addUserToSpecificGroup(memberKey, memberDisplay, groupId, groupName) {
+            const key = sanitizeKey(memberKey);
+            if (!key || !groupId) return;
+
+            const gSnap = await db.ref('groups/' + groupId).once('value');
+            const gVal = gSnap.val() || {};
+            const chatId = gVal.chatId || ('group_' + groupId);
+            const gName = gVal.name || groupName || 'مجموعة';
+
+            await db.ref(`groups/${groupId}/members/${key}`).set(true);
+            await db.ref(`userGroups/${key}/${groupId}`).set({
+                groupId,
+                chatId,
+                name: gName,
+                addedAt: Date.now()
+            });
+
+            if (activeSubpanelType === 'selectGroupForUser') {
+                closeSubpanel(true);
+            }
+            showInAppToast('تمت الإضافة للمجموعة', `تمت إضافة ${memberDisplay || key} إلى مجموعة "${gName}".`);
+        }
+
+        async function startChatWithRegisteredUser(userItem) {
+            if (!userItem || !userItem.username || userItem.username === currentUser) return;
+            const chatId = getDirectChatId(currentUser, userItem.username);
+            await db.ref(`friends/${currentUser}/${userItem.username}`).update({
+                username: userItem.username,
+                displayName: userItem.displayName,
+                chatId,
+                addedAt: Date.now()
+            });
+            openDirectChat(userItem.username, userItem.displayName, chatId, userItem.verified, userItem.vipAdmin);
+        }
+
+        function listenToAllUsers() {
+            if (usersListenerRef && usersListenerCallback) usersListenerRef.off('value', usersListenerCallback);
+            usersListenerRef = db.ref('users');
+            usersListenerCallback = usersListenerRef.on('value', (snapshot) => {
+                const usersObj = snapshot.val() || {};
+                const list = [];
+                const featured = [];
+
+                Object.entries(usersObj).forEach(([key, val]) => {
+                    if (key === currentUser) return;
+                    const isVip = !!(val.vipAdmin || isAdminUsername(key));
+                    const isVer = !!(val.verified || isVip);
+                    userBadgeCache[key] = { verified: isVer, vipAdmin: isVip };
+
+                    const item = {
+                        username: key,
+                        displayName: val.displayName || key,
+                        bio: val.bio || 'متاح للدردشة ⚡',
+                        online: !!val.online,
+                        verified: isVer,
+                        vipAdmin: isVip
+                    };
+                    list.push(item);
+                    if (isVer || isVip) featured.push(item);
+                });
+
+                list.sort((a, b) => {
+                    if (a.online !== b.online) return a.online ? -1 : 1;
+                    if (a.vipAdmin !== b.vipAdmin) return a.vipAdmin ? -1 : 1;
+                    return a.displayName.localeCompare(b.displayName, 'ar');
+                });
+
+                featured.sort((a, b) => (b.vipAdmin ? 1 : 0) - (a.vipAdmin ? 1 : 0));
+
+                allUsersCache = list;
+                featuredUsersCache = featured;
+                document.getElementById('allUsersCount').textContent = String(list.length);
+
+                if (activeHomeTab === 'users') renderAllUsersList();
+                if (activeSubpanelType === 'featured') renderFeaturedInSubpanel();
+            });
+        }
+
+        function renderAllUsersList() {
+            const container = document.getElementById('allUsersListContainer');
+            if (!container) return;
+
+            const q = (document.getElementById('homeSearchInput')?.value || '').trim().toLowerCase();
+            let items = allUsersCache;
+            if (q) {
+                items = items.filter(u =>
+                    (u.displayName || '').toLowerCase().includes(q) ||
+                    (u.username || '').toLowerCase().includes(q) ||
+                    (u.bio || '').toLowerCase().includes(q)
+                );
+            }
+
+            if (!items.length) {
+                container.innerHTML = '<div class="empty-state">لا يوجد مستخدمون مطابقون للبحث.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            items.forEach(u => {
+                const isAlreadyFriend = !!friendsCache[u.username];
+                const div = document.createElement('div');
+                div.className = 'chat-row-card';
+                div.onclick = () => startChatWithRegisteredUser(u);
+                div.innerHTML = `
+                    <div class="row-left">
+                        <div class="row-avatar">
+                            ${u.displayName.charAt(0).toUpperCase()}
+                            <span class="status-dot ${u.online ? 'online' : ''}"></span>
+                        </div>
+                        <div class="row-info">
+                            <div class="rname">
+                                <span>${escapeHtml(u.displayName)}</span>
+                                ${getBadgesHtml(u.verified, u.vipAdmin)}
+                            </div>
+                            <div class="rlast">@${escapeHtml(u.username)} • ${u.online ? 'متصل الآن' : 'غير متصل'}</div>
+                        </div>
+                    </div>
+                    <div class="quick-user-btns" onclick="event.stopPropagation()">
+                        <button type="button" class="mini-action-btn ${isAlreadyFriend ? 'added' : ''}" onclick="quickAddFriendByKey('${escapeJs(u.username)}', '${escapeJs(u.displayName)}', false)">
+                            <i class="fas ${isAlreadyFriend ? 'fa-check' : 'fa-user-plus'}"></i> ${isAlreadyFriend ? 'صديق' : 'صديق'}
+                        </button>
+                        <button type="button" class="mini-action-btn group-add" onclick="handleQuickAddToGroup('${escapeJs(u.username)}', '${escapeJs(u.displayName)}')">
+                            <i class="fas fa-users"></i> مجموعة
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
         }
 
         async function createNewGroup() {
-            dismissKeyboard();
             const nameInput = document.getElementById('newGroupNameInput');
             const membersInput = document.getElementById('newGroupMembersInput');
             const statusEl = document.getElementById('groupStatusMsg');
@@ -2462,7 +2757,7 @@
             if (!combined.length) {
                 container.innerHTML = q
                     ? '<div class="empty-state">لا توجد نتائج مطابقة للبحث.</div>'
-                    : '<div class="empty-state"><i class="fas fa-comments" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا توجد محادثات أو مجموعات بعد.<br>أضف صديقاً أو أنشئ مجموعة جديدة للبدء!</div>';
+                    : '<div class="empty-state"><i class="fas fa-comments" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.5;"></i>لا توجد محادثات أو مجموعات بعد.<br>اختر مستخدماً من تبويب <strong>المستخدمون</strong> أو أنشئ مجموعة جديدة!</div>';
                 return;
             }
 
@@ -2566,7 +2861,7 @@
                 targetObj.lastText = lastText;
                 targetObj.lastTime = lastTime;
                 targetObj.unreadCount = unreadCount;
-                renderUnifiedFeed();
+                if (activeHomeTab === 'chats') renderUnifiedFeed();
             });
             feedMsgListeners[chatId] = { ref, cb };
         }
@@ -2580,7 +2875,8 @@
                 const friendsObj = snapshot.val();
                 if (!friendsObj) {
                     friendsCache = {};
-                    renderUnifiedFeed();
+                    if (activeHomeTab === 'chats') renderUnifiedFeed();
+                    else renderAllUsersList();
                     return;
                 }
 
@@ -2617,7 +2913,8 @@
                     attachFeedLiveSummary(chatId, { kind: 'direct', key: f.username });
                 }));
 
-                renderUnifiedFeed();
+                if (activeHomeTab === 'chats') renderUnifiedFeed();
+                else renderAllUsersList();
             });
         }
 
@@ -2630,7 +2927,7 @@
                 const grpObj = snapshot.val();
                 if (!grpObj) {
                     groupsCache = {};
-                    renderUnifiedFeed();
+                    if (activeHomeTab === 'chats') renderUnifiedFeed();
                     return;
                 }
 
@@ -2662,7 +2959,7 @@
                     attachFeedLiveSummary(chatId, { kind: 'group', key: g.groupId });
                 }));
 
-                renderUnifiedFeed();
+                if (activeHomeTab === 'chats') renderUnifiedFeed();
             });
         }
 
@@ -2702,33 +2999,7 @@
             });
         }
 
-        function listenToFeaturedUsers() {
-            if (featuredListenerRef && featuredListenerCallback) featuredListenerRef.off('value', featuredListenerCallback);
-            featuredListenerRef = db.ref('users');
-            featuredListenerCallback = featuredListenerRef.on('value', (snapshot) => {
-                const usersObj = snapshot.val() || {};
-                featuredUsersCache = Object.entries(usersObj)
-                    .map(([key, val]) => {
-                        const isVip = !!(val.vipAdmin || isAdminUsername(key));
-                        const isVer = !!(val.verified || isVip);
-                        return {
-                            username: key,
-                            displayName: val.displayName || key,
-                            bio: val.bio || 'حساب مميز في الدردشة الأسطورية',
-                            online: !!val.online,
-                            verified: isVer,
-                            vipAdmin: isVip
-                        };
-                    })
-                    .filter(u => (u.verified || u.vipAdmin) && u.username !== currentUser)
-                    .sort((a, b) => (b.vipAdmin ? 1 : 0) - (a.vipAdmin ? 1 : 0));
-
-                if (activeSubpanelType === 'featured') renderFeaturedInSubpanel();
-            });
-        }
-
         function openDirectChat(partnerKey, partnerDisplay, chatId, partnerVerified = false, partnerVipAdmin = false) {
-            dismissKeyboard();
             closeSideDrawer(false);
             closeSubpanel(false);
             activeChatType = 'direct';
@@ -2751,7 +3022,6 @@
         }
 
         function openGroupChat(groupId, groupName, chatId, memberCount = 1) {
-            dismissKeyboard();
             closeSideDrawer(false);
             closeSubpanel(false);
             activeChatType = 'group';
@@ -2779,13 +3049,11 @@
         // 7. غرف الكود السريعة
         // ==========================================
         function createQuickRoom() {
-            dismissKeyboard();
             const code = Math.random().toString(36).substring(2, 6).toUpperCase();
             openRoomChat(code);
         }
 
         function joinQuickRoom() {
-            dismissKeyboard();
             const code = (document.getElementById('roomCodeInput')?.value || '').trim().toUpperCase();
             if (!code) return;
             openRoomChat(code);
@@ -2837,7 +3105,6 @@
             document.getElementById('searchBarBox').classList.remove('active');
             document.getElementById('chatSearchInput').value = '';
             typingIndicator.classList.remove('active');
-            dismissKeyboard();
             pushNavState('chat');
         }
 
@@ -2867,7 +3134,7 @@
             if (isRecordingVoice) stopVoiceRecording();
             chatScreen.classList.remove('active');
             homeScreen.classList.add('active');
-            renderUnifiedFeed();
+            renderActiveHomeTab();
 
             if (syncHistory && history.state && history.state.legendaryView === 'chat') {
                 ignoreNextPopState = true;
@@ -2945,10 +3212,9 @@
             const shouldOpen = show === null ? !box.classList.contains('active') : !!show;
             box.classList.toggle('active', shouldOpen);
             if (shouldOpen) {
-                input.focus();
+                setTimeout(() => input.focus(), 30);
             } else {
                 input.value = '';
-                dismissKeyboard();
                 renderMessagesList();
             }
         }
@@ -2983,6 +3249,7 @@
 
         function insertEmoji(emoji) {
             chatInput.value += emoji;
+            chatInput.focus();
         }
 
         function copyTextToClipboard(text) {
@@ -3064,7 +3331,6 @@
 
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'other'}`;
-                wrapper.onclick = (e) => e.stopPropagation();
 
                 const nameHtml = isMe
                     ? ''
@@ -3154,13 +3420,11 @@
 
             if (isRecordingVoice) {
                 stopVoiceRecording();
-                dismissKeyboard();
                 return;
             }
 
             const text = chatInput.value.trim();
             if ((!text && !pendingCompressedImage && !pendingAudioClip) || !activeChatId || !currentUser) {
-                dismissKeyboard();
                 return;
             }
 
@@ -3211,7 +3475,7 @@
                 isTyping = false;
                 clearTimeout(typingTimeout);
                 db.ref(`chats/${activeChatId}/typing/${currentUser}`).set(false);
-                dismissKeyboard();
+                chatInput.focus();
             } finally {
                 isSendingMessage = false;
             }
@@ -3222,8 +3486,8 @@
             e.preventDefault();
             sendMessage();
         });
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
